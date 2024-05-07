@@ -1,0 +1,3 @@
+
+Si la aplicación Web hace uso de texturas, en general, si tiene que cargar archivos desde los script javascript, no basta con arrastrar el fichero .html al navegador, hay que tener un servidor web. En el guion de la práctica 1 se explica cómo hacerlo.
+

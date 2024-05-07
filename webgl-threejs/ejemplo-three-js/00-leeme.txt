@@ -1,0 +1,14 @@
+
+Si la aplicación Web hace uso de texturas, en general, si tiene que cargar archivos desde los script javascript, no basta con arrastrar el fichero .html al navegador, hay que tener un servidor web
+
+Puede tenerse uno sencillo con la siguiente orden. Hay que ejecutarla en la carpeta que va a ser la raiz del servidor web. En este caso, la carpeta que contiene el archivo   index.html
+
+python -m SimpleHTTPServer
+
+En el navegador se carga la página con
+
+http://localhost:8000
+
+
+
+
