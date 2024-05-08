@@ -8,20 +8,24 @@ class Personaje extends THREE.Object3D {
     super();
 
     var circuito = c.tubeGeometry;
-    
-    this.speed = 0; // Velocidad inicial del personaje
-    this.acceleration = 0.00001; // Aceleración del personaje
-    this.maxSpeed = 0.001; // Velocidad máxima del personaje
-    this.minSpeed = -0.0005; // Velocidad mínima del personaje (puede ser negativa para retroceder)
-    this.friction = 0.00001; // Fricción para la desaceleración del personaje
 
+    this.speed = 0; // Velocidad inicial del personaje
+    this.acceleration = 0.0005; // Aceleración del personaje
+    this.maxSpeed = 0.075; // Velocidad máxima del personaje
+    this.minSpeed = -0.005; // Velocidad mínima del personaje (puede ser negativa para retroceder)
+    this.friction = 0.00005; // Fricción para la desaceleración del personaje
+    this.rotacionLateral = 0; // Rotación lateral del personaje
+    this.desacelerar = false; // Bandera para desacelerar
+    this.desgirar = false; // Bandera para desacelerar el giro
+    
     this.personaje = new THREE.Group();
     this.createGUI(gui, titleGui);
     this.createChasis();
     this.createAlonso();
+    this.createReloj();
 
     this.rot = 0;
-    
+
     var n1 = this.createNeumatico();
     n1.position.set(0.55, 0.2, 0.82); // Posicionar
     this.personaje.add(n1);
@@ -35,17 +39,17 @@ class Personaje extends THREE.Object3D {
     n4.position.set(-0.55, 0.2, -1.22); // Posicionar
     this.personaje.add(n4);
 
-    this.personaje.scale.set(0.5,0.5,0.5);
+    this.personaje.scale.set(0.5, 0.5, 0.5);
 
     this.nodoPosOrientTubo = new THREE.Object3D();
     this.movimientoLateral = new THREE.Object3D();
     this.posSuperficie = new THREE.Object3D();
     this.posSuperficie.position.y = circuito.parameters.radius;
-    
+
     this.add(this.nodoPosOrientTubo);
     this.nodoPosOrientTubo.add(this.movimientoLateral);
     this.movimientoLateral.add(this.posSuperficie);
-    this.movimientoLateral.rotateZ(Math.PI/2);
+    this.movimientoLateral.rotateZ(Math.PI / 2);
     this.posSuperficie.add(this.personaje);
     //pergarlo al tubo
     this.t = 0;
@@ -63,23 +67,29 @@ class Personaje extends THREE.Object3D {
     this.nodoPosOrientTubo.lookAt(posTemp);
 
     this.createCamara();
+    this.movimientoPrincipal();
+    this.alternarVista();
   }
 
-  createCamara(){
+  createReloj() {
+    this.reloj = new THREE.Clock();
+  }
+
+  createCamara() {
     // Crear un nodo para posicionar y orientar la cámara de tercera persona
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000);
     // Recuerda: Todas las unidades están en metros
     // También se indica dónde se coloca
-    this.camera.position.set (0, 2, -5);
+    this.camera.position.set(0, 2, -5);
     // Y hacia dónde mira
-    var look = new THREE.Vector3 (0,1,0);
+    var look = new THREE.Vector3(0, 1, 0);
     this.camera.lookAt(look);
     this.cameraController = new THREE.Object3D();
     this.cameraController.add(this.camera);
     this.personaje.add(this.cameraController);
   }
 
-  createChasis(){
+  createChasis() {
 
     var ml = new MTLLoader();
     var ol = new OBJLoader();
@@ -88,10 +98,10 @@ class Personaje extends THREE.Object3D {
         ol.setMaterials(materials);
         ol.load('../models/f1.obj',
           (box) => {
-            box.traverseVisible((o)=>{
-              if(o.isMesh){
-                if(o.material.name == "Material.001")
-                o.material.flatShading = true;
+            box.traverseVisible((o) => {
+              if (o.isMesh) {
+                if (o.material.name == "Material.001")
+                  o.material.flatShading = true;
               }
             })
             box.scale.set(0.2, 0.2, 0.2); // Escalar
@@ -117,7 +127,7 @@ class Personaje extends THREE.Object3D {
     var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
     sphere.scale.set(0.1, 0.1, 0.1); // Escalar
     sphere.position.set(0, 0.7, 0.1); // Posicionar
-    sphere.rotation.y -= Math.PI/2; // Rotar
+    sphere.rotation.y -= Math.PI / 2; // Rotar
     this.personaje.add(sphere);
   }
   createNeumatico() {
@@ -146,6 +156,9 @@ class Personaje extends THREE.Object3D {
     shape.moveTo(0, 0);
   }
 
+  getCamara() {
+    return this.camera;
+  }
 
   createGUI(gui, titleGui) {
     // Controles para el tamaño, la orientación y la posición de la caja
@@ -180,7 +193,7 @@ class Personaje extends THREE.Object3D {
         this.guiControls.anim = false;
       }
     }
-    
+
     // Se crea una sección para los controles de la caja
     var folder = gui.addFolder(titleGui);
     // Estas lineas son las que añaden los componentes de la interfaz
@@ -201,56 +214,87 @@ class Personaje extends THREE.Object3D {
     folder.add(this.guiControls, 'reset').name('[ Reset ]');
   }
 
-  movimientoPrincipal(){
-      // Lógica de movimiento del personaje
-      // Actualiza la velocidad según la entrada del usuario
-      document.addEventListener('keydown', (event) => {
+  movimientoPrincipal() {
+    // Lógica de movimiento del personaje
+    // Actualiza la velocidad según la entrada del usuario
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'w') {
         this.desacelerar = false;
-        if (event.key === 'w') {
-          // Acelera hacia adelante
-          this.speed += this.acceleration;
-          this.speed = Math.min(this.speed, this.maxSpeed); // Limita la velocidad máxima
-        } else if (event.key === 's') {
-          // Desacelera o retrocede
-          this.speed -= this.acceleration;
-          this.speed = Math.max(this.speed, this.minSpeed); // Limita la velocidad mínima
-        }
-      });
-      
-      if(!this.desacelerar)
-      document.addEventListener('keydown', (event) => {
-        if (event.key === 'a') {
-          // Aplica fricción para desacelerar
-          this.movimientoLateral.rotateZ(-Math.PI/32*0.005);
-        } else if (event.key === 'd') {
-          // Aplica fricción para desacelerar
-          this.movimientoLateral.rotateZ(Math.PI/32*0.005);
-        }
-      });
-      document.addEventListener('keyup', (event) => {
-        if (event.key === 'w' || event.key === 's') {
-          // Aplica fricción para desacelerar
-          this.desacelerar = true;
-        }
-      });
+        // Acelera hacia adelante
+        this.speed += this.acceleration;
+        this.speed = Math.min(this.speed, this.maxSpeed); // Limita la velocidad máxima
+      } else if (event.key === 's') {
+        this.desacelerar = false;
+        // Desacelera o retrocede
+        this.speed -= this.acceleration;
+        this.speed = Math.max(this.speed, this.minSpeed); // Limita la velocidad mínima
+      } else if (event.key == 'a' && this.speed != 0) {
+        // Aplica rotación hacia la izquierda si hay velocidad
+        this.rotacionLateral -= 2; 
+        this.rotacionLateral = Math.max(this.rotacionLateral, -this.maxSpeed); // Limita la rotación
+      } else if (event.key == 'd' && this.speed != 0) {
+        // Aplica rotación hacia la derecha si hay velocidad
+        this.rotacionLateral += 2; 
+        this.rotacionLateral = Math.min(this.rotacionLateral, this.maxSpeed); // Limita la rotación
+      }
 
-      if(this.desacelerar){
-        if (this.speed > 0) {
-          this.speed -= this.friction;
-          this.speed = Math.max(this.speed, 0); // Velocidad mínima es cero
-      } else if (this.speed < 0) {
-          this.speed += this.friction;
-          this.speed = Math.min(this.speed, 0); // Velocidad máxima es cero
+      if((event.key == 'a' || event.key == 'd') && this.speed != 0){
+        this.desgirar = false;
+        this.movimientoLateral.rotateZ(this.rotacionLateral);
       }
+
+    });
+
+    document.addEventListener('keyup', (event) => {
+      if (event.key == 'w' || event.key == 's') {
+        // Detiene la rotación lateral cuando se suelta la tecla
+        this.desacelerar = true;
       }
+    });
+
+    document.addEventListener('keyup', (event) => {
+      if (event.key == 'a' || event.key == 'd') {
+        // Detiene la rotación lateral cuando se suelta la tecla
+        this.desgirar = true;
+      }
+    });
+  }
+
+  alternarVista(){
+    document.addEventListener('keydown', (event) => {
+      if(event.key == 'c'){
+        this.cameraController.rotation.y = (Math.PI);
+      }
+    });
+    document.addEventListener('keyup', (event) => {
+      if(event.key == 'c'){
+        this.cameraController.rotation.y = 0;
+      }
+    });
   }
 
   update() {
-    this.movimientoPrincipal();
+    if (this.desacelerar) {
+      if (this.speed > 0) {
+        this.speed -= this.friction;
+        this.speed = Math.max(this.speed, 0); // Velocidad mínima es cero
+      } else if (this.speed < 0) {
+        this.speed += this.friction;
+        this.speed = Math.min(this.speed, 0); // Velocidad máxima es cero
+      }
+    }
+    if(this.desgirar){
+      if(this.rotacionLateral > 0){
+        this.rotacionLateral -= this.friction;
+        this.rotacionLateral = Math.max(this.rotacionLateral, 0); // Velocidad mínima es cero
+      }else if(this.rotacionLateral < 0){
+        this.rotacionLateral += this.friction;
+        this.rotacionLateral = Math.min(this.rotacionLateral, 0); // Velocidad máxima es cero
+      }
+    }
     // Actualiza la posición del personaje según la velocidad
-    this.t = (this.t + this.speed) %1;
-    if(this.t < 0) this.t = 1 + this.t;
-    console.log(this.t);
+    this.t = (this.t + this.speed * this.reloj.getDelta()) % 1;
+    if (this.t < 0) this.t = 1 + this.t;
     var posTemp = this.path.getPointAt(this.t);
     this.nodoPosOrientTubo.position.copy(posTemp);
     var tangente = this.path.getTangentAt(this.t);
@@ -258,18 +302,6 @@ class Personaje extends THREE.Object3D {
     var segmentoActual = Math.floor(this.t * this.segmentos);
     this.nodoPosOrientTubo.up = this.tubo.binormals[segmentoActual];
     this.nodoPosOrientTubo.lookAt(posTemp);
-    /*this.position.set(this.guiControls.posX, this.guiControls.posY, this.guiControls.posZ);
-    if (this.guiControls.anim) {
-      this.rot = (this.rot + 0.01) % (Math.PI * 2);
-      this.rotation.set(this.guiControls.rotX, this.rot, this.guiControls.rotZ);
-    } else {
-      this.rotation.set(this.guiControls.rotX, this.guiControls.rotY, this.guiControls.rotZ);
-    }
-    this.scale.set(this.guiControls.sizeX, this.guiControls.sizeY, this.guiControls.sizeZ);*/
-  }
-
-  getCamara(){
-    return this.camera;
   }
 }
 

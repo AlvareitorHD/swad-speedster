@@ -96,6 +96,7 @@ class MyScene extends THREE.Scene {
     this.cameraControl.panSpeed = 0.5;
     // Debe orbitar con respecto al punto de mira de la cámara
     this.cameraControl.target = look;
+    this.cambioCamara();
   }
   
 
@@ -132,7 +133,6 @@ class MyScene extends THREE.Scene {
       lightPower : 500.0,  // La potencia de esta fuente de luz se mide en lúmenes
       ambientIntensity : 0.5,   
       axisOnOff : true,
-      camara: false
     }
 
     // Se crea una sección para los controles de esta clase
@@ -152,17 +152,9 @@ class MyScene extends THREE.Scene {
     folder.add (this.guiControls, 'axisOnOff')
       .name ('Mostrar ejes : ')
       .onChange ( (value) => this.setAxisVisible (value) );
-
-      folder.add (this.guiControls, 'camara')
-      .name ('Cambiar camara : ')
-      .onChange ( (value) => this.setCamara (value) );
-    
     return gui;
   }
   
-  setCamara(value){
-    this.cambiaCam = value;
-  }
   createLights () {
     // Se crea una luz ambiental, evita que se vean complentamente negras las zonas donde no incide de manera directa una fuente de luz
     // La luz ambiental solo tiene un color y una intensidad
@@ -235,11 +227,19 @@ class MyScene extends THREE.Scene {
     // Este método es llamado cada vez que el usuario modifica el tamapo de la ventana de la aplicación
     // Hay que actualizar el ratio de aspecto de la cámara
     this.setCameraAspect (window.innerWidth / window.innerHeight);
-    
+    this.personaje.getCamara.aspect = window.innerWidth / window.innerHeight;
+    this.personaje.getCamara.updateProjectionMatrix();
     // Y también el tamaño del renderizador
     this.renderer.setSize (window.innerWidth, window.innerHeight);
   }
 
+  cambioCamara() {
+    document.addEventListener('keyup', (event) => {
+      if (event.key === ' ') {
+        this.cambiaCam = !this.cambiaCam;
+      }
+    });
+  }
   update () {
     
     if (this.stats) this.stats.update();
