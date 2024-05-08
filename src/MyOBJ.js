@@ -54,16 +54,18 @@ class Personaje extends THREE.Object3D {
     var segmentoActual = Math.floor(this.t * this.segmentos);
     this.nodoPosOrientTubo.up = this.tubo.binormals[segmentoActual];
     this.nodoPosOrientTubo.lookAt(posTemp);
+
+    this.createCamara();
   }
 
   createCamara(){
     // Crear un nodo para posicionar y orientar la cámara de tercera persona
-    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 2000);
+    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000);
     // Recuerda: Todas las unidades están en metros
     // También se indica dónde se coloca
-    this.camera.position.set (0, 2, -2);
+    this.camera.position.set (0, 2, -5);
     // Y hacia dónde mira
-    var look = new THREE.Vector3 (0,0,2);
+    var look = new THREE.Vector3 (0,1,0);
     this.camera.lookAt(look);
     this.cameraController = new THREE.Object3D();
     this.cameraController.add(this.camera);
@@ -171,7 +173,7 @@ class Personaje extends THREE.Object3D {
         this.guiControls.anim = false;
       }
     }
-
+    
     // Se crea una sección para los controles de la caja
     var folder = gui.addFolder(titleGui);
     // Estas lineas son las que añaden los componentes de la interfaz
@@ -199,7 +201,7 @@ class Personaje extends THREE.Object3D {
     // Después, la rotación en Y
     // Luego, la rotación en X
     // Y por último la traslación
-    this.t = (this.t +0.0001)%1;
+    this.t = (this.t +0.0005)%1;
     var posTemp = this.path.getPointAt(this.t);
     this.nodoPosOrientTubo.position.copy(posTemp);
     var tangente = this.path.getTangentAt(this.t);
@@ -215,6 +217,10 @@ class Personaje extends THREE.Object3D {
       this.rotation.set(this.guiControls.rotX, this.guiControls.rotY, this.guiControls.rotZ);
     }
     this.scale.set(this.guiControls.sizeX, this.guiControls.sizeY, this.guiControls.sizeZ);*/
+  }
+
+  getCamara(){
+    return this.camera;
   }
 }
 

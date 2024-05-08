@@ -21,13 +21,17 @@ import { Circuito } from './Circuito.js'
 class MyScene extends THREE.Scene {
   constructor (myCanvas) {
     super();
-    
     // Lo primero, crear el visualizador, pasándole el lienzo sobre el que realizar los renderizados.
     this.renderer = this.createRenderer(myCanvas);
     
     // Se añade a la gui los controles para manipular los elementos de esta clase
     this.gui = this.createGUI ();
-    
+    this.circuito = new Circuito(this.gui, "COntroles circuito");
+    this.add(this.circuito);
+    this.personaje = new Personaje(this.gui, "Controles de la Caja",this.circuito);
+    this.add (this.personaje);
+
+
     this.initStats();
     
     // Construimos los distinos elementos que tendremos en la escena
@@ -47,15 +51,12 @@ class MyScene extends THREE.Scene {
     this.axis = new THREE.AxesHelper (2);
     this.add (this.axis);
     
-    
+    this.cambiaCam = false;
+    this.personajeCam = this.personaje.getCamara();
     // Por último creamos el modelo.
     // El modelo puede incluir su parte de la interfaz gráfica de usuario. Le pasamos la referencia a 
     // la gui y el texto bajo el que se agruparán los controles de la interfaz que añada el modelo.
-    this.circuito = new Circuito(this.gui, "COntroles circuito");
-    this.add(this.circuito);
-  
-    this.personaje = new Personaje(this.gui, "Controles de la Caja",this.circuito);
-    this.add (this.personaje);
+
 }
   initStats() {
   
@@ -97,7 +98,6 @@ class MyScene extends THREE.Scene {
     this.cameraControl.target = look;
   }
   
-  cambiaCam
 
   createGround () {
     // El suelo es un Mesh, necesita una geometría y un material.
@@ -215,7 +215,11 @@ class MyScene extends THREE.Scene {
   getCamera () {
     // En principio se devuelve la única cámara que tenemos
     // Si hubiera varias cámaras, este método decidiría qué cámara devuelve cada vez que es consultado
+    if(this.cambiaCam)
     return this.camera;
+  else{
+    return this.personajeCam;
+  }
   }
   
   setCameraAspect (ratio) {
