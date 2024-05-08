@@ -4,11 +4,18 @@ import { MTLLoader } from '../libs/MTLLoader.js'
 
 class Personaje extends THREE.Object3D {
   constructor(gui, titleGui, c) {
-    var circuito = c.tubeGeometry;
+
     super();
+
+    var circuito = c.tubeGeometry;
+    
+    this.speed = 0; // Velocidad inicial del personaje
+    this.acceleration = 0.00001; // Aceleración del personaje
+    this.maxSpeed = 0.001; // Velocidad máxima del personaje
+    this.minSpeed = -0.0005; // Velocidad mínima del personaje (puede ser negativa para retroceder)
+    this.friction = 0.00001; // Fricción para la desaceleración del personaje
+
     this.personaje = new THREE.Group();
-    // Se crea la parte de la interfaz que corresponde a la caja
-    // Se crea primero porque otros métodos usan las variables que se definen para la interfaz
     this.createGUI(gui, titleGui);
     this.createChasis();
     this.createAlonso();
@@ -194,14 +201,56 @@ class Personaje extends THREE.Object3D {
     folder.add(this.guiControls, 'reset').name('[ Reset ]');
   }
 
+  movimientoPrincipal(){
+      // Lógica de movimiento del personaje
+      // Actualiza la velocidad según la entrada del usuario
+      document.addEventListener('keydown', (event) => {
+        this.desacelerar = false;
+        if (event.key === 'w') {
+          // Acelera hacia adelante
+          this.speed += this.acceleration;
+          this.speed = Math.min(this.speed, this.maxSpeed); // Limita la velocidad máxima
+        } else if (event.key === 's') {
+          // Desacelera o retrocede
+          this.speed -= this.acceleration;
+          this.speed = Math.max(this.speed, this.minSpeed); // Limita la velocidad mínima
+        }
+      });
+      
+      if(!this.desacelerar)
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'a') {
+          // Aplica fricción para desacelerar
+          this.movimientoLateral.rotateZ(-Math.PI/32*0.005);
+        } else if (event.key === 'd') {
+          // Aplica fricción para desacelerar
+          this.movimientoLateral.rotateZ(Math.PI/32*0.005);
+        }
+      });
+      document.addEventListener('keyup', (event) => {
+        if (event.key === 'w' || event.key === 's') {
+          // Aplica fricción para desacelerar
+          this.desacelerar = true;
+        }
+      });
+
+      if(this.desacelerar){
+        if (this.speed > 0) {
+          this.speed -= this.friction;
+          this.speed = Math.max(this.speed, 0); // Velocidad mínima es cero
+      } else if (this.speed < 0) {
+          this.speed += this.friction;
+          this.speed = Math.min(this.speed, 0); // Velocidad máxima es cero
+      }
+      }
+  }
+
   update() {
-    // Con independencia de cómo se escriban las 3 siguientes líneas, el orden en el que se aplican las transformaciones es:
-    // Primero, el escalado
-    // Segundo, la rotación en Z
-    // Después, la rotación en Y
-    // Luego, la rotación en X
-    // Y por último la traslación
-    this.t = (this.t +0.0005)%1;
+    this.movimientoPrincipal();
+    // Actualiza la posición del personaje según la velocidad
+    this.t = (this.t + this.speed) %1;
+    if(this.t < 0) this.t = 1 + this.t;
+    console.log(this.t);
     var posTemp = this.path.getPointAt(this.t);
     this.nodoPosOrientTubo.position.copy(posTemp);
     var tangente = this.path.getTangentAt(this.t);
