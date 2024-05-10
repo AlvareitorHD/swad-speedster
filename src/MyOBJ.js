@@ -269,6 +269,19 @@ class Personaje extends THREE.Object3D {
         this.cameraController.rotation.y = 0;
       }
     });
+
+    document.addEventListener('keydown', (event) => {
+      if(event.key == 'v'){
+        this.cameraController.rotation.x = -0.005;
+        this.cameraController.position.set(0, -1.2, 5.12);
+      }
+    });
+    document.addEventListener('keyup', (event) => {
+      if(event.key == 'v'){
+        this.cameraController.rotation.x = 0;
+        this.cameraController.position.set(0, 0, 0);
+      }
+    });
   }
 
   update() {
