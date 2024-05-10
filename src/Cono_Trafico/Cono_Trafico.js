@@ -54,7 +54,7 @@ class Cono_Trafico extends THREE.Object3D{
       this.add(this.nodoPosOrientTubo);
       this.nodoPosOrientTubo.add(this.movimientoLateral);
       this.movimientoLateral.add(this.posSuperficie);
-      this.movimientoLateral.rotateZ(Math.PI / 3);
+      this.movimientoLateral.rotateZ(Math.PI / 2.5);
       this.posSuperficie.add(this.cono_trafico);
       //pergarlo al tubo
       this.t = 0.025;
