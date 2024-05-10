@@ -11,6 +11,7 @@ import { Stats } from '../libs/stats.module.js'
 
 import { Personaje } from './MyOBJ.js'
 import { Circuito } from './Circuito.js'
+import { Cono_Trafico } from './Cono_Trafico/Cono_Trafico.js'
 
 
 /// La clase fachada del modelo
@@ -30,6 +31,8 @@ class MyScene extends THREE.Scene {
     this.add(this.circuito);
     this.personaje = new Personaje(this.gui, "Controles de la Caja",this.circuito);
     this.add (this.personaje);
+    this.cono = new Cono_Trafico(this.gui, "Controles del cono",this.circuito);
+    this.add(this.cono);
 
 
     this.initStats();

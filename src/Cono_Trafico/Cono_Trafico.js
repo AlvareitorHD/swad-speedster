@@ -3,9 +3,10 @@ import * as THREE from '../../libs/three.module.js'
 import { CSG } from '../../libs/CSG-v2.js'
 
 class Cono_Trafico extends THREE.Object3D{
-    constructor(gui,titleGui) {
+    constructor(gui,titleGui,c) {
         super();
 
+        var circuito = c.tubeGeometry;
         // Se crea la parte de la interfaz que corresponde a la caja
         // Se crea primero porque otros métodos usan las variables que se definen para la interfaz
         this.createGUI(gui,titleGui);
@@ -38,10 +39,38 @@ class Cono_Trafico extends THREE.Object3D{
         csg.subtract([conoExtraerMesh]);
 
         this.cono_trafico = csg.toMesh();
+        this.cono_trafico.geometry.scale(0.4, 0.4, 0.4);
         // Y añadirlo como hijo del Object3D (el this)
         this.add(this.cono_trafico);
+        this.posicionar(circuito);
     }
 
+    posicionar(circuito){
+      this.nodoPosOrientTubo = new THREE.Object3D();
+      this.movimientoLateral = new THREE.Object3D();
+      this.posSuperficie = new THREE.Object3D();
+      this.posSuperficie.position.y = circuito.parameters.radius;
+  
+      this.add(this.nodoPosOrientTubo);
+      this.nodoPosOrientTubo.add(this.movimientoLateral);
+      this.movimientoLateral.add(this.posSuperficie);
+      this.movimientoLateral.rotateZ(Math.PI / 3);
+      this.posSuperficie.add(this.cono_trafico);
+      //pergarlo al tubo
+      this.t = 0.025;
+      this.tubo = circuito;
+      this.path = circuito.parameters.path;
+      this.radio = circuito.parameters.radius;
+      this.segmentos = circuito.parameters.tubularSegments;
+  
+      var posTemp = this.path.getPointAt(this.t);
+      this.nodoPosOrientTubo.position.copy(posTemp);
+      var tangente = this.path.getTangentAt(this.t);
+      posTemp.add(tangente);
+      var segmentoActual = Math.floor(this.t * this.segmentos);
+      this.nodoPosOrientTubo.up = this.tubo.binormals[segmentoActual];
+      this.nodoPosOrientTubo.lookAt(posTemp);
+    }
     createGUI (gui,titleGui) {
         // Controles para el tamaño, la orientación y la posición de la caja
         this.guiControls = {
