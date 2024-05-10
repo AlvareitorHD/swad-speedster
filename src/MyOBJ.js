@@ -13,7 +13,7 @@ class Personaje extends THREE.Object3D {
     this.acceleration = 0.0005; // Aceleración del personaje
     this.maxSpeed = 0.075; // Velocidad máxima del personaje
     this.minSpeed = -0.005; // Velocidad mínima del personaje (puede ser negativa para retroceder)
-    this.friction = 0.00005; // Fricción para la desaceleración del personaje
+    this.friction = 0.0001; // Fricción para la desaceleración del personaje
     this.rotacionLateral = 0; // Rotación lateral del personaje
     this.desacelerar = false; // Bandera para desacelerar
     this.desgirar = false; // Bandera para desacelerar el giro
@@ -230,12 +230,10 @@ class Personaje extends THREE.Object3D {
         this.speed = Math.max(this.speed, this.minSpeed); // Limita la velocidad mínima
       } else if (event.key == 'a' && this.speed != 0) {
         // Aplica rotación hacia la izquierda si hay velocidad
-        this.rotacionLateral -= 2; 
-        this.rotacionLateral = Math.max(this.rotacionLateral, -this.maxSpeed); // Limita la rotación
+        this.rotacionLateral = this.speed > 0 ? -this.speed : this.speed;
       } else if (event.key == 'd' && this.speed != 0) {
         // Aplica rotación hacia la derecha si hay velocidad
-        this.rotacionLateral += 2; 
-        this.rotacionLateral = Math.min(this.rotacionLateral, this.maxSpeed); // Limita la rotación
+        this.rotacionLateral =  this.speed<0? -this.speed : this.speed; 
       }
 
       if((event.key == 'a' || event.key == 'd') && this.speed != 0){
