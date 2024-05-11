@@ -23,6 +23,7 @@ class Personaje extends THREE.Object3D {
     this.createChasis();
     this.createAlonso();
     this.createReloj();
+    
 
     this.rot = 0;
 
@@ -40,7 +41,6 @@ class Personaje extends THREE.Object3D {
     this.personaje.add(n4);
 
     this.personaje.scale.set(0.5, 0.5, 0.5);
-
     this.nodoPosOrientTubo = new THREE.Object3D();
     this.movimientoLateral = new THREE.Object3D();
     this.posSuperficie = new THREE.Object3D();
@@ -69,7 +69,32 @@ class Personaje extends THREE.Object3D {
     this.createCamara();
     this.movimientoPrincipal();
     this.alternarVista();
+    this.createColision();
+    this.createRayCaster();
+    
   }
+
+  createColision() {
+    // Crea un nuevo Box3 para la colisión
+    this.colision = new THREE.Box3();
+    // Calcula las dimensiones del Box3 basándose en la geometría del personaje
+    this.colision.setFromObject(this.personaje);
+    // Crea un Box3Helper para visualizar el Box3
+    var helper = new THREE.Box3Helper(this.colision, 0xffffff);
+    helper.visible = true;
+    // Añade el Box3Helper al personaje como hijo para que se mueva con él
+    this.personaje.add(helper);
+}
+
+createRayCaster(){
+  this.rayo = new THREE.Raycaster(
+    new THREE.Vector3(),
+    new THREE.Vector3(0, 0, 1),
+    0,
+    1
+  );
+}
+
 
   createReloj() {
     this.reloj = new THREE.Clock();
@@ -283,8 +308,22 @@ class Personaje extends THREE.Object3D {
       }
     });
   }
+  updateRayo(children){
+    var pos = new THREE.Vector3();
+    this.personaje.getWorldPosition(pos);
+    this.rayo.set(pos, new THREE.Vector3(0, 0, 1).normalize());
+      var impactados = this.rayo.intersectObjects(children, true);
+      if (impactados.length > 0) {
+        for(var i = 0; i < impactados.length; i++){
+          if(impactados[i].object instanceof THREE.Object3D){
+            console.log("Hay impacto");
+          }
+        }
+    }
+  }
 
-  update() {
+  update(children) {
+    this.updateRayo(children);
     if (this.desacelerar) {
       if (this.speed > 0) {
         this.speed -= this.friction;

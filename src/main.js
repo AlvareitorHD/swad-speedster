@@ -20,6 +20,7 @@ import { Cono_Trafico } from './Cono_Trafico/Cono_Trafico.js'
  */
 
 class MyScene extends THREE.Scene {
+  
   constructor (myCanvas) {
     super();
     // Lo primero, crear el visualizador, pasándole el lienzo sobre el que realizar los renderizados.
@@ -32,8 +33,7 @@ class MyScene extends THREE.Scene {
     this.personaje = new Personaje(this.gui, "Controles de la Caja",this.circuito);
     this.add (this.personaje);
     this.cono = new Cono_Trafico(this.gui, "Controles del cono",this.circuito);
-    this.add(this.cono);
-
+    this.circuito.add(this.cono);
 
     this.initStats();
     
@@ -61,6 +61,8 @@ class MyScene extends THREE.Scene {
     // la gui y el texto bajo el que se agruparán los controles de la interfaz que añada el modelo.
 
 }
+
+
   initStats() {
   
     var stats = new Stats();
@@ -248,6 +250,7 @@ class MyScene extends THREE.Scene {
       }
     });
   }
+
   update () {
     
     if (this.stats) this.stats.update();
@@ -258,13 +261,10 @@ class MyScene extends THREE.Scene {
     this.cameraControl.update();
     
     // Se actualiza el resto del modelo
-    this.personaje.update();
+    this.personaje.update(this.circuito.children);
     
     // Le decimos al renderizador "visualiza la escena que te indico usando la cámara que te estoy pasando"
       this.renderer.render (this, this.getCamera());
-  
-    
-
     // Este método debe ser llamado cada vez que queramos visualizar la escena de nuevo.
     // Literalmente le decimos al navegador: "La próxima vez que haya que refrescar la pantalla, llama al método que te indico".
     // Si no existiera esta línea,  update()  se ejecutaría solo la primera vez.
