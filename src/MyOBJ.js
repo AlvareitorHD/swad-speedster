@@ -2,6 +2,8 @@ import * as THREE from '../libs/three.module.js'
 import { OBJLoader } from '../libs/OBJLoader.js'
 import { MTLLoader } from '../libs/MTLLoader.js'
 
+import { Cono_Trafico } from './Cono_Trafico/Cono_Trafico.js'
+
 class Personaje extends THREE.Object3D {
   constructor(gui, titleGui, c) {
 
@@ -336,7 +338,7 @@ class Personaje extends THREE.Object3D {
       var impactados = this.rayo.intersectObjects(children, true);
       if (impactados.length > 0) {
         for(var i = 0; i < impactados.length; i++){
-          if(impactados[i].object instanceof THREE.Object3D){
+          if(impactados[i].object instanceof Cono_Trafico){
             console.log("Hay impacto");
           }
         }
