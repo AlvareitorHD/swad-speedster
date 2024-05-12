@@ -84,16 +84,36 @@ class Personaje extends THREE.Object3D {
     helper.visible = true;
     // Añade el Box3Helper al personaje como hijo para que se mueva con él
     this.personaje.add(helper);
-}
+  }
 
-createRayCaster(){
-  this.rayo = new THREE.Raycaster(
-    new THREE.Vector3(),
-    new THREE.Vector3(0, 0, 1),
-    0,
-    1
-  );
-}
+  createRayCaster(){
+    this.rayo = new THREE.Raycaster(
+      new THREE.Vector3(),
+      new THREE.Vector3(0, 0, 1),
+      0,
+      1
+    );
+  }
+
+  createPicking(event){
+    var mouse = new THREE.Vector2();
+    var raycaster = this.createRayCaster();
+
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = 1 - 2 * (event.clientY / window.innerHeight);
+
+    raycaster.setFromCamera(mouse, camera);
+//Pruebo primero con el cono para ver si se realiza el peak
+    var pickableObjects = [];
+    pickableObjects.push(this.circuito.cono);
+
+    var pickedObjects = raycaster.intersectObjects(pickableObjects, true);
+
+    if (pickedObjects > 0){
+      var selectedObject = pickedObjects[0].object;
+      var selectedPoint = pickedObjects[0].point;
+    }
+  }
 
 
   createReloj() {
@@ -308,6 +328,7 @@ createRayCaster(){
       }
     });
   }
+
   updateRayo(children){
     var pos = new THREE.Vector3();
     this.personaje.getWorldPosition(pos);

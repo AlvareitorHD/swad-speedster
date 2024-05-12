@@ -185,6 +185,7 @@ class Circuito extends THREE.Object3D {
         folder.add(this.guiControls, 'anim').name('Girar: ').listen();
         folder.add(this.guiControls, 'reset').name('[ Reset ]');
     }
+    
     update() {
         this.position.set(this.guiControls.posX, this.guiControls.posY, this.guiControls.posZ);
         if (this.guiControls.anim) {

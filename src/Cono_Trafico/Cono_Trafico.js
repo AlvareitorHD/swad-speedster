@@ -42,6 +42,7 @@ class Cono_Trafico extends THREE.Object3D{
         this.posicionar(circuito);
         this.createColision();
     }
+    
     createColision(){
       var box = new THREE.Box3();
       box.setFromObject(this.cono_trafico);
