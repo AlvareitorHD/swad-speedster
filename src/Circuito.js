@@ -3,10 +3,9 @@ import * as THREE from '../libs/three.module.js'
 class Circuito extends THREE.Object3D {
     constructor(gui, titleGui) {
         super();
-
         // Se crea la parte de la interfaz que corresponde a la caja
         // Se crea primero porque otros métodos usan las variables que se definen para la interfaz
-        this.createGUI(gui, titleGui);
+        //this.createGUI(gui, titleGui);
 
         var vertices = [
             new THREE.Vector3(3.513597, 0.000000, 9.059264),
@@ -105,6 +104,7 @@ class Circuito extends THREE.Object3D {
             new THREE.Vector3(5.0096415, -0.6051655, 8.962302)
 
         ];
+        
         // Crear una curva a partir de los vértices
         var curve = new THREE.CatmullRomCurve3(vertices);
 
