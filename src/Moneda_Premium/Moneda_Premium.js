@@ -2,7 +2,7 @@ import * as THREE from '../../libs/three.module.js'
 
 import { CSG } from '../../libs/CSG-v2.js'
 
-class Punto_Escudo extends THREE.Object3D{
+class Moneda_Premium extends THREE.Object3D{
     constructor(gui,titleGui) {
         super();
 
@@ -11,37 +11,76 @@ class Punto_Escudo extends THREE.Object3D{
         this.createGUI(gui,titleGui);
 
         //Creamos los materiales
-        var texture = new THREE.TextureLoader().load('../../imgs/wood.jpg');
-        var Mat = new THREE.MeshStandardMaterial({color: 0xFFFF00});
+        var Mat = new THREE.MeshStandardMaterial({color: 0x00FF00});
+        var bordeMat = new THREE.MeshPhysicalMaterial({
+          color: 0xFFD700,
+          metalness: 0.5,
+        });
 
-        var bordeMat = new THREE.MeshStandardMaterial({map: texture});        
         //Creamos las geometrias
         var shape = new THREE.Shape();
 
-        shape.moveTo(0.001, -0.5);
-        shape.quadraticCurveTo(0.5, -0.1, 0.6, 0.6);
-        shape.quadraticCurveTo(0.1, 0.6, 0.001, 0.8);
-        shape.quadraticCurveTo(-0.1, 0.6, -0.6, 0.6);
-        shape.quadraticCurveTo(-0.5, -0.1, 0.001, -0.5);
+        shape.moveTo(-0.001, -0.5);
+        shape.lineTo(0.45, -0.5);
+        shape.quadraticCurveTo(0.5, -0.5, 0.5, -0.45);
+        shape.lineTo(0.5, 0.45);
+        shape.quadraticCurveTo(0.5, 0.5, 0.45, 0.5);
+        shape.lineTo(-0.45, 0.5);
+        shape.quadraticCurveTo(-0.5, 0.5, -0.5, 0.45);
+        shape.lineTo(-0.5, -0.45);
+        shape.quadraticCurveTo(-0.5, -0.5, -0.45, -0.5);
+        shape.lineTo(-0.001, -0.5);
+
+        var holeShape = new THREE.Shape();
+
+        holeShape.moveTo(-0.001, -0.45);
+        holeShape.lineTo(0.4, -0.45);
+        holeShape.quadraticCurveTo(0.45, -0.45, 0.45, -0.4);
+        holeShape.lineTo(0.45, 0.4);
+        holeShape.quadraticCurveTo(0.45, 0.45, 0.4, 0.45);
+        holeShape.lineTo(-0.4, 0.45);
+        holeShape.quadraticCurveTo(-0.45, 0.45, -0.45, 0.4);
+        holeShape.lineTo(-0.45, -0.4);
+        holeShape.quadraticCurveTo(-0.45, -0.45, -0.4, -0.45);
+        holeShape.lineTo(-0.001, -0.45);
+
+        var flecha = new THREE.Shape();
+        flecha.moveTo(-0.001, -0.4);
+        flecha.lineTo(0.1, -0.4);
+        flecha.lineTo(0.1, 0.1);
+        flecha.lineTo(0.3, -0.1);
+        flecha.lineTo(0.4, 0);
+        flecha.lineTo(0.001, 0.4);
+        flecha.lineTo(-0.4, 0);
+        flecha.lineTo(-0.3, -0.1);
+        flecha.lineTo(-0.1, 0.1);
+        flecha.lineTo(-0.1, -0.4);
 
         //Se posiciona y se orienta
-
+        shape.holes.push(holeShape);
 
         // Un Mesh se compone de geometría y material
         var options = {depth: 0.2, steps: 1, bevelEnabled: false};
 
         var bordeGeom = new THREE.ExtrudeGeometry(shape, options);
+        var swadGeom = new THREE.ExtrudeGeometry(holeShape, options);
+        var flechaGeom = new THREE.ExtrudeGeometry(flecha, options);
 
-        var escudoGeom = new THREE.ExtrudeGeometry(shape, options);
-        escudoGeom.scale(0.93, 0.93, 1.2);
-        escudoGeom.translate(0, 0, -0.02);
+        swadGeom.scale(1, 1, 0.8);
+        swadGeom.translate(0, 0, 0.02);
 
-        var bordeescudoMesh = new THREE.Mesh(bordeGeom, bordeMat);
-        var escudoMesh = new THREE.Mesh(escudoGeom, Mat);
+        flechaGeom.scale(1, 1, 1);
+        flechaGeom.rotateZ(-Math.PI/4);
+        flechaGeom.translate(0, 0, -0.0001);
+
+        var bordeswadMesh = new THREE.Mesh(bordeGeom, bordeMat);
+        var swadMesh = new THREE.Mesh(swadGeom, Mat);
+        var flechaMesh = new THREE.Mesh(flechaGeom, bordeMat);
 
         // Y añadirlo como hijo del Object3D (el this)
-        this.add(escudoMesh);
-        this.add(bordeescudoMesh);
+        this.add(swadMesh);
+        this.add(bordeswadMesh);
+        this.add(flechaMesh);
     }
 
     createGUI (gui,titleGui) {
@@ -110,4 +149,4 @@ class Punto_Escudo extends THREE.Object3D{
     }
 }
 
-export { Punto_Escudo }
+export { Moneda_Premium }
