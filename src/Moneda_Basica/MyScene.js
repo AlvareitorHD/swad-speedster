@@ -6,7 +6,7 @@ import { TrackballControls } from '../../libs/TrackballControls.js'
 import { Stats } from '../../libs/stats.module.js'
 
 // Clases de mi proyecto
-import { Punto_Escudo } from './Punto_Escudo.js'
+import { Moneda_Basica } from './Moneda_Basica.js'
 
 /// La clase fachada del modelo
 /**
@@ -36,23 +36,23 @@ class MyScene extends THREE.Scene {
     
     // Y unos ejes. Imprescindibles para orientarnos sobre dónde están las cosas
     // Todas las unidades están en metros
-    this.axisEscudo = new THREE.AxesHelper(1.5);
+    this.axisBasica = new THREE.AxesHelper(1.5);
 
     // Por último creamos el modelo.
     // El modelo puede incluir su parte de la interfaz gráfica de usuario. Le pasamos la referencia a 
     // la gui y el texto bajo el que se agruparán los controles de la interfaz que añada el modelo.
     
     //Modelo del escudo
-    this.escudo = new Punto_Escudo(this.gui, "Controles del Escudo");
+    this.basica = new Moneda_Basica(this.gui, "Controles de la moneda básica");
 
-    this.objectEscudo = new THREE.Object3D();
-    this.objectEscudo.add(this.escudo);
+    this.objectBasica = new THREE.Object3D();
+    this.objectBasica.add(this.basica);
 
-    this.groupEscudo = new THREE.Group();
-    this.groupEscudo.add(this.axisEscudo);
-    this.groupEscudo.add(this.objectEscudo);
+    this.groupBasica = new THREE.Group();
+    this.groupBasica.add(this.axisBasica);
+    this.groupBasica.add(this.objectBasica);
 
-    this.add(this.groupEscudo);
+    this.add(this.groupBasica);
   }
   
   initStats() {
@@ -158,7 +158,7 @@ class MyScene extends THREE.Scene {
   }  
   
   setAxisVisible (valor) {
-    this.axisEscudo.visible = valor;
+    this.axisBasica.visible = valor;
   }
   
   createRenderer (myCanvas) {
@@ -212,7 +212,7 @@ class MyScene extends THREE.Scene {
     this.cameraControl.update();
     
     // Se actualiza el resto del modelo
-    this.escudo.update();
+    this.basica.update();
     
     // Le decimos al renderizador "visualiza la escena que te indico usando la cámara que te estoy pasando"
     this.renderer.render (this, this.getCamera());
