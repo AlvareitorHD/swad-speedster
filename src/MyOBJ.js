@@ -93,7 +93,7 @@ class Personaje extends THREE.Object3D {
       new THREE.Vector3(),
       new THREE.Vector3(0, 0, 1),
       0,
-      1
+      0.01
     );
   }
 
@@ -337,11 +337,7 @@ class Personaje extends THREE.Object3D {
     this.rayo.set(pos, new THREE.Vector3(0, 0, 1).normalize());
       var impactados = this.rayo.intersectObjects(children, true);
       if (impactados.length > 0) {
-        for(var i = 0; i < impactados.length; i++){
-          if(impactados[i].object instanceof Cono_Trafico){
-            console.log("Hay impacto");
-          }
-        }
+        console.log("Colisión");
     }
   }
 
