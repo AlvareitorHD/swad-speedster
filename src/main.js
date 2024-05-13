@@ -272,7 +272,7 @@ class MyScene extends THREE.Scene {
     // Hay que actualizar el ratio de aspecto de la cámara
     this.setCameraAspect(window.innerWidth / window.innerHeight);
     this.personaje.getCamara.aspect = window.innerWidth / window.innerHeight;
-    this.personaje.getCamara().updateProjectionMatrix();
+    this.personaje.getCamara.updateProjectionMatrix();
     // Y también el tamaño del renderizador
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }

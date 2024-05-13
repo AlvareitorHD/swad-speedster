@@ -83,11 +83,24 @@ class Moneda_Basica extends THREE.Object3D{
 
     picked() {
       console.log("Moneda recogida");
-      // Actualiza la posición en el eje Y
-      this.posSuperficie.position.y += 1;
       // Inicia el Tween para animar el movimiento
-      //var tween = new TWEEN.Tween(this.posSuperficie.position).to(this.posSuperficie.position.y + 100, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
+      var tween = new TWEEN.Tween(this.posSuperficie.position)
+        .to({ y: this.posSuperficie.position.y + 3 }, 1000)
+        .easing(TWEEN.Easing.Quadratic.Out)
+        .onUpdate(() => {
+          this.posSuperficie.rotation.y += 0.5;
+        })
+        .start();
 
+        //Desaparece la moneda después de 1 segundo
+        setTimeout(() =>{
+          this.posSuperficie.visible = false;
+
+          //Después de 10 segundos, la moneda vuelve a ser visible
+          setTimeout(() =>{
+            this.posSuperficie.visible = true;
+          }, 10000);
+        }, 1000);
     }
     
 
@@ -104,7 +117,7 @@ class Moneda_Basica extends THREE.Object3D{
       this.nodoPosOrientTubo = new THREE.Object3D();
       this.movimientoLateral = new THREE.Object3D();
       this.posSuperficie = new THREE.Object3D();
-      this.posSuperficie.position.y = circuito.parameters.radius+1.5;
+      this.posSuperficie.position.y = circuito.parameters.radius+1;
   
       this.add(this.nodoPosOrientTubo);
       this.nodoPosOrientTubo.add(this.movimientoLateral);
@@ -129,10 +142,10 @@ class Moneda_Basica extends THREE.Object3D{
 
     updatePos(){
       if ((this.t * 10) % 2 == 0){
-        this.movimientoLateral.rotateZ(0.8 * this.reloj.getDelta());
+        this.movimientoLateral.rotateZ(0.7 * this.reloj.getDelta());
       }
       else{
-        this.movimientoLateral.rotateZ(-0.8 * this.reloj.getDelta());
+        this.movimientoLateral.rotateZ(-0.7 * this.reloj.getDelta());
       }
     }
 
