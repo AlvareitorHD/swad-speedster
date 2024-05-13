@@ -10,19 +10,77 @@
     <script type="importmap">
           { "imports": { "three": "../../libs/three.module.js" } }
     </script>
-    
-    <script type="module" src="./main.js"></script>    
+
+    <script type="module" src="./main.js"></script>
     <style>
-        body{
+        body {
             margin: 0;
-            overflow: hidden; 
+            overflow: hidden;
+        }
+
+        #hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* Fondo semi-transparente */
+            border-radius: 10px;
+            color: #fff;
+            /* Color del texto */
+            font-family: 'Arial', sans-serif;
+            /* Fuente */
+            font-size: 16px;
+        }
+
+        #speed,
+        #vueltas,
+        #score {
+            margin-bottom: 5px;
+        }
+
+        #speed {
+            font-weight: bold;
+        }
+
+        #score {
+            font-style: italic;
+        }
+
+        /* Estilos específicos para el tema de carreras y Formula 1 */
+        body {
+            background-color: #000;
+            /* Color de fondo oscuro */
+        }
+
+        #hud {
+            border: 2px solid #fff;
+            /* Borde blanco */
+        }
+
+        #speed {
+            color: #f00;
+            /* Color rojo para la velocidad */
+        }
+
+        #score {
+            color: #ff0;
+            /* Color amarillo para el puntaje */
         }
     </style>
 </head>
+
 <body>
 
-<!-- Div which will hold the Output -->
-<div id="WebGL-output">
-</div>
+    <!-- Div which will hold the Output -->
+    <div id="WebGL-output">
+        <div id="hud">
+            <div id="speed">Speed: </div>
+            <div id="vueltas">Vueltas: </div>
+            <div id="score">Score: </div>
+        </div>
+        
+    </div>
 </body>
+
 </html>

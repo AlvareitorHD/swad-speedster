@@ -16,6 +16,8 @@ class Personaje extends THREE.Object3D {
 
     var circuito = c.tubeGeometry;
     this.circuito = c;
+    this.vueltas = 0;
+    this.score = 0;
 
     this.speed = 0; // Velocidad inicial del personaje
     this.acceleration = 0.0005; // Aceleración del personaje
@@ -140,10 +142,12 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
       if(selectedObject.userData instanceof Moneda_Basica){
         console.log("Colisión con moneda básica");
         selectedObject.userData.picked();
+        this.score += 1;
       }
       else if(selectedObject.userData instanceof Moneda_Premium){
         console.log("Colisión con moneda premium");
         selectedObject.userData.picked();
+        this.score += 5;
       }
     }
   }
@@ -208,6 +212,7 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
     sphere.rotation.y -= Math.PI / 2; // Rotar
     this.personaje.add(sphere);
   }
+
   createNeumatico() {
     // Crear un toro estirado para representar el neumático
     var tireGeometry = new THREE.TorusGeometry(0.5, 0.2, 16, 100);
@@ -377,7 +382,10 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
         }, 3000);
         impactados[0].object.userData.colision();
         console.log("Colisión con un cono de tráfico");
-        this.speed *= 0.2; // Reduce la velocidad           
+        this.speed *= 0.2; // Reduce la velocidad
+        if(this.score > 0)
+        this.score -= 1;
+        else this.score = 0;
       }
       else if (impactados[0].object.userData instanceof Neumatico && !this.timeout) {
         this.timeout = true;
