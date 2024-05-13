@@ -117,7 +117,7 @@ class Moneda_Basica extends THREE.Object3D{
       this.nodoPosOrientTubo = new THREE.Object3D();
       this.movimientoLateral = new THREE.Object3D();
       this.posSuperficie = new THREE.Object3D();
-      this.posSuperficie.position.y = circuito.parameters.radius+1;
+      this.posSuperficie.position.y = circuito.parameters.radius+1.5;
   
       this.add(this.nodoPosOrientTubo);
       this.nodoPosOrientTubo.add(this.movimientoLateral);
