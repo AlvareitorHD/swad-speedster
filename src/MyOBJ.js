@@ -109,7 +109,6 @@ class Personaje extends THREE.Object3D {
     document.addEventListener('mousedown', this.onDocumentMouseDown.bind(this), false);
   }
 
-
   onDocumentMouseDown(event) {
     var mouse = new THREE.Vector2();
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
