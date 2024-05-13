@@ -18,6 +18,7 @@ class Personaje extends THREE.Object3D {
     this.circuito = c;
     this.vueltas = 0;
     this.score = 0;
+    this.puntuar = true;
 
     this.speed = 0; // Velocidad inicial del personaje
     this.acceleration = 0.0005; // Aceleración del personaje
@@ -145,10 +146,14 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
         selectedObject.userData.picked();
         this.score += 1;
       }
-      else if(selectedObject.userData instanceof Moneda_Premium){
+      else if(selectedObject.userData instanceof Moneda_Premium && this.puntuar){
+        this.puntuar = false;
         console.log("Colisión con moneda premium");
         selectedObject.userData.picked();
         this.score += 5;
+        setTimeout(() =>{
+          this.puntuar = true;
+        },1000); //Aumenta el giro de la moneda durante un 1 segundo
       }
     }
   }
