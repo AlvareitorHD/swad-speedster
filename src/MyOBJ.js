@@ -8,8 +8,6 @@ import { Tween } from '../libs/tween.esm.js';
 import { Moneda_Basica } from './Moneda_Basica/Moneda_Basica.js';
 import { Moneda_Premium } from './Moneda_Premium/Moneda_Premium.js';
 
-import { Cono_Trafico } from './Cono_Trafico/Cono_Trafico.js';
-
 class Personaje extends THREE.Object3D {
   constructor(gui, titleGui, c) {
 
@@ -119,6 +117,11 @@ class Personaje extends THREE.Object3D {
     var h = this.hijos.filter(hijo => hijo instanceof Moneda_Basica || hijo instanceof Moneda_Premium);
     var pickedObjects = this.raycaster.intersectObjects(h, true);
 
+    if (pickedObjects.length > 0) {
+      console.log("PICKING");
+      var selectedObject = pickedObjects[0].object;
+      var selectedPoint = pickedObjects[0].point;
+
       if(selectedObject.userData instanceof Moneda_Basica){
         console.log("Colisión con moneda básica");
         selectedObject.userData.picked();
@@ -128,6 +131,8 @@ class Personaje extends THREE.Object3D {
         selectedObject.userData.picked();
       }
     }
+  }
+
 
   createReloj() {
     this.reloj = new THREE.Clock();
@@ -346,7 +351,6 @@ class Personaje extends THREE.Object3D {
     var pos = new THREE.Vector3();
     this.personaje.getWorldPosition(pos);
     this.rayo.set(pos, new THREE.Vector3(0, 0, 1).normalize());
-
     var impactados = this.rayo.intersectObjects(this.hijos, true);
     if (impactados.length > 0) {
       if (impactados[0].object.userData instanceof Cono_Trafico && !this.timeout) {
