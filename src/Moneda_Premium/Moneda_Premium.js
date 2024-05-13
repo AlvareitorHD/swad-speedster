@@ -73,7 +73,6 @@ class Moneda_Premium extends THREE.Object3D{
         swadGeom.scale(1, 1, 0.8);
         swadGeom.translate(0, 0, 0.02);
 
-        flechaGeom.scale(1, 1, 1);
         flechaGeom.rotateZ(-Math.PI/4);
         flechaGeom.translate(0, 0, -0.0001);
 
@@ -88,6 +87,7 @@ class Moneda_Premium extends THREE.Object3D{
         this.premium.add(flechaMesh);
         this.premium.userData = this;
         this.premium.position.z = -0.1;
+        this.premium.scale.set(1.4, 1.4, 1.4);
 
         this.reloj = new THREE.Clock();
         this.createColision();
@@ -126,9 +126,10 @@ class Moneda_Premium extends THREE.Object3D{
       ],true);
       var geometrLine = new THREE.BufferGeometry();
       geometrLine.setFromPoints(this.ruta.getPoints(100));
-      var materialLine = new THREE.LineBasicMaterial({color: 0xff0000});
-      var line = new THREE.Line(geometrLine, materialLine);
-      this.add(line);
+      // Linea de la ruta visible
+      //var materialLine = new THREE.LineBasicMaterial({color: 0xff0000});
+      //var line = new THREE.Line(geometrLine, materialLine);
+      //this.add(line);
       this.segmentos = 100;
       this.binormales = this.ruta.computeFrenetFrames(this.segmentos, true).binormals;
       var origen = {t: 0};
@@ -138,10 +139,6 @@ class Moneda_Premium extends THREE.Object3D{
       var animacion = new TWEEN.Tween(origen).to(destino, tiempo).onUpdate(() => {
         var posicion = this.ruta.getPointAt(origen.t);
         this.premium.position.copy(posicion);
-        // var tangente = this.ruta.getTangentAt(origen.t);
-        // posicion.add(tangente);
-        // this.premium.up = this.binormales[Math.floor(origen.t * this.segmentos)];
-        // this.premium.lookAt(posicion);
         this.premium.rotation.y -= this.velocidad*this.reloj.getDelta();
       });
       animacion.repeat(Infinity);

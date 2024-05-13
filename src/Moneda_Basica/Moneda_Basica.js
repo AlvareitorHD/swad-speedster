@@ -67,11 +67,14 @@ class Moneda_Basica extends THREE.Object3D{
 
         // Y añadirlo como hijo del Object3D (el this)
         this.basica = new THREE.Object3D();
+        swadMesh.geometry.scale(0.4, 0.4, 0.4);
+        bordeswadMesh.geometry.scale(0.4, 0.4, 0.4);
+        flechaMesh.geometry.scale(0.4, 0.4, 0.4);
         this.basica.add(swadMesh);
         this.basica.add(bordeswadMesh);
         this.basica.add(flechaMesh);
 
-        this.basica.scale.set(0.4, 0.4, 0.4);
+        //this.basica.scale.set(0.4, 0.4, 0.4);
 
         this.basica.userData = this;
 

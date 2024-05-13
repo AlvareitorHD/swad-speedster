@@ -281,8 +281,8 @@ class MyScene extends THREE.Scene {
     // Este método es llamado cada vez que el usuario modifica el tamapo de la ventana de la aplicación
     // Hay que actualizar el ratio de aspecto de la cámara
     this.setCameraAspect(window.innerWidth / window.innerHeight);
-    this.personaje.getCamara.aspect = window.innerWidth / window.innerHeight;
-    this.personaje.getCamara.updateProjectionMatrix();
+    this.personaje.camera.aspect = window.innerWidth / window.innerHeight;
+    this.personaje.camera.updateProjectionMatrix();
     // Y también el tamaño del renderizador
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }

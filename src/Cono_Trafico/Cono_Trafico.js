@@ -37,7 +37,8 @@ class Cono_Trafico extends THREE.Object3D{
 
         this.cono_trafico = csg.toMesh();
         this.cono_trafico.userData = this;
-        this.cono_trafico.geometry.scale(0.4, 0.4, 0.4);
+        //this.cono_trafico.geometry.scale(0.4, 0.4, 0.4);
+        this.cono_trafico.scale.set(0.4, 0.4, 0.4);
         // Y añadirlo como hijo del Object3D (el this)
         this.add(this.cono_trafico);
         this.posicionar(circuito,t,rot);

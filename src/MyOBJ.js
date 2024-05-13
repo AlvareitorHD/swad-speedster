@@ -22,7 +22,7 @@ class Personaje extends THREE.Object3D {
     this.speed = 0; // Velocidad inicial del personaje
     this.acceleration = 0.0005; // Aceleración del personaje
     this.maxSpeed = 0.075; // Velocidad máxima del personaje
-    this.minSpeed = -0.005; // Velocidad mínima del personaje (puede ser negativa para retroceder)
+    this.minSpeed = -0.01; // Velocidad mínima del personaje (puede ser negativa para retroceder)
     this.friction = 0.0001; // Fricción para la desaceleración del personaje
     this.rotacionLateral = 0; // Rotación lateral del personaje
     this.desacelerar = false; // Bandera para desacelerar
@@ -105,10 +105,10 @@ class Personaje extends THREE.Object3D {
 
     // Raycaster para detectar colisiones
     this.rayo = new THREE.Raycaster(
-      new THREE.Vector3(0,0,0),
+      new THREE.Vector3(0,0,-0.2),
       new THREE.Vector3(0, 0, 1),
       0,
-      0.01
+      0.03
     );
     // Crea un rayo visual
   this.rayoVisual = new THREE.Line(
@@ -310,7 +310,7 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
       } else if (event.key === 's'|| event.key == KeyCode.KEY_DOWN) {
         this.desacelerar = false;
         // Desacelera o retrocede
-        this.speed -= this.acceleration;
+        this.speed -= this.acceleration*2;
         this.speed = Math.max(this.speed, this.minSpeed); // Limita la velocidad mínima
       } else if ((event.key == 'a' || event.key == KeyCode.KEY_LEFT) && this.speed != 0) {
         // Aplica rotación hacia la izquierda si hay velocidad
@@ -322,7 +322,7 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
 
       if((event.key == 'a' || event.key == 'd') && this.speed != 0){
         this.desgirar = false;
-        this.movimientoLateral.rotateZ(this.rotacionLateral);
+        this.movimientoLateral.rotateZ(this.rotacionLateral*Math.PI);
       }
 
     });

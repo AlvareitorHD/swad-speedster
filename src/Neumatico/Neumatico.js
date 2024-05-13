@@ -29,7 +29,7 @@ class Neumatico extends THREE.Object3D{
         //Contruimos el mesh
         this.neumatico = new THREE.Mesh(neumaticoGeom, Mat);
         this.neumatico.userData = this;
-        this.neumatico.geometry.scale(0.5, 0.5, 0.5);
+        this.neumatico.scale.set(0.5, 0.5, 0.5);
         this.neumatico.geometry.rotateX(Math.PI / 2);
         // Y añadirlo como hijo del Object3D (el this)
         this.add(this.neumatico);
