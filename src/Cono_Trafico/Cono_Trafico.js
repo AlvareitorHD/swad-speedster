@@ -45,7 +45,6 @@ class Cono_Trafico extends THREE.Object3D{
     }
     colision(){
         console.log("Caer al suelo");
-        var targetPosition = new THREE.Vector3(this.position.x, 0, this.position.z);
         var origen = { x: 0};
         var destino = { x: Math.PI/2};
         var tween = new TWEEN.Tween(origen).to(destino, 500);

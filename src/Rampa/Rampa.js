@@ -3,13 +3,9 @@ import * as THREE from '../../libs/three.module.js'
 import { CSG } from '../../libs/CSG-v2.js'
 
 class Rampa extends THREE.Object3D{
-    constructor(gui,titleGui) {
+    constructor(c,t,rot) {
         super();
-
-        // Se crea la parte de la interfaz que corresponde a la caja
-        // Se crea primero porque otros métodos usan las variables que se definen para la interfaz
-        this.createGUI(gui,titleGui);
-
+        var circuito = c.tubeGeometry;
         //Creamos los materiales
         var texture = new THREE.TextureLoader().load('../../imgs/rampa.webp');
         var Mat = new THREE.MeshStandardMaterial({map: texture});
@@ -31,9 +27,51 @@ class Rampa extends THREE.Object3D{
         var csg = new CSG();
         csg.subtract([rampaMesh, subsMesh]);
 
-        this.cono_trafico = csg.toMesh();
+        this.rampa = csg.toMesh();
+        this.rampa.userData = this;
+        this.rampa.geometry.scale(1, 0.5, 1);
+        this.rampa.geometry.translate(0, 0.225, 0);
+        this.rampa.geometry.rotateY(-Math.PI/2);
         // Y añadirlo como hijo del Object3D (el this)
-        this.add(this.cono_trafico);
+        this.add(this.rampa);
+        this.posicionar(circuito,t,rot);
+        this.createColision();
+    }
+
+    createColision(){
+      var box = new THREE.Box3();
+      box.setFromObject(this.rampa);
+      var boxHelper = new THREE.Box3Helper(box, 0xffff00);
+      boxHelper.visible = true;
+      boxHelper.userData = this;
+      this.rampa.add(boxHelper);
+    }
+
+    posicionar(circuito,ti,rot){
+      this.nodoPosOrientTubo = new THREE.Object3D();
+      this.movimientoLateral = new THREE.Object3D();
+      this.posSuperficie = new THREE.Object3D();
+      this.posSuperficie.position.y = circuito.parameters.radius;
+  
+      this.add(this.nodoPosOrientTubo);
+      this.nodoPosOrientTubo.add(this.movimientoLateral);
+      this.movimientoLateral.add(this.posSuperficie);
+      this.movimientoLateral.rotateZ(rot);
+      this.posSuperficie.add(this.rampa);
+      //pergarlo al tubo
+      this.t = ti;
+      this.tubo = circuito;
+      this.path = circuito.parameters.path;
+      this.radio = circuito.parameters.radius;
+      this.segmentos = circuito.parameters.tubularSegments;
+  
+      var posTemp = this.path.getPointAt(this.t);
+      this.nodoPosOrientTubo.position.copy(posTemp);
+      var tangente = this.path.getTangentAt(this.t);
+      posTemp.add(tangente);
+      var segmentoActual = Math.floor(this.t * this.segmentos);
+      this.nodoPosOrientTubo.up = this.tubo.binormals[segmentoActual];
+      this.nodoPosOrientTubo.lookAt(posTemp);
     }
 
     createGUI (gui,titleGui) {
@@ -89,16 +127,7 @@ class Rampa extends THREE.Object3D{
     }
 
     update () {
-        // Con independencia de cómo se escriban las 3 siguientes líneas, el orden en el que se aplican las transformaciones es:
-        // Primero, el escalado
-        // Segundo, la rotación en Z
-        // Después, la rotación en Y
-        // Luego, la rotación en X
-        // Y por último la traslación
-       
-        this.position.set (this.guiControls.posX,this.guiControls.posY,this.guiControls.posZ);
-        this.scale.set (this.guiControls.sizeX,this.guiControls.sizeY,this.guiControls.sizeZ);
-        this.rotation.set (this.guiControls.rotX,this.guiControls.rotY,this.guiControls.rotZ);
+
     }
 }
 

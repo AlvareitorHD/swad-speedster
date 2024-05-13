@@ -93,7 +93,7 @@ class Moneda_Basica extends THREE.Object3D{
 
     createColision(){
       var box = new THREE.Box3();
-      box.setFromObject(this);
+      box.setFromObject(this.basica);
       var boxHelper = new THREE.Box3Helper(box, 0xffff00);
       boxHelper.visible = true;
       boxHelper.userData = this;
