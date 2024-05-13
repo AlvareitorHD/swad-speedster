@@ -374,21 +374,24 @@ class Personaje extends THREE.Object3D {
       else if (impactados[0].object.userData instanceof Rampa && !this.salto && this.speed > 0) {
         this.salto = true;
         this.speed *=1.5;
-        var origen = { y: this.radio};
-        var destino = { y: this.radio + 2 };
+        var origen = { y: this.radio, rot: 0};
+        var destino = { y: this.radio + 1, rot: -Math.PI/4 };
         var tween = new TWEEN.Tween(origen).to(destino, 500);
         tween.easing(TWEEN.Easing.Quadratic.InOut);
         tween.onUpdate(() => {
             this.posSuperficie.position.y = origen.y;
+            this.personaje.rotation.x = origen.rot;
         });
         tween.start();
         setTimeout(() => {
-        origen = { y: this.radio+2};
-        destino = { y: this.radio};
+        origen = { y: this.radio+1, rot: -Math.PI/4};
+        destino = { y: this.radio, rot: 0};
         var tween = new TWEEN.Tween(origen).to(destino, 500);
         tween.easing(TWEEN.Easing.Linear.None);
         tween.onUpdate(() => {
             this.posSuperficie.position.y = origen.y;
+            this.personaje.rotation.x = origen.rot;
+
         });
         tween.start();
         },500);
