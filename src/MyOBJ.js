@@ -375,7 +375,7 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
     this.personaje.getWorldDirection(direccion);
     this.rayo.set(pos, direccion.normalize());
     var impactados = this.rayo.intersectObjects(this.hijos, true);
-    if (impactados.length > 0) {
+    if (impactados.length > 0 && impactados[0].distance < 0.5) {
       if (impactados[0].object.userData instanceof Cono_Trafico && !this.timeout) {
         this.timeout = true;
         setTimeout(() => {
@@ -395,6 +395,26 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
         }, 3000);
         console.log("Colisión con neumatico");
         this.speed = 0; // Reduce la velocidad
+
+        //Simular choque
+        var origen = { rot: 0};
+        var destino = { rot: Math.PI/8 };
+        var tween = new TWEEN.Tween(origen).to(destino, 500);
+        tween.easing(TWEEN.Easing.Quadratic.InOut);
+        tween.onUpdate(() => {
+            this.personaje.rotation.x = origen.rot;
+        });
+        tween.start();
+        setTimeout(() => {
+        origen = { rot: Math.PI/8};
+        destino = {rot: 0};
+        var tween = new TWEEN.Tween(origen).to(destino, 500);
+        tween.easing(TWEEN.Easing.Linear.None);
+        tween.onUpdate(() => {
+            this.personaje.rotation.x = origen.rot;
+        });
+        tween.start();
+        },500);
       }
       else if (impactados[0].object.userData instanceof Rampa && !this.salto && this.speed > 0) {
         this.salto = true;

@@ -11,7 +11,7 @@ class Neumatico extends THREE.Object3D{
         // Creamos la textura del neumatico
         var texture = new THREE.TextureLoader().load('../../imgs/neumatico.jpeg');
         //Le aplicamos la textura
-        var Mat = new THREE.MeshStandardMaterial({map: texture, side: THREE.DoubleSide});
+        var Mat = new THREE.MeshStandardMaterial({map: texture, side: THREE.DoubleSide, color: 0x444444});
         
         var shape = new THREE.Shape();
 
