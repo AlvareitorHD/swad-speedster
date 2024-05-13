@@ -27,8 +27,8 @@ class Personaje extends THREE.Object3D {
     this.rotacionLateral = 0; // Rotación lateral del personaje
     this.desacelerar = false; // Bandera para desacelerar
     this.desgirar = false; // Bandera para desacelerar el giro
-    
-    this.personaje = new THREE.Group();
+
+    this.personaje = new THREE.Object3D();
     this.createGUI(gui, titleGui);
     this.createChasis();
     this.createAlonso();
@@ -49,8 +49,7 @@ class Personaje extends THREE.Object3D {
     this.n4 = this.createNeumatico();
     this.n4.position.set(-0.55, 0.2, -1.22); // Posicionar
     this.personaje.add(this.n4);
-
-    this.personaje.scale.set(0.5, 0.5, 0.5);
+ 
     this.nodoPosOrientTubo = new THREE.Object3D();
     this.movimientoLateral = new THREE.Object3D();
     this.posSuperficie = new THREE.Object3D();
@@ -80,6 +79,8 @@ class Personaje extends THREE.Object3D {
     this.alternarVista();
     this.createColision();
     this.createRayCaster();
+
+    this.personaje.scale.set(0.5, 0.5, 0.5);
     
   }
 

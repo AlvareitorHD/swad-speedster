@@ -84,25 +84,28 @@ class Moneda_Basica extends THREE.Object3D{
     picked() {
       console.log("Moneda recogida");
       var rot = this.movimientoLateral.rotation.z;
+      var initialPosY = this.posSuperficie.position.y;
+      
       // Inicia el Tween para animar el movimiento
       var tween = new TWEEN.Tween(this.posSuperficie.position)
-        .to({ y: this.posSuperficie.position.y + 3 }, 1000)
-        .easing(TWEEN.Easing.Quadratic.Out)
-        .onUpdate(() => {
-          this.posSuperficie.rotation.y += 0.5;
-          this.movimientoLateral.rotation.z = rot;
-        })
-        .start();
+      .to({ y: this.posSuperficie.position.y + 3 }, 1000)
+      .easing(TWEEN.Easing.Quadratic.Out)
+      .onUpdate(() => {
+        this.posSuperficie.rotation.y += 0.5;
+        this.movimientoLateral.rotation.z = rot;
+      })
+      .start();
 
-        //Desaparece la moneda después de 1 segundo
-        setTimeout(() =>{
-          this.posSuperficie.visible = false;
+      //Desaparece la moneda después de 1 segundo
+      setTimeout(() =>{
+      this.posSuperficie.visible = false;
 
-          //Después de 10 segundos, la moneda vuelve a ser visible
-          setTimeout(() =>{
-            this.posSuperficie.visible = true;
-          }, 10000);
-        }, 1000);
+      //Después de 10 segundos, la moneda vuelve a ser visible y vuelve a la posición inicial
+      setTimeout(() =>{
+        this.posSuperficie.visible = true;
+        this.posSuperficie.position.y = initialPosY; // Restore the initial y position
+      }, 10000);
+      }, 1000);
     }
     
 
