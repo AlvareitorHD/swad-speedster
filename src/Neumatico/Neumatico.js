@@ -1,12 +1,12 @@
 import * as THREE from '../../libs/three.module.js'
 
 class Neumatico extends THREE.Object3D{
-    constructor(gui,titleGui,c) {
+    constructor(gui,titleGui,c,t) {
         super();
 
         // Se crea la parte de la interfaz que corresponde a la caja
         // Se crea primero porque otros métodos usan las variables que se definen para la interfaz
-        this.createGUI(gui,titleGui);
+        //this.createGUI(gui,titleGui);
 
         // Creamos la textura del neumatico
         var texture = new THREE.TextureLoader().load('../../imgs/neumatico.jpeg');
@@ -36,7 +36,7 @@ class Neumatico extends THREE.Object3D{
         this.add(this.neumatico);
         this.reloj = new THREE.Clock();
         this.createColision();
-        this.posicionar(c.tubeGeometry);
+        this.posicionar(c.tubeGeometry,t);
     }
 
     createColision(){
@@ -48,7 +48,7 @@ class Neumatico extends THREE.Object3D{
       this.neumatico.add(boxHelper);
     }
 
-    posicionar(circuito){
+    posicionar(circuito,ti){
       this.nodoPosOrientTubo = new THREE.Object3D();
       this.movimientoLateral = new THREE.Object3D();
       this.posSuperficie = new THREE.Object3D();
@@ -60,7 +60,7 @@ class Neumatico extends THREE.Object3D{
       this.movimientoLateral.rotateZ(Math.PI / 2);
       this.posSuperficie.add(this.neumatico);
       //pergarlo al tubo
-      this.t = 0.1;
+      this.t = ti;
       this.tubo = circuito;
       this.path = circuito.parameters.path;
       this.radio = circuito.parameters.radius;
@@ -141,9 +141,9 @@ class Neumatico extends THREE.Object3D{
         // Luego, la rotación en X
         // Y por último la traslación
        
-        this.position.set (this.guiControls.posX,this.guiControls.posY,this.guiControls.posZ);
+        /*this.position.set (this.guiControls.posX,this.guiControls.posY,this.guiControls.posZ);
         this.scale.set (this.guiControls.sizeX,this.guiControls.sizeY,this.guiControls.sizeZ);
-        this.rotation.set (this.guiControls.rotX,this.guiControls.rotY,this.guiControls.rotZ);
+        this.rotation.set (this.guiControls.rotX,this.guiControls.rotY,this.guiControls.rotZ);*/
     }
 }
 

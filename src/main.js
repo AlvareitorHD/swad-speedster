@@ -33,6 +33,7 @@ class MyScene extends THREE.Scene {
     this.add(this.circuito);
     this.personaje = new Personaje(this.gui, "Controles de la Caja", this.circuito);
     this.add(this.personaje);
+
     this.t = 0.03;
     var rot = Math.PI / 2;
     var conos = [];
@@ -43,8 +44,14 @@ class MyScene extends THREE.Scene {
       rot += Math.PI / 4;
     }
     this.circuito.add(...conos);
-    this.neumatico = new Neumatico(this.gui, "Controles del neumático", this.circuito);
-    this.circuito.add(this.neumatico);
+
+    this.neumaticos = [];
+    for (var i = 0; i < 5; i++) {
+      var neumatico = new Neumatico(this.gui, "Controles del neumático", this.circuito,this.t);
+      this.neumaticos.push(neumatico);
+      this.t = (i/5+0.2)%1;
+    }
+    this.circuito.add(...this.neumaticos);
 
     this.initStats();
 
@@ -273,7 +280,7 @@ class MyScene extends THREE.Scene {
 
     this.personaje.update(this.hijos);
 
-    this.neumatico.update();
+    this.neumaticos.forEach(neumatico => neumatico.update());
 
     // Le decimos al renderizador "visualiza la escena que te indico usando la cámara que te estoy pasando"
     this.renderer.render(this, this.getCamera());

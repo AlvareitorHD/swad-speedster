@@ -104,7 +104,6 @@ class Circuito extends THREE.Object3D {
             new THREE.Vector3(5.0096415, -0.6051655, 8.962302)
 
         ];
-        
         // Crear una curva a partir de los vértices
         var curve = new THREE.CatmullRomCurve3(vertices);
 
