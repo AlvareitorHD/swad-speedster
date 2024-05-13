@@ -2,12 +2,15 @@ import * as THREE from '../libs/three.module.js'
 import { OBJLoader } from '../libs/OBJLoader.js'
 import { MTLLoader } from '../libs/MTLLoader.js'
 
+import { Cono_Trafico } from './Cono_Trafico/Cono_Trafico.js';
+
 class Personaje extends THREE.Object3D {
   constructor(gui, titleGui, c) {
 
     super();
 
     var circuito = c.tubeGeometry;
+    this.circuito = c;
 
     this.speed = 0; // Velocidad inicial del personaje
     this.acceleration = 0.0005; // Aceleración del personaje
@@ -105,7 +108,7 @@ class Personaje extends THREE.Object3D {
     raycaster.setFromCamera(mouse, camera);
 //Pruebo primero con el cono para ver si se realiza el peak
     var pickableObjects = [];
-    pickableObjects.push(this.circuito.cono);
+    pickableObjects.push(this.tubo.cono);
 
     var pickedObjects = raycaster.intersectObjects(pickableObjects, true);
 
@@ -333,13 +336,15 @@ class Personaje extends THREE.Object3D {
     var pos = new THREE.Vector3();
     this.personaje.getWorldPosition(pos);
     this.rayo.set(pos, new THREE.Vector3(0, 0, 1).normalize());
-      var impactados = this.rayo.intersectObjects(children, true);
-      if (impactados.length > 0) {
-        for(var i = 0; i < impactados.length; i++){
-          if(impactados[i].object instanceof THREE.Object3D){
-            console.log("Hay impacto");
-          }
+
+
+    var impactados = this.rayo.intersectObjects(, true);
+    if (impactados.length > 0) {
+      for(var i = 0; i < impactados.length; i++){
+        if(impactados[i].object instanceof THREE.Object3D){
+          console.log("Hay impacto");
         }
+      }
     }
   }
 
