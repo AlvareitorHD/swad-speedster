@@ -13,8 +13,10 @@ import { Personaje } from './MyOBJ.js'
 import { Circuito } from './Circuito.js'
 import { Cono_Trafico } from './Cono_Trafico/Cono_Trafico.js'
 import { Neumatico } from './Neumatico/Neumatico.js'
+import { Rampa } from './Rampa/Rampa.js'
 
 import { Moneda_Basica } from './Moneda_Basica/Moneda_Basica.js'
+import { Moneda_Premium } from './Moneda_Premium/Moneda_Premium.js'
 
 
 /// La clase fachada del modelo
@@ -63,7 +65,15 @@ class MyScene extends THREE.Scene {
     }
     this.circuito.add(...this.basicas);
 
+    this.premium = new Moneda_Premium(this.gui, "Controles de la moneda", this.circuito);
+    this.circuito.add(this.premium);
+
     this.initStats();
+    var hijos = this.circuito.children.filter(child => !(child == this.circuito.tubeMesh));
+    this.personaje.setObstaculos(hijos);
+
+    this.rampa = new Rampa(this.gui, "Controles de la rampa");
+    this.add(this.rampa);
 
     // Construimos los distinos elementos que tendremos en la escena
 
@@ -86,7 +96,7 @@ class MyScene extends THREE.Scene {
     this.personajeCam = this.personaje.getCamara();
 
     // Cogemos los hijos del circuito que no sean el tubo y se lo pasamos al personaje para que pueda colisionar
-    this.hijos = this.circuito.children.filter(child => !(child == this.circuito.tubeMesh));
+    //this.hijos = this.circuito.children.filter(child => !(child == this.circuito.tubeMesh));
 
   }
 
@@ -288,10 +298,11 @@ class MyScene extends THREE.Scene {
     // Se actualiza la posición de la cámara según su controlador
     this.cameraControl.update();
 
-    this.personaje.update(this.hijos);
+    this.personaje.update(/*this.hijos*/);
 
     this.neumaticos.forEach(neumatico => neumatico.update());
     this.basicas.forEach(basica => basica.update());
+    this.premium.update();
 
     // Le decimos al renderizador "visualiza la escena que te indico usando la cámara que te estoy pasando"
     this.renderer.render(this, this.getCamera());

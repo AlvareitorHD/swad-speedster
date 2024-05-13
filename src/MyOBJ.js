@@ -5,6 +5,8 @@ import * as KeyCode from '../libs/keycode.esm.js'
 import { Cono_Trafico } from './Cono_Trafico/Cono_Trafico.js';
 import { Neumatico } from './Neumatico/Neumatico.js';
 import { Tween } from '../libs/tween.esm.js';
+import { Moneda_Basica } from './Moneda_Basica/Moneda_Basica.js';
+import { Moneda_Premium } from './Moneda_Premium/Moneda_Premium.js';
 
 class Personaje extends THREE.Object3D {
   constructor(gui, titleGui, c) {
@@ -27,7 +29,7 @@ class Personaje extends THREE.Object3D {
     this.createChasis();
     this.createAlonso();
     this.createReloj();
-    
+    this.createCamara();
 
     this.rot = 0;
 
@@ -70,12 +72,16 @@ class Personaje extends THREE.Object3D {
     this.nodoPosOrientTubo.up = this.tubo.binormals[segmentoActual];
     this.nodoPosOrientTubo.lookAt(posTemp);
 
-    this.createCamara();
     this.movimientoPrincipal();
     this.alternarVista();
     this.createColision();
     this.createRayCaster();
     
+  }
+
+  setObstaculos(h){
+    console.log(h);
+    this.hijos = h;
   }
 
   createColision() {
@@ -97,27 +103,34 @@ class Personaje extends THREE.Object3D {
       0,
       0.01
     );
+    this.raycaster = new THREE.Raycaster();
+    document.addEventListener('mousedown', this.onDocumentMouseDown.bind(this), false);
   }
 
-  createPicking(event){
-    var mouse = new THREE.Vector2();
-    var raycaster = this.createRayCaster();
 
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = 1 - 2 * (event.clientY / window.innerHeight);
+    onDocumentMouseDown(event) {
+      var mouse = new THREE.Vector2();
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = 1 - 2 * (event.clientY / window.innerHeight);
+      this.raycaster.setFromCamera(mouse, this.camera);
+      var h = this.hijos.filter(hijo => hijo instanceof Moneda_Basica || hijo instanceof Moneda_Premium);
+      var pickedObjects = this.raycaster.intersectObjects(h, true);
 
-    raycaster.setFromCamera(mouse, camera);
-//Pruebo primero con el cono para ver si se realiza el peak
-    var pickableObjects = [];
-    pickableObjects.push(this.circuito.cono);
+      if (pickedObjects.length > 0) {
+        console.log("PICKING");
+        var selectedObject = pickedObjects[0].object;
+        var selectedPoint = pickedObjects[0].point;
 
-    var pickedObjects = raycaster.intersectObjects(pickableObjects, true);
-
-    if (pickedObjects > 0){
-      var selectedObject = pickedObjects[0].object;
-      var selectedPoint = pickedObjects[0].point;
+        if(selectedObject.userData instanceof Moneda_Basica){
+          console.log("Colisión con moneda básica");
+          selectedObject.userData.picked();
+        }
+        else if(selectedObject.userData instanceof Moneda_Premium){
+          console.log("Colisión con moneda premium");
+          selectedObject.userData.picked();
+        }
+      }
     }
-  }
 
 
   createReloj() {
@@ -333,17 +346,18 @@ class Personaje extends THREE.Object3D {
     });
   }
 
-  updateRayo(children){
+  updateRayo(){
     var pos = new THREE.Vector3();
     this.personaje.getWorldPosition(pos);
     this.rayo.set(pos, new THREE.Vector3(0, 0, 1).normalize());
-      var impactados = this.rayo.intersectObjects(children, true);
+      var impactados = this.rayo.intersectObjects(this.hijos, true);
       if (impactados.length > 0) {
           if (impactados[0].object.userData instanceof Cono_Trafico && !this.timeout) {
             this.timeout = true;
             setTimeout(() => {
               this.timeout = false;
             }, 3000);
+            impactados[0].object.userData.colision();
             console.log("Colisión con un cono de tráfico");
             this.speed *= 0.2; // Reduce la velocidad           
           }
@@ -367,8 +381,8 @@ class Personaje extends THREE.Object3D {
     }
   }
 
-  update(children) {
-    this.updateRayo(children);
+  update() {
+    this.updateRayo();
 
     this.animate();
 

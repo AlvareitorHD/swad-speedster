@@ -1,6 +1,7 @@
 import * as THREE from '../../libs/three.module.js'
 
 import { CSG } from '../../libs/CSG-v2.js'
+import * as TWEEN from '../../libs/tween.esm.js'
 
 class Cono_Trafico extends THREE.Object3D{
     constructor(c,t,rot) {
@@ -42,6 +43,22 @@ class Cono_Trafico extends THREE.Object3D{
         this.posicionar(circuito,t,rot);
         this.createColision();
     }
+    colision(){
+        console.log("Caer al suelo");
+        var targetPosition = new THREE.Vector3(this.position.x, 0, this.position.z);
+        var origen = { x: 0};
+        var destino = { x: Math.PI/2};
+        var tween = new TWEEN.Tween(origen).to(destino, 500);
+        tween.easing(TWEEN.Easing.Linear.None);
+        tween.onUpdate(() => {
+            this.cono_trafico.rotation.x = origen.x;
+        });
+        tween.start();
+
+        setTimeout(() => {
+          this.cono_trafico.rotation.x = 0;
+        }, 3000);//3 segundos
+    }
     
     createColision(){
       var box = new THREE.Box3();
@@ -77,6 +94,8 @@ class Cono_Trafico extends THREE.Object3D{
       var segmentoActual = Math.floor(this.t * this.segmentos);
       this.nodoPosOrientTubo.up = this.tubo.binormals[segmentoActual];
       this.nodoPosOrientTubo.lookAt(posTemp);
+
+      TWEEN.update();
     }
 }
 

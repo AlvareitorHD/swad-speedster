@@ -1,6 +1,7 @@
 import * as THREE from '../../libs/three.module.js'
 
 import { CSG } from '../../libs/CSG-v2.js'
+import * as TWEEN from '../../libs/tween.esm.js'
 
 class Moneda_Basica extends THREE.Object3D{
     constructor(gui,titleGui, c, t) {
@@ -79,6 +80,16 @@ class Moneda_Basica extends THREE.Object3D{
         this.createColision();
         this.posicionar(c.tubeGeometry,t);
     }
+
+    picked() {
+      console.log("Moneda recogida");
+      // Actualiza la posición en el eje Y
+      this.posSuperficie.position.y += 1;
+      // Inicia el Tween para animar el movimiento
+      //var tween = new TWEEN.Tween(this.posSuperficie.position).to(this.posSuperficie.position.y + 100, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
+
+    }
+    
 
     createColision(){
       var box = new THREE.Box3();
