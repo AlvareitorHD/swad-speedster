@@ -83,12 +83,14 @@ class Moneda_Basica extends THREE.Object3D{
 
     picked() {
       console.log("Moneda recogida");
+      var rot = this.movimientoLateral.rotation.z;
       // Inicia el Tween para animar el movimiento
       var tween = new TWEEN.Tween(this.posSuperficie.position)
         .to({ y: this.posSuperficie.position.y + 3 }, 1000)
         .easing(TWEEN.Easing.Quadratic.Out)
         .onUpdate(() => {
           this.posSuperficie.rotation.y += 0.5;
+          this.movimientoLateral.rotation.z = rot;
         })
         .start();
 

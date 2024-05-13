@@ -7,6 +7,7 @@ class Moneda_Premium extends THREE.Object3D{
     constructor(gui,titleGui) {
         super();
 
+        this.velocidad = 5;
         // Se crea la parte de la interfaz que corresponde a la caja
         // Se crea primero porque otros métodos usan las variables que se definen para la interfaz
         this.createGUI(gui,titleGui);
@@ -141,7 +142,7 @@ class Moneda_Premium extends THREE.Object3D{
         // posicion.add(tangente);
         // this.premium.up = this.binormales[Math.floor(origen.t * this.segmentos)];
         // this.premium.lookAt(posicion);
-        this.premium.rotation.y -= 5*this.reloj.getDelta();
+        this.premium.rotation.y -= this.velocidad*this.reloj.getDelta();
       });
       animacion.repeat(Infinity);
       animacion.start();
@@ -149,6 +150,10 @@ class Moneda_Premium extends THREE.Object3D{
 
     picked(){
       console.log("PREMIUM recogida");
+      this.velocidad = 25;
+      setTimeout(() =>{
+        this.velocidad = 5;
+      },1000); //Aumenta el giro de la moneda durante un 1 segundo
     }
 
     createColision(){

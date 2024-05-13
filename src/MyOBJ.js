@@ -100,14 +100,29 @@ class Personaje extends THREE.Object3D {
   }
 
   createRayCaster(){
+
+    // Raycaster para detectar colisiones
     this.rayo = new THREE.Raycaster(
-      new THREE.Vector3(),
+      new THREE.Vector3(0,0,0),
       new THREE.Vector3(0, 0, 1),
       0,
       0.01
     );
+    // Crea un rayo visual
+  this.rayoVisual = new THREE.Line(
+  new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3(0, 0, 1)]),
+  new THREE.LineBasicMaterial({ color: 0xff0000 }) // Color rojo
+);
+this.rayoVisual.visible = true; // Oculta el rayo por defecto
+this.add(this.rayoVisual); // Añade el rayo al raycaster
+
+    // PICKING
     this.raycaster = new THREE.Raycaster();
     document.addEventListener('mousedown', this.onDocumentMouseDown.bind(this), false);
+  }
+
+  actualizarRayoVisual() {
+    this.rayoVisual.geometry.setFromPoints([this.rayo.ray.origin, this.rayo.ray.origin.clone().add(this.rayo.ray.direction)]);
   }
 
   onDocumentMouseDown(event) {
@@ -351,7 +366,9 @@ class Personaje extends THREE.Object3D {
   updateRayo(){
     var pos = new THREE.Vector3();
     this.personaje.getWorldPosition(pos);
-    this.rayo.set(pos, new THREE.Vector3(0, 0, 1).normalize());
+    var direccion = new THREE.Vector3();
+    this.personaje.getWorldDirection(direccion);
+    this.rayo.set(pos, direccion.normalize());
     var impactados = this.rayo.intersectObjects(this.hijos, true);
     if (impactados.length > 0) {
       if (impactados[0].object.userData instanceof Cono_Trafico && !this.timeout) {
@@ -416,7 +433,7 @@ class Personaje extends THREE.Object3D {
 
   update() {
     this.updateRayo();
-
+    this.actualizarRayoVisual();
     this.animate();
 
     if (this.desacelerar) {
