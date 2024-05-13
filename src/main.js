@@ -14,6 +14,8 @@ import { Circuito } from './Circuito.js'
 import { Cono_Trafico } from './Cono_Trafico/Cono_Trafico.js'
 import { Neumatico } from './Neumatico/Neumatico.js'
 
+import { Moneda_Basica } from './Moneda_Basica/Moneda_Basica.js'
+
 
 /// La clase fachada del modelo
 /**
@@ -52,6 +54,14 @@ class MyScene extends THREE.Scene {
       this.t = (i/5+0.2)%1;
     }
     this.circuito.add(...this.neumaticos);
+
+    this.basicas = [];
+    for (var i = 0; i < 20; i++) {
+      var basica = new Moneda_Basica(this.gui, "Controles de la moneda", this.circuito,this.t);
+      this.basicas.push(basica);
+      this.t = (i/20+0.2)%1;
+    }
+    this.circuito.add(...this.basicas);
 
     this.initStats();
 
@@ -105,7 +115,7 @@ class MyScene extends THREE.Scene {
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 2000);
     // Recuerda: Todas las unidades están en metros
     // También se indica dónde se coloca
-    this.camera.position.set(4, 2, 4);
+    this.camera.position.set(45, 43, 45);
     // Y hacia dónde mira
     var look = new THREE.Vector3(0, 0, 0);
     this.camera.lookAt(look);
@@ -281,6 +291,7 @@ class MyScene extends THREE.Scene {
     this.personaje.update(this.hijos);
 
     this.neumaticos.forEach(neumatico => neumatico.update());
+    this.basicas.forEach(basica => basica.update());
 
     // Le decimos al renderizador "visualiza la escena que te indico usando la cámara que te estoy pasando"
     this.renderer.render(this, this.getCamera());

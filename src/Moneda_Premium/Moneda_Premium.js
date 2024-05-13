@@ -78,9 +78,12 @@ class Moneda_Premium extends THREE.Object3D{
         var flechaMesh = new THREE.Mesh(flechaGeom, bordeMat);
 
         // Y añadirlo como hijo del Object3D (el this)
-        this.add(swadMesh);
-        this.add(bordeswadMesh);
-        this.add(flechaMesh);
+        this.premium = new THREE.Object3D();
+        this.premium.add(swadMesh);
+        this.premium.add(bordeswadMesh);
+        this.premium.add(flechaMesh);
+        
+        this.add(this.premium);
     }
 
     createGUI (gui,titleGui) {
