@@ -12,6 +12,7 @@ import { Stats } from '../libs/stats.module.js'
 import { Personaje } from './MyOBJ.js'
 import { Circuito } from './Circuito.js'
 import { Cono_Trafico } from './Cono_Trafico/Cono_Trafico.js'
+import { Neumatico } from './Neumatico/Neumatico.js'
 
 
 /// La clase fachada del modelo
@@ -32,8 +33,18 @@ class MyScene extends THREE.Scene {
     this.add(this.circuito);
     this.personaje = new Personaje(this.gui, "Controles de la Caja", this.circuito);
     this.add(this.personaje);
-    this.cono = new Cono_Trafico(this.gui, "Controles del cono", this.circuito);
-    this.circuito.add(this.cono);
+    this.t = 0.03;
+    var rot = Math.PI / 2;
+    var conos = [];
+    for (var i = 0; i < 8; i++) {
+      var cono = new Cono_Trafico(this.circuito, this.t, rot);
+      conos.push(cono);
+      this.t = (i/8+0.1)%1;
+      rot += Math.PI / 4;
+    }
+    this.circuito.add(...conos);
+    this.neumatico = new Neumatico(this.gui, "Controles del neumático", this.circuito);
+    this.circuito.add(this.neumatico);
 
     this.initStats();
 
@@ -238,14 +249,14 @@ class MyScene extends THREE.Scene {
     // Hay que actualizar el ratio de aspecto de la cámara
     this.setCameraAspect(window.innerWidth / window.innerHeight);
     this.personaje.getCamara.aspect = window.innerWidth / window.innerHeight;
-    this.personaje.getCamara.updateProjectionMatrix();
+    this.personaje.getCamara().updateProjectionMatrix();
     // Y también el tamaño del renderizador
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
   cambioCamara() {
     document.addEventListener('keyup', (event) => {
-      if (event.key === ' ') {
+      if (event.key == " ") {
         this.cambiaCam = !this.cambiaCam;
       }
     });
@@ -261,6 +272,8 @@ class MyScene extends THREE.Scene {
     this.cameraControl.update();
 
     this.personaje.update(this.hijos);
+
+    this.neumatico.update();
 
     // Le decimos al renderizador "visualiza la escena que te indico usando la cámara que te estoy pasando"
     this.renderer.render(this, this.getCamera());

@@ -1,6 +1,10 @@
 import * as THREE from '../libs/three.module.js'
 import { OBJLoader } from '../libs/OBJLoader.js'
 import { MTLLoader } from '../libs/MTLLoader.js'
+import * as KeyCode from '../libs/keycode.esm.js'
+import { Cono_Trafico } from './Cono_Trafico/Cono_Trafico.js';
+import { Neumatico } from './Neumatico/Neumatico.js';
+import { Tween } from '../libs/tween.esm.js';
 
 class Personaje extends THREE.Object3D {
   constructor(gui, titleGui, c) {
@@ -27,18 +31,18 @@ class Personaje extends THREE.Object3D {
 
     this.rot = 0;
 
-    var n1 = this.createNeumatico();
-    n1.position.set(0.55, 0.2, 0.82); // Posicionar
-    this.personaje.add(n1);
-    var n2 = this.createNeumatico();
-    n2.position.set(-0.55, 0.2, 0.82); // Posicionar
-    this.personaje.add(n2);
-    var n3 = this.createNeumatico();
-    n3.position.set(0.55, 0.2, -1.22); // Posicionar
-    this.personaje.add(n3);
-    var n4 = this.createNeumatico();
-    n4.position.set(-0.55, 0.2, -1.22); // Posicionar
-    this.personaje.add(n4);
+    this.n1 = this.createNeumatico();
+    this.n1.position.set(0.55, 0.2, 0.82); // Posicionar
+    this.personaje.add(this.n1);
+    this.n2 = this.createNeumatico();
+    this.n2.position.set(-0.55, 0.2, 0.82); // Posicionar
+    this.personaje.add(this.n2);
+    this.n3 = this.createNeumatico();
+    this.n3.position.set(0.55, 0.2, -1.22); // Posicionar
+    this.personaje.add(this.n3);
+    this.n4 = this.createNeumatico();
+    this.n4.position.set(-0.55, 0.2, -1.22); // Posicionar
+    this.personaje.add(this.n4);
 
     this.personaje.scale.set(0.5, 0.5, 0.5);
     this.nodoPosOrientTubo = new THREE.Object3D();
@@ -263,20 +267,20 @@ class Personaje extends THREE.Object3D {
     // Lógica de movimiento del personaje
     // Actualiza la velocidad según la entrada del usuario
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'w') {
+      if (event.key === 'w' || event.key === KeyCode.KEY_UP) {
         this.desacelerar = false;
         // Acelera hacia adelante
         this.speed += this.acceleration;
         this.speed = Math.min(this.speed, this.maxSpeed); // Limita la velocidad máxima
-      } else if (event.key === 's') {
+      } else if (event.key === 's'|| event.key == KeyCode.KEY_DOWN) {
         this.desacelerar = false;
         // Desacelera o retrocede
         this.speed -= this.acceleration;
         this.speed = Math.max(this.speed, this.minSpeed); // Limita la velocidad mínima
-      } else if (event.key == 'a' && this.speed != 0) {
+      } else if ((event.key == 'a' || event.key == KeyCode.KEY_LEFT) && this.speed != 0) {
         // Aplica rotación hacia la izquierda si hay velocidad
         this.rotacionLateral = this.speed > 0 ? -this.speed : this.speed;
-      } else if (event.key == 'd' && this.speed != 0) {
+      } else if ((event.key == 'd' || event.key == KeyCode.KEY_RIGHT) && this.speed != 0) {
         // Aplica rotación hacia la derecha si hay velocidad
         this.rotacionLateral =  this.speed<0? -this.speed : this.speed; 
       }
@@ -289,14 +293,14 @@ class Personaje extends THREE.Object3D {
     });
 
     document.addEventListener('keyup', (event) => {
-      if (event.key == 'w' || event.key == 's') {
+      if (event.key == 'w' || event.key == 's' || event.key == KeyCode.KEY_UP || event.key == KeyCode.KEY_DOWN) {
         // Detiene la rotación lateral cuando se suelta la tecla
         this.desacelerar = true;
       }
     });
 
     document.addEventListener('keyup', (event) => {
-      if (event.key == 'a' || event.key == 'd') {
+      if (event.key == 'a' || event.key == 'd' || event.key == KeyCode.KEY_LEFT || event.key == KeyCode.KEY_RIGHT) {
         // Detiene la rotación lateral cuando se suelta la tecla
         this.desgirar = true;
       }
@@ -335,12 +339,39 @@ class Personaje extends THREE.Object3D {
     this.rayo.set(pos, new THREE.Vector3(0, 0, 1).normalize());
       var impactados = this.rayo.intersectObjects(children, true);
       if (impactados.length > 0) {
-        console.log("Colisión");
+          if (impactados[0].object.userData instanceof Cono_Trafico && !this.timeout) {
+            this.timeout = true;
+            setTimeout(() => {
+              this.timeout = false;
+            }, 3000);
+            console.log("Colisión con un cono de tráfico");
+            this.speed *= 0.2; // Reduce la velocidad           
+          }
+          else if (impactados[0].object.userData instanceof Neumatico && !this.timeout) {
+            this.timeout = true;
+            setTimeout(() => {
+              this.timeout = false;
+            }, 3000);
+            console.log("Colisión con neumatico");
+            this.speed = 0; // Reduce la velocidad
+          }
+    }
+  }
+
+  animate() {
+    if(this.speed != 0){
+      this.n1.rotation.x += this.speed*2*Math.PI;
+      this.n2.rotation.x += this.speed*2*Math.PI;
+      this.n3.rotation.x += this.speed*2*Math.PI;
+      this.n4.rotation.x += this.speed*2*Math.PI;
     }
   }
 
   update(children) {
     this.updateRayo(children);
+
+    this.animate();
+
     if (this.desacelerar) {
       if (this.speed > 0) {
         this.speed -= this.friction;

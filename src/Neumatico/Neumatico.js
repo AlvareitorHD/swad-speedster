@@ -1,7 +1,7 @@
 import * as THREE from '../../libs/three.module.js'
 
 class Neumatico extends THREE.Object3D{
-    constructor(gui,titleGui) {
+    constructor(gui,titleGui,c) {
         super();
 
         // Se crea la parte de la interfaz que corresponde a la caja
@@ -9,7 +9,7 @@ class Neumatico extends THREE.Object3D{
         this.createGUI(gui,titleGui);
 
         // Creamos la textura del neumatico
-        var texture = new THREE.TextureLoader().load('../../imgs/neumatico.webp');
+        var texture = new THREE.TextureLoader().load('../../imgs/neumatico.jpeg');
         //Le aplicamos la textura
         var Mat = new THREE.MeshStandardMaterial({map: texture, side: THREE.DoubleSide});
 
@@ -28,11 +28,55 @@ class Neumatico extends THREE.Object3D{
         var neumaticoGeom = new THREE.LatheGeometry(points, 30, 0, Math.PI * 2);
 
         //Contruimos el mesh
-        var neumatico = new THREE.Mesh(neumaticoGeom, Mat);
-        //Esto es necesario para la revolucion y los puntos del perfil
-        this.neumatico = neumatico;
+        this.neumatico = new THREE.Mesh(neumaticoGeom, Mat);
+        this.neumatico.userData = this;
+        this.neumatico.geometry.scale(0.5, 0.5, 0.5);
+        this.neumatico.geometry.rotateX(Math.PI / 2);
         // Y añadirlo como hijo del Object3D (el this)
-        this.add(neumatico);
+        this.add(this.neumatico);
+        this.reloj = new THREE.Clock();
+        this.createColision();
+        this.posicionar(c.tubeGeometry);
+    }
+
+    createColision(){
+      var box = new THREE.Box3();
+      box.setFromObject(this.neumatico);
+      var boxHelper = new THREE.Box3Helper(box, 0xffff00);
+      boxHelper.visible = true;
+      boxHelper.userData = this;
+      this.neumatico.add(boxHelper);
+    }
+
+    posicionar(circuito){
+      this.nodoPosOrientTubo = new THREE.Object3D();
+      this.movimientoLateral = new THREE.Object3D();
+      this.posSuperficie = new THREE.Object3D();
+      this.posSuperficie.position.y = circuito.parameters.radius+0.5;
+  
+      this.add(this.nodoPosOrientTubo);
+      this.nodoPosOrientTubo.add(this.movimientoLateral);
+      this.movimientoLateral.add(this.posSuperficie);
+      this.movimientoLateral.rotateZ(Math.PI / 2);
+      this.posSuperficie.add(this.neumatico);
+      //pergarlo al tubo
+      this.t = 0.1;
+      this.tubo = circuito;
+      this.path = circuito.parameters.path;
+      this.radio = circuito.parameters.radius;
+      this.segmentos = circuito.parameters.tubularSegments;
+  
+      var posTemp = this.path.getPointAt(this.t);
+      this.nodoPosOrientTubo.position.copy(posTemp);
+      var tangente = this.path.getTangentAt(this.t);
+      posTemp.add(tangente);
+      var segmentoActual = Math.floor(this.t * this.segmentos);
+      this.nodoPosOrientTubo.up = this.tubo.binormals[segmentoActual];
+      this.nodoPosOrientTubo.lookAt(posTemp);
+    }
+
+    updatePos(){
+      this.movimientoLateral.rotateZ(2 * this.reloj.getDelta());
     }
 
     createGUI (gui,titleGui) {
@@ -88,6 +132,8 @@ class Neumatico extends THREE.Object3D{
     }
 
     update () {
+      this.neumatico.rotation.z += (0.05);
+      this.updatePos();
         // Con independencia de cómo se escriban las 3 siguientes líneas, el orden en el que se aplican las transformaciones es:
         // Primero, el escalado
         // Segundo, la rotación en Z

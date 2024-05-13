@@ -3,9 +3,8 @@ import * as THREE from '../../libs/three.module.js'
 import { CSG } from '../../libs/CSG-v2.js'
 
 class Cono_Trafico extends THREE.Object3D{
-    constructor(gui,titleGui,c) {
+    constructor(c,t,rot) {
         super();
-
         var circuito = c.tubeGeometry;
 
         //Creamos los materiales
@@ -36,10 +35,11 @@ class Cono_Trafico extends THREE.Object3D{
         csg.subtract([conoExtraerMesh]);
 
         this.cono_trafico = csg.toMesh();
+        this.cono_trafico.userData = this;
         this.cono_trafico.geometry.scale(0.4, 0.4, 0.4);
         // Y añadirlo como hijo del Object3D (el this)
         this.add(this.cono_trafico);
-        this.posicionar(circuito);
+        this.posicionar(circuito,t,rot);
         this.createColision();
     }
     
@@ -48,10 +48,11 @@ class Cono_Trafico extends THREE.Object3D{
       box.setFromObject(this.cono_trafico);
       var boxHelper = new THREE.Box3Helper(box, 0xffff00);
       boxHelper.visible = true;
+      boxHelper.userData = this;
       this.cono_trafico.add(boxHelper);
     }
 
-    posicionar(circuito){
+    posicionar(circuito,ti,rot){
       this.nodoPosOrientTubo = new THREE.Object3D();
       this.movimientoLateral = new THREE.Object3D();
       this.posSuperficie = new THREE.Object3D();
@@ -60,10 +61,10 @@ class Cono_Trafico extends THREE.Object3D{
       this.add(this.nodoPosOrientTubo);
       this.nodoPosOrientTubo.add(this.movimientoLateral);
       this.movimientoLateral.add(this.posSuperficie);
-      this.movimientoLateral.rotateZ(Math.PI / 2);
+      this.movimientoLateral.rotateZ(rot);
       this.posSuperficie.add(this.cono_trafico);
       //pergarlo al tubo
-      this.t = 0.01;
+      this.t = ti;
       this.tubo = circuito;
       this.path = circuito.parameters.path;
       this.radio = circuito.parameters.radius;
