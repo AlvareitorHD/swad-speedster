@@ -3,10 +3,9 @@ import * as THREE from '../libs/three.module.js'
 class Circuito extends THREE.Object3D {
     constructor(gui, titleGui) {
         super();
-
         // Se crea la parte de la interfaz que corresponde a la caja
         // Se crea primero porque otros métodos usan las variables que se definen para la interfaz
-        this.createGUI(gui, titleGui);
+        //this.createGUI(gui, titleGui);
 
         var vertices = [
             new THREE.Vector3(3.513597, 0.000000, 9.059264),
@@ -91,7 +90,7 @@ class Circuito extends THREE.Object3D {
             new THREE.Vector3(41.915764, -8.141637, -2.823272),
             new THREE.Vector3(43.053581, -8.141637, -1.604183),
             new THREE.Vector3(44.597759, -8.141637, -0.994639),
-            new THREE.Vector3(46.101303, -8.913727, -0.425731),
+            new THREE.Vector3(46.101303, -8.11104 , 0.288976 ),
             new THREE.Vector3(47.686115, -8.141637, 2.174991),
             new THREE.Vector3(48.255024, -8.141637, 5.588439),
             new THREE.Vector3(47.523571, -8.751181, 7.498344),
