@@ -6,6 +6,8 @@ import { Cono_Trafico } from './Cono_Trafico/Cono_Trafico.js';
 import { Neumatico } from './Neumatico/Neumatico.js';
 import { Tween } from '../libs/tween.esm.js';
 
+import { Cono_Trafico } from './Cono_Trafico/Cono_Trafico.js'
+
 class Personaje extends THREE.Object3D {
   constructor(gui, titleGui, c) {
 
