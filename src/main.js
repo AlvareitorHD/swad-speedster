@@ -69,11 +69,9 @@ class MyScene extends THREE.Scene {
     this.circuito.add(this.premium);
 
     this.initStats();
-    var hijos = this.circuito.children.filter(child => !(child == this.circuito.tubeMesh));
-    this.personaje.setObstaculos(hijos);
 
-    this.rampa = new Rampa(this.gui, "Controles de la rampa");
-    this.add(this.rampa);
+    this.rampa = new Rampa(this.circuito,0.05,Math.PI/2);
+    this.circuito.add(this.rampa);
 
     // Construimos los distinos elementos que tendremos en la escena
 
@@ -94,6 +92,9 @@ class MyScene extends THREE.Scene {
 
     this.cambiaCam = false;
     this.personajeCam = this.personaje.getCamara();
+
+    var hijos = this.circuito.children.filter(child => !(child == this.circuito.tubeMesh));
+    this.personaje.setObstaculos(hijos);
   }
 
 

@@ -4,7 +4,8 @@ import { MTLLoader } from '../libs/MTLLoader.js'
 import * as KeyCode from '../libs/keycode.esm.js'
 import { Cono_Trafico } from './Cono_Trafico/Cono_Trafico.js';
 import { Neumatico } from './Neumatico/Neumatico.js';
-import { Tween } from '../libs/tween.esm.js';
+import { Rampa } from './Rampa/Rampa.js';
+import * as TWEEN from '../../libs/tween.esm.js'
 import { Moneda_Basica } from './Moneda_Basica/Moneda_Basica.js';
 import { Moneda_Premium } from './Moneda_Premium/Moneda_Premium.js';
 
@@ -51,7 +52,8 @@ class Personaje extends THREE.Object3D {
     this.nodoPosOrientTubo = new THREE.Object3D();
     this.movimientoLateral = new THREE.Object3D();
     this.posSuperficie = new THREE.Object3D();
-    this.posSuperficie.position.y = circuito.parameters.radius;
+    this.radio = circuito.parameters.radius;
+    this.posSuperficie.position.y = this.radio;
 
     this.add(this.nodoPosOrientTubo);
     this.nodoPosOrientTubo.add(this.movimientoLateral);
@@ -62,7 +64,6 @@ class Personaje extends THREE.Object3D {
     this.t = 0;
     this.tubo = circuito;
     this.path = circuito.parameters.path;
-    this.radio = circuito.parameters.radius;
     this.segmentos = circuito.parameters.tubularSegments;
 
     var posTemp = this.path.getPointAt(this.t);
@@ -370,6 +371,34 @@ class Personaje extends THREE.Object3D {
         console.log("Colisión con neumatico");
         this.speed = 0; // Reduce la velocidad
       }
+      else if (impactados[0].object.userData instanceof Rampa && !this.salto && this.speed > 0) {
+        this.salto = true;
+        this.speed *=1.5;
+        var origen = { y: this.radio};
+        var destino = { y: this.radio + 2 };
+        var tween = new TWEEN.Tween(origen).to(destino, 500);
+        tween.easing(TWEEN.Easing.Quadratic.InOut);
+        tween.onUpdate(() => {
+            this.posSuperficie.position.y = origen.y;
+        });
+        tween.start();
+        setTimeout(() => {
+        origen = { y: this.radio+2};
+        destino = { y: this.radio};
+        var tween = new TWEEN.Tween(origen).to(destino, 500);
+        tween.easing(TWEEN.Easing.Linear.None);
+        tween.onUpdate(() => {
+            this.posSuperficie.position.y = origen.y;
+        });
+        tween.start();
+        },500);
+        console.log("Colisión con rampa");
+
+        setTimeout(() => {
+          this.speed /= 1.5;
+          this.salto = false;
+        }, 1000);//3 segundos
+      }
     }
   }
 
@@ -415,6 +444,8 @@ class Personaje extends THREE.Object3D {
     var segmentoActual = Math.floor(this.t * this.segmentos);
     this.nodoPosOrientTubo.up = this.tubo.binormals[segmentoActual];
     this.nodoPosOrientTubo.lookAt(posTemp);
+
+    TWEEN.update();
   }
 }
 
