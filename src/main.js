@@ -251,12 +251,18 @@ class MyScene extends THREE.Scene {
   updateHUD(){
     const speed = document.getElementById("speed");
     speed.innerHTML = "Speed: " + (this.personaje.speed * 1600).toFixed(2) + " km/h";
+    // Obtiene el elemento de la aguja
+    var aguja = document.getElementById('aguja');
+    // Aplica la rotación a la aguja mediante CSS
+    // Calcula el ángulo de rotación de la aguja basado en la velocidad
+    var angle = (this.personaje.speed*1600/ 120) * 300;
+    aguja.style.transform = 'rotate(' + angle + 'deg)';
     const vueltas = document.getElementById("vueltas");
     if (this.personaje.t >= 0.99 && this.personaje.vueltas == 0)
       this.personaje.vueltas++;
     vueltas.innerHTML = "Vueltas: " + this.personaje.vueltas;
     const score = document.getElementById("score");
-    score.innerHTML = "Score: " + this.personaje.score;
+    score.innerHTML = "Score: " + this.personaje.score+ " pts";
   }
   getCamera() {
     // En principio se devuelve la única cámara que tenemos

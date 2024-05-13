@@ -17,6 +17,18 @@
             margin: 0;
             overflow: hidden;
         }
+        @font-face {
+            font-family: 'titulo';
+            src: url('/imgs/SpeedRacing-NegativeItalic.ttf') format('truetype');
+        }
+
+        #title {
+            font-family: 'titulo';
+            font-size: 2em;
+            color: #000;
+            text-align: center;
+            background-color: #ff0;
+        }
 
         #hud {
             position: absolute;
@@ -31,6 +43,7 @@
             font-family: 'Arial', sans-serif;
             /* Fuente */
             font-size: 16px;
+            border: 2px solid #ff0000;
         }
 
         #speed,
@@ -41,32 +54,96 @@
 
         #speed {
             font-weight: bold;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.5em;
+            color: rgb(255, 0, 0);
+            margin-left: auto;
+            padding: 10%;
         }
 
         #score {
             font-style: italic;
-        }
-
-        /* Estilos específicos para el tema de carreras y Formula 1 */
-        body {
-            background-color: #000;
-            /* Color de fondo oscuro */
-        }
-
-        #hud {
-            border: 2px solid #fff;
-            /* Borde blanco */
-        }
-
-        #speed {
-            color: #f00;
-            /* Color rojo para la velocidad */
-        }
-
-        #score {
             color: #ff0;
-            /* Color amarillo para el puntaje */
+            font-size: 2em;
         }
+
+        .cuentakilometros {
+            width: 200px;
+            height: 200px;
+            background-color: #031c03;
+            border-radius: 50%;
+            border-color: red;
+            border-style: dashed;
+            position: relative;
+            padding: 1em;
+        }
+
+        .agujero {
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .aguja {
+            width: 2px;
+            height: 80px;
+            background-color: red;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: top center;
+            transform: translateX(-50%) rotate(0deg);
+            transition: transform 0.5s ease;
+            /* Animación de la aguja */
+        }
+
+        .contenedor {
+            position: fixed;
+            bottom: 20px;
+            /* Ajusta la distancia desde el borde inferior de la ventana */
+            margin-left: 10%;
+            /* Centra horizontalmente el cuentakilómetros */
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.786);
+            border-radius: 1em;
+        }
+
+        .numero {
+            position: absolute;
+            font-size: 1em;
+            color: #ffffff;
+            font-family: 'Arial';
+            font-style: boold;
+        }
+
+.numero0 {
+  top: 90%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.numero1 {
+  top: 45%;
+  left: 10%;
+  transform: translateX(-50%);
+}
+
+.numero2 {
+  top: 10%;
+  left: 45%;
+  transform: translateY(-50%);
+}
+.numero3 {
+  top: 50%;
+  left: 85%;
+  transform: translateY(-50%);
+}
+
     </style>
 </head>
 
@@ -75,12 +152,27 @@
     <!-- Div which will hold the Output -->
     <div id="WebGL-output">
         <div id="hud">
-            <div id="speed">Speed: </div>
+            <div id="title"> ( SWAD Speedster ) </div>
+            <img src="/favicon.ico" alt="SWAD Logo" width="100">
+
             <div id="vueltas">Vueltas: </div>
             <div id="score">Score: </div>
         </div>
-        
+
     </div>
+
+    <div class="contenedor">
+        <div class="cuentakilometros">
+            <div class="agujero"></div>
+            <div class="aguja" id="aguja"></div>
+            <div class="numero numero0">0</div>
+            <div class="numero numero1">45</div>
+            <div class="numero numero2">75</div>
+            <div class="numero numero3">105</div>
+        </div>
+        <div id="speed">Speed: 0</div>
+    </div>
+
 </body>
 
 </html>

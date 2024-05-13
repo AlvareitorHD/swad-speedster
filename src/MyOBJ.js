@@ -42,12 +42,14 @@ class Personaje extends THREE.Object3D {
     this.n1.position.set(0.55, 0.2, 0.82); // Posicionar
     this.personaje.add(this.n1);
     this.n2 = this.createNeumatico();
+    this.n2.geometry.rotateY(Math.PI);
     this.n2.position.set(-0.55, 0.2, 0.82); // Posicionar
     this.personaje.add(this.n2);
     this.n3 = this.createNeumatico();
     this.n3.position.set(0.55, 0.2, -1.22); // Posicionar
     this.personaje.add(this.n3);
     this.n4 = this.createNeumatico();
+    this.n4.geometry.rotateY(Math.PI);
     this.n4.position.set(-0.55, 0.2, -1.22); // Posicionar
     this.personaje.add(this.n4);
  
@@ -220,6 +222,7 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
   }
 
   createNeumatico() {
+    var llanta = this.createLlanta();
     // Crear un toro estirado para representar el neumático
     var tireGeometry = new THREE.TorusGeometry(0.5, 0.2, 16, 100);
     tireGeometry.scale(1, 1, 2);
@@ -236,6 +239,7 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
     });
 
     var tire = new THREE.Mesh(tireGeometry, material);
+    tire.add(llanta);
     return tire;
   }
 
@@ -243,6 +247,18 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
     // Crear un objeto por revolución
     var shape = new THREE.Shape();
     shape.moveTo(0, 0);
+    shape.lineTo(1, 0);
+    shape.lineTo(1, 0.1);
+    shape.quadraticCurveTo(1, 0.2, 0.9, 0.3);
+    shape.lineTo(0.1, 0.3);
+    shape.lineTo(0,0.3);
+  
+    var geometry = new THREE.LatheGeometry(shape.getPoints(), 32);
+    geometry.scale(0.2, 0.2, 0.2);
+    geometry.rotateZ(-Math.PI / 2);
+    var material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+    var mesh = new THREE.Mesh(geometry, material);
+    return mesh;
   }
 
   getCamara() {
@@ -457,12 +473,35 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
 
   animate() {
     if(this.speed != 0){
-      this.n1.rotation.x += this.speed*2*Math.PI;
-      this.n2.rotation.x += this.speed*2*Math.PI;
-      this.n3.rotation.x += this.speed*2*Math.PI;
-      this.n4.rotation.x += this.speed*2*Math.PI;
+      this.n1.geometry.rotateX(this.speed*2*Math.PI);
+      this.n2.geometry.rotateX(this.speed*2*Math.PI);
+      this.n3.geometry.rotateX(this.speed*2*Math.PI);
+      this.n4.geometry.rotateX(this.speed*2*Math.PI);
     }
+    if(!this.desgirar && this.rotacionLateral > 0){
+      this.n1.rotation.y -= this.rotacionLateral;
+      this.n1.rotation.y = Math.max(this.n1.rotation.y, -Math.PI/4);
+      this.n2.rotation.y -= this.rotacionLateral;
+      this.n2.rotation.y = Math.max(this.n2.rotation.y, -Math.PI/4);
+    } else if (!this.desgirar && this.rotacionLateral < 0) {
+      this.n1.rotation.y -= this.rotacionLateral; // Resta porque la rotación lateral es negativa
+      this.n1.rotation.y = Math.min(this.n1.rotation.y, Math.PI / 4); // Limita la rotación en el rango
+      this.n2.rotation.y -= this.rotacionLateral; // Resta porque la rotación lateral es negativa
+      this.n2.rotation.y = Math.min(this.n2.rotation.y, Math.PI / 4); // Limita la rotación en el rango
+  } else{
+    if(this.desgirar && this.rotacionLateral > 0){
+      this.n1.rotation.y -= this.friction;
+      this.n1.rotation.y = Math.max(this.rotacionLateral, 0); // Velocidad mínima es cero
+      this.n2.rotation.y -= this.friction;
+      this.n2.rotation.y = Math.max(this.rotacionLateral, 0); // Velocidad mínima es cero
+  }else if(this.desgirar && this.rotacionLateral < 0){
+      this.n1.rotation.y += this.friction;
+      this.n1.rotation.y = Math.min(this.rotacionLateral, 0); // Velocidad máxima es cero
+      this.n2.rotation.y += this.friction;
+      this.n2.rotation.y = Math.min(this.rotacionLateral, 0); // Velocidad máxima es cero
   }
+  }
+}
 
   update() {
     this.updateRayo();
