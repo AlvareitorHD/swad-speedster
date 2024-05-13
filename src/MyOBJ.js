@@ -26,7 +26,7 @@ class Personaje extends THREE.Object3D {
     this.desacelerar = false; // Bandera para desacelerar
     this.desgirar = false; // Bandera para desacelerar el giro
 
-    this.personaje = new THREE.Group();
+    this.personaje = new THREE.Object3D();
     this.createGUI(gui, titleGui);
     this.createChasis();
     this.createAlonso();
