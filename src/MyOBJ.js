@@ -78,11 +78,11 @@ class Personaje extends THREE.Object3D {
     this.nodoPosOrientTubo.up = this.tubo.binormals[segmentoActual];
     this.nodoPosOrientTubo.lookAt(posTemp);
 
+    this.createSonido();
     this.movimientoPrincipal();
     this.alternarVista();
     this.createColision();
     this.createRayCaster();
-
     this.personaje.scale.set(0.5, 0.5, 0.5);
     
   }
@@ -261,6 +261,11 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
     return mesh;
   }
 
+  createSonido(){
+    this.aceleracion = new Audio('/sound/car-acceleration-inside-car.mp3');
+    this.ralenti = new Audio('/sound/ralenti.mp3');
+  }
+
   getCamara() {
     return this.camera;
   }
@@ -327,6 +332,8 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
         this.desacelerar = false;
         // Acelera hacia adelante
         this.speed += this.acceleration;
+        this.aceleracion.play();
+        this.ralenti.pause();
         this.speed = Math.min(this.speed, this.maxSpeed); // Limita la velocidad máxima
       } else if (event.key === 's'|| event.key == KeyCode.KEY_DOWN) {
         this.desacelerar = false;
@@ -352,6 +359,12 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
       if (event.key == 'w' || event.key == 's' || event.key == KeyCode.KEY_UP || event.key == KeyCode.KEY_DOWN) {
         // Detiene la rotación lateral cuando se suelta la tecla
         this.desacelerar = true;
+        if(this.speed < 0.125){
+          this.aceleracion.pause();
+        }
+        if(this.speed == 0){
+          this.ralenti.play();
+        }
       }
     });
 
@@ -416,7 +429,7 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
         }, 3000);
         console.log("Colisión con neumatico");
         this.speed = 0; // Reduce la velocidad
-
+        impactados[0].object.userData.colision();
         //Simular choque
         var origen = { rot: 0};
         var destino = { rot: Math.PI/8 };
@@ -502,6 +515,7 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
   }
   }
 }
+
 
   update() {
     this.updateRayo();

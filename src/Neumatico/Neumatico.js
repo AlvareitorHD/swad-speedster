@@ -76,6 +76,11 @@ class Neumatico extends THREE.Object3D{
       this.nodoPosOrientTubo.lookAt(posTemp);
     }
 
+    colision(){
+      var sonido = new Audio('/sound/qubodup-crash.ogg');
+      sonido.play();
+    }
+
     updatePos(){
       this.movimientoLateral.rotateZ(2 * this.reloj.getDelta());
     }

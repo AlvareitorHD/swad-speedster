@@ -55,6 +55,9 @@ class Cono_Trafico extends THREE.Object3D{
         });
         tween.start();
 
+        var sonido = new Audio('/sound/cono.mp3');
+        sonido.play();
+
         setTimeout(() => {
           this.cono_trafico.rotation.x = 0;
         }, 3000);//3 segundos
