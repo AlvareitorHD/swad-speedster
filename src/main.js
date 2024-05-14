@@ -31,6 +31,9 @@ class MyScene extends THREE.Scene {
     // Lo primero, crear el visualizador, pasándole el lienzo sobre el que realizar los renderizados.
     this.renderer = this.createRenderer(myCanvas);
     this.createSky();
+    // Establecer el estado inicial del botón y el audio
+    this.musicEnabled = true; // Música activada por defecto
+    this.alternarMusica();
 
     // Se añade a la gui los controles para manipular los elementos de esta clase
     this.gui = this.createGUI();
@@ -96,6 +99,29 @@ class MyScene extends THREE.Scene {
 
     var hijos = this.circuito.children.filter(child => !(child == this.circuito.tubeMesh));
     this.personaje.setObstaculos(hijos);
+  }
+
+  alternarMusica() {
+        // Seleccionar el botón y el audio
+        var toggleButton = document.getElementById('toggleMusic');
+        var audio = new Audio('/sound/main_theme.mp3');
+      
+        audio.volume = 0.2; // Volumen inicial del audio
+
+        toggleButton.addEventListener('click', () => {
+          this.musicEnabled = !this.musicEnabled; // Alternar el estado de la música
+
+// Función para alternar la reproducción de la música
+if (this.musicEnabled) {
+  audio.pause(); // Pausar la música si está activada
+  toggleButton.textContent = 'Activar Música'; // Cambiar el texto del botón
+} else {
+  audio.play(); // Reproducir la música si está desactivada
+  toggleButton.textContent = 'Desactivar Música'; // Cambiar el texto del botón
+}
+// Agregar un evento de clic al botón para llamar a la función toggleMusic
+toggleButton.addEventListener('click', toggleMusic);
+        });
   }
 
 

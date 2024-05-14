@@ -12,6 +12,7 @@
     </script>
 
     <script type="module" src="./main.js"></script>
+
     <style>
         body {
             margin: 0;
@@ -21,6 +22,34 @@
             font-family: 'titulo';
             src: url('/imgs/SpeedRacing-NegativeItalic.ttf') format('truetype');
         }
+
+        /* Estilo base del botón */
+#toggleMusic {
+    position: absolute; /* Fijar el botón en la esquina inferior derecha */
+    bottom: 1em;
+    right: 1em;
+  background-color: #ff0000; /* Color de fondo rojo */
+  color: #fff; /* Color del texto blanco */
+  padding: 10px 20px; /* Espacio alrededor del texto */
+  font-size: 16px; /* Tamaño de fuente */
+  border: none; /* Sin borde */
+  cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+  border-radius: 5px; /* Bordes redondeados */
+  text-transform: uppercase; /* Convertir el texto a mayúsculas */
+  font-weight: bold; /* Texto en negrita */
+  transition: background-color 0.3s, color 0.3s; /* Transición suave al cambiar de color */
+}
+
+/* Estilo cuando el cursor está encima */
+#toggleMusic:hover {
+  background-color: #cc0000; /* Color de fondo rojo oscuro */
+}
+
+/* Estilo cuando se hace clic */
+#toggleMusic:active {
+  background-color: #00fa43; /* Color de fondo rojo más oscuro */
+}
+
 
         #title {
             font-family: 'titulo';
@@ -172,6 +201,8 @@
         </div>
         <div id="speed">Speed: 0</div>
     </div>
+
+    <button id="toggleMusic">Activar Música</button>
 
 </body>
 
