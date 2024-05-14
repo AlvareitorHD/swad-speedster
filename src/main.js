@@ -214,7 +214,7 @@ class MyScene extends THREE.Scene {
     this.add(this.pointLight);
 
     // Luz direccional
-    var directionalLight = new THREE.DirectionalLight(0xfdf3c6, 1.0);
+    var directionalLight = new THREE.DirectionalLight(0xfdf3c6, 1.5);
     directionalLight.position.set(1, 1, 1);
     this.add(directionalLight);
   }
