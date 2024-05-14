@@ -105,7 +105,7 @@ class MyScene extends THREE.Scene {
         // Seleccionar el botón y el audio
         var toggleButton = document.getElementById('toggleMusic');
         var audio = new Audio('/sound/main_theme.mp3');
-      
+        audio.loop = true; // Repetir la música
         audio.volume = 0.2; // Volumen inicial del audio
 
         toggleButton.addEventListener('click', () => {
