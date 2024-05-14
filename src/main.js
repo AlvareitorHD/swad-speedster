@@ -30,6 +30,7 @@ class MyScene extends THREE.Scene {
     super();
     // Lo primero, crear el visualizador, pasándole el lienzo sobre el que realizar los renderizados.
     this.renderer = this.createRenderer(myCanvas);
+    this.createSky();
 
     // Se añade a la gui los controles para manipular los elementos de esta clase
     this.gui = this.createGUI();
@@ -97,6 +98,18 @@ class MyScene extends THREE.Scene {
     this.personaje.setObstaculos(hijos);
   }
 
+
+  createSky() {
+    var path = "/imgs/cube/";
+    var format = '.bmp';
+    var urls = [
+      path + 'px' + format, path + 'nx' + format,
+      path + 'py' + format, path + 'ny' + format,
+      path + 'pz' + format, path + 'nz' + format
+    ];
+    var textureCube = new THREE.CubeTextureLoader().load(urls);
+    this.background = textureCube;
+  }
 
   initStats() {
 

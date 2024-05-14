@@ -264,6 +264,7 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
   createSonido(){
     this.aceleracion = new Audio('/sound/car-acceleration-inside-car.mp3');
     this.ralenti = new Audio('/sound/ralenti.mp3');
+    this.ralenti.volume = 0.1;
   }
 
   getCamara() {

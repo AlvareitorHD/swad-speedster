@@ -13,12 +13,12 @@ class Moneda_Premium extends THREE.Object3D{
         this.createGUI(gui,titleGui);
 
         //Creamos los materiales
-        var Mat = new THREE.MeshStandardMaterial({color: 0x00FF00});
+        var Mat = new THREE.MeshStandardMaterial({color: 0x00AA00}); // Color verde
         var bordeMat = new THREE.MeshPhysicalMaterial({
-          color: 0xffd700, // Color dorado en formato hexadecimal
+          color: 0xffd700, // Color dorado
           metalness: 1,    // Ajusta la metalicidad para un aspecto dorado
           roughness: 0.5,  // Controla la rugosidad de la superficie (0 para una superficie perfectamente lisa, 1 para una superficie muy rugosa)
-          reflectivity: 0.8 // Controla la reflectividad de la superficie (0 para ninguna reflectividad, 1 para una reflectividad total)
+          reflectivity: 0.8, // Controla la reflectividad de la superficie (0 para ninguna reflectividad, 1 para una reflectividad total)
       });
 
         //Creamos las geometrias

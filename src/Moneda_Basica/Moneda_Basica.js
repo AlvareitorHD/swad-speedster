@@ -89,6 +89,7 @@ class Moneda_Basica extends THREE.Object3D{
       var rot = this.movimientoLateral.rotation.z;
       var initialPosY = this.posSuperficie.position.y;
       var audio = new Audio('/sound/coin.flac');
+      audio.volume = 0.5;
       audio.play();
       // Inicia el Tween para animar el movimiento
       var tween = new TWEEN.Tween(this.posSuperficie.position)
