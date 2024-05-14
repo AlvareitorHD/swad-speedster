@@ -36,6 +36,11 @@ class Rampa extends THREE.Object3D{
         this.add(this.rampa);
         this.posicionar(circuito,t,rot);
         this.createColision();
+        this.sonido = new Audio('/sound/rampa.mp3' );
+    }
+
+    colision(){
+      this.sonido.play();
     }
 
     createColision(){

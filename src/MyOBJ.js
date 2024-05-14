@@ -332,8 +332,6 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
         this.desacelerar = false;
         // Acelera hacia adelante
         this.speed += this.acceleration;
-        this.aceleracion.play();
-        this.ralenti.pause();
         this.speed = Math.min(this.speed, this.maxSpeed); // Limita la velocidad máxima
       } else if (event.key === 's'|| event.key == KeyCode.KEY_DOWN) {
         this.desacelerar = false;
@@ -359,9 +357,7 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
       if (event.key == 'w' || event.key == 's' || event.key == KeyCode.KEY_UP || event.key == KeyCode.KEY_DOWN) {
         // Detiene la rotación lateral cuando se suelta la tecla
         this.desacelerar = true;
-        if(this.speed < 0.125){
-          this.aceleracion.pause();
-        }
+
         if(this.speed == 0){
           this.ralenti.play();
         }
@@ -462,6 +458,7 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
             this.personaje.rotation.x = origen.rot;
         });
         tween.start();
+        impactados[0].object.userData.colision();
         setTimeout(() => {
         origen = { y: this.radio+1, rot: -Math.PI/4};
         destino = { y: this.radio, rot: 0};
@@ -521,6 +518,13 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
     this.updateRayo();
     this.actualizarRayoVisual();
     this.animate();
+    if(this.speed == 0){
+      this.aceleracion.pause();
+      this.ralenti.play();
+    } else{
+      this.aceleracion.play();
+      this.ralenti.pause();
+    }
 
     if (this.desacelerar) {
       if (this.speed > 0) {

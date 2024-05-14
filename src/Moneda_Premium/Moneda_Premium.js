@@ -93,6 +93,7 @@ class Moneda_Premium extends THREE.Object3D{
         this.createColision();
         this.add(this.premium);
         this.createRuta();
+        this.sonido = new Audio('/sound/moneda_premium.wav');
     }
 
     createRuta(){
@@ -146,6 +147,7 @@ class Moneda_Premium extends THREE.Object3D{
     }
 
     picked(){
+      this.sonido.play();
       console.log("PREMIUM recogida");
       this.velocidad = 25;
       setTimeout(() =>{
