@@ -17,6 +17,7 @@ class Personaje extends THREE.Object3D {
     var circuito = c.tubeGeometry;
     this.circuito = c;
     this.vueltas = 0;
+    this.mitad = false;
     this.score = 0;
     this.puntuar = true;
 
@@ -52,6 +53,8 @@ class Personaje extends THREE.Object3D {
     this.n4.geometry.rotateY(Math.PI);
     this.n4.position.set(-0.55, 0.2, -1.22); // Posicionar
     this.personaje.add(this.n4);
+
+    this.createLuzTrasera();
  
     this.nodoPosOrientTubo = new THREE.Object3D();
     this.movimientoLateral = new THREE.Object3D();
@@ -85,6 +88,35 @@ class Personaje extends THREE.Object3D {
     this.createRayCaster();
     this.personaje.scale.set(0.5, 0.5, 0.5);
     
+  }
+
+  createLuzTrasera(){
+    var caja = new THREE.BoxGeometry(0.2, 0.25, 0.1);
+    var material = new THREE.MeshStandardMaterial({
+      color: 0x555555,        // Color blanco
+      metalness: 1,           // Nivel de metalidad
+      roughness: 0.5,         // Nivel de rugosidad
+    });
+    var sujetador = new THREE.Mesh(caja, material);
+
+    this.luz = new THREE.PointLight(0xff0000, 0, 10);
+    var luminaria = new THREE.SphereGeometry(0.075, 16, 16);
+    var material = new THREE.MeshPhysicalMaterial({ 
+      color: 0xff0000,        // Color rojo
+      emissive: 0xff0000,     // Emisión de luz roja
+      emissiveIntensity: 0, // Intensidad de la emisión
+      metalness: 0.5,         // Nivel de metalidad
+      roughness: 0.5,          // Nivel de rugosidad
+      //transmission:1,
+      //thickness:0.01,
+      //ior:2,
+      transparent: true,
+    });
+    this.luz_trasera = new THREE.Mesh(luminaria, material);
+    this.luz_trasera.add(sujetador);
+    this.luz_trasera.add(this.luz);
+    this.luz_trasera.position.set(0, 0.5, -1.5);
+    this.personaje.add(this.luz_trasera);
   }
 
   setObstaculos(h){
@@ -335,6 +367,17 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
         this.speed += this.acceleration;
         this.speed = Math.min(this.speed, this.maxSpeed); // Limita la velocidad máxima
       } else if (event.key === 's'|| event.key == KeyCode.KEY_DOWN) {
+        this.luz_trasera.material.emissiveIntensity = 1;
+        if(this.speed < 0){
+          this.luz.color = new THREE.Color(0xffffff);
+          this.luz_trasera.material.emissive = new THREE.Color(0xaaaaaa);
+        }
+        else{
+          this.luz_trasera.material.emissive = new THREE.Color(0xff0000);
+          this.luz.color = new THREE.Color(0xff0000);
+        }
+
+        this.luz.intensity = 1;
         this.desacelerar = false;
         // Desacelera o retrocede
         this.speed -= this.acceleration*2;
@@ -362,6 +405,10 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
         if(this.speed == 0){
           this.ralenti.play();
         }
+      }
+      if(event.key == 's'){
+        this.luz_trasera.material.emissiveIntensity = 0;
+        this.luz.intensity = 0;
       }
     });
 
@@ -544,6 +591,15 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
         this.rotacionLateral += this.friction;
         this.rotacionLateral = Math.min(this.rotacionLateral, 0); // Velocidad máxima es cero
       }
+    }
+    if(this.t >= 0.5 && this.t < 0.65 && !this.mitad){
+      this.mitad = true;
+      console.log("Mitad del circuito");
+    }
+    if(this.t >= 0 && this.t <= 0.1 && this.mitad){
+      this.vueltas++; this.mitad = false; console.log("Vuelta completada");
+      this.maxSpeed *= 1.1;
+      this.activaVuelta = true;
     }
     // Actualiza la posición del personaje según la velocidad
     this.t = (this.t + this.speed * this.reloj.getDelta()) % 1;

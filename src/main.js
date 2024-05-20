@@ -17,6 +17,7 @@ import { Rampa } from './Rampa/Rampa.js'
 
 import { Moneda_Basica } from './Moneda_Basica/Moneda_Basica.js'
 import { Moneda_Premium } from './Moneda_Premium/Moneda_Premium.js'
+import { Punto_Escudo } from './Punto_Escudo/Punto_Escudo.js'
 
 
 /// La clase fachada del modelo
@@ -76,6 +77,9 @@ class MyScene extends THREE.Scene {
 
     this.rampa = new Rampa(this.circuito,0.05,Math.PI/2);
     this.circuito.add(this.rampa);
+
+    this.punto_escudo = new Punto_Escudo(this.gui,"a");
+    this.add(this.punto_escudo);
 
     // Construimos los distinos elementos que tendremos en la escena
 
@@ -242,7 +246,7 @@ toggleButton.addEventListener('click', toggleMusic);
     this.ambientLight = new THREE.AmbientLight('white', this.guiControls.ambientIntensity);
     // La añadimos a la escena
     this.add(this.ambientLight);
-
+    /*
     // Se crea una luz focal que va a ser la luz principal de la escena
     // La luz focal, además tiene una posición, y un punto de mira
     // Si no se le da punto de mira, apuntará al (0,0,0) en coordenadas del mundo
@@ -250,12 +254,12 @@ toggleButton.addEventListener('click', toggleMusic);
     this.pointLight = new THREE.PointLight(0xffffff);
     this.pointLight.power = this.guiControls.lightPower;
     this.pointLight.position.set(2, 3, 1);
-    this.add(this.pointLight);
+    this.add(this.pointLight);*/
 
     // Luz direccional
-    var directionalLight = new THREE.DirectionalLight(0xfdf3c6, 1.5);
-    directionalLight.position.set(1, 1, 1);
-    this.add(directionalLight);
+    this.directionalLight = new THREE.DirectionalLight(0xfdf3c6, 1.5);
+    this.directionalLight.position.set(1, 1, 1);
+    this.add(this.directionalLight);
   }
 
   setLightPower(valor) {
@@ -290,6 +294,8 @@ toggleButton.addEventListener('click', toggleMusic);
   updateHUD(){
     const speed = document.getElementById("speed");
     speed.innerHTML = "Speed: " + (this.personaje.speed * 1600).toFixed(2) + " km/h";
+    const max_speed = document.getElementById("max_speed");
+    max_speed.innerHTML = "Max Speed: " + (this.personaje.maxSpeed * 1600).toFixed(2) + " km/h";
     // Obtiene el elemento de la aguja
     var aguja = document.getElementById('aguja');
     // Aplica la rotación a la aguja mediante CSS
@@ -297,9 +303,17 @@ toggleButton.addEventListener('click', toggleMusic);
     var angle = (this.personaje.speed*1600/ 120) * 300;
     aguja.style.transform = 'rotate(' + angle + 'deg)';
     const vueltas = document.getElementById("vueltas");
-    if (this.personaje.t >= 0.99 && this.personaje.vueltas == 0)
-      this.personaje.vueltas++;
     vueltas.innerHTML = "Vueltas: " + this.personaje.vueltas;
+
+    const vuelta = document.getElementById("vuelta");
+    if(this.personaje.activaVuelta){
+      vuelta.innerHTML = "( Vuelta " + this.personaje.vueltas+ " de 5 )";
+      vuelta.style.display = "block";
+      setTimeout(() => {
+        this.personaje.activaVuelta = false;
+        vuelta.style.display = "none";
+      }, 3000);
+    }
     const score = document.getElementById("score");
     score.innerHTML = "Score: " + this.personaje.score+ " pts";
   }
