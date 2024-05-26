@@ -2,77 +2,75 @@
 # www.blender.org
 
 newmtl Material
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
 Ks 0.919118 0.919118 0.919118
 Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 3
-Pr 0.500000
-Pm 1.000000
-Ps 0.000000
-Pc 0.000000
-Pcr 0.030000
-aniso 0.000000
-anisor 0.000000
 map_Kd swad3584x1024-01.jpg
 
 newmtl Material.001
+Ns 354.725372
+Ka 1.000000 1.000000 1.000000
 Kd 0.000000 0.351533 0.004391
 Ks 0.919118 0.919118 0.919118
 Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 3
-Pr 0.404412
-Pm 1.000000
-Ps 0.000000
-Pc 0.000000
-Pcr 0.030000
-aniso 0.000000
-anisor 0.000000
 
 newmtl Material.003
-Kd 0.513695 0.513695 0.513695  // Color difuso (RGB)
-Ks 0.8 0.8 0.8                 // Coeficientes especulares (RGB) aumentados para mayor reflectividad
-Ke 0.000000 0.000000 0.000000  // Emisión (RGB)
-Ni 1.450000                    // Índice de refracción
-d 1.000000                     // Factor de opacidad
-illum 3                        // Modelo de iluminación
-Pr 0.3                         // Rugosidad especular aumentada para un aspecto más metálico
-Pm 1.000000                    // Fresnel factor (0 to 1)
-Ps 0.000000                    // Probabilidad de reflexión especular
-Pc 0.000000                    // Probabilidad de reflexión difusa
-Pcr 0.030000                   // Probabilidad de reflexión en cámara (cámara raytraced)
-aniso 0.000000                 // Intensidad de anisotropía
-anisor 0.000000                // Rotación de anisotropía
+Ns 542.020569   # Valor de brillo especular
+Ka 0.000000 0.000000 0.000000
+Kd 0.513695 0.513695 0.513695
+Ks 0.800000 0.800000 0.800000   # Ajustado para un aspecto más metálico
+Ke 0.000000 0.000000 0.000000
+Ni 2.000000   # Ajustado para un índice de refracción más alto para materiales metálicos
+d 1.000000
+illum 3
 
-newmtl fibra
+
+newmtl Material.004
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.179049 0.011937 0.006780
 Ks 0.500000 0.500000 0.500000
 Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-Ps 0.000000
-Pc 0.000000
-Pcr 0.030000
-aniso 0.000000
-anisor 0.000000
-map_Bump carbon-fiber_normal-ogl.png
+
+newmtl Material.005
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.031017 0.031017 0.031017
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+
+newmtl fibra
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000   # Ajustado para aumentar el brillo
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
 map_Kd carbon-fiber_albedo.png
 map_Ns carbon-fiber_roughness.png
-refl carbon-fiber_metallic.png
+map_refl carbon-fiber_metallic.png
+map_Bump -bm 1.000000 carbon-fiber_normal-ogl.png
+
 
 newmtl morro
+Ns 335.663879
+Ka 1.000000 1.000000 1.000000
 Ks 0.500000 0.500000 0.500000
 Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 3
-Pr 0.420635
-Pm 1.000000
-Ps 0.000000
-Pc 0.000000
-Pcr 0.030000
-aniso 0.000000
-anisor 0.000000
-map_Kd ../imgs/morro.png
+map_Kd morro.png

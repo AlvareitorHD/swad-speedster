@@ -34,7 +34,7 @@ class Personaje extends THREE.Object3D {
 
     this.personaje = new THREE.Object3D();
     this.createGUI(gui, titleGui);
-    //this.createChasis();
+    this.createChasis();
     this.createAlonso();
     this.createReloj();
     this.createCamara();
@@ -121,16 +121,16 @@ class Personaje extends THREE.Object3D {
     var semiCylynderMesh = new THREE.Mesh(semiCylynder, material2);
 
     var canonMesh = new THREE.Mesh(canon, material3);
-
+ 
     //Posicionamos los mesh
-    baseMesh.position.set(0, 0.95, -0.3);
-    soporteMesh.position.set(0, 1.1, -0.3);
+    baseMesh.position.set(0, 0.95, 0);
+    soporteMesh.position.set(0, 1.1, 0);
 
     cuboEliminarMesh.position.set(0, -0.15, 0);
 
     semiCylynderMesh.rotateZ(Math.PI/2);
 
-    canonMesh.position.set(0, 1.5, -0.27);
+    canonMesh.position.set(0, 1.5, 0);
     canonMesh.geometry.scale(1, 0.7, 1);
 
     //Creamos un csg para crear la semicircunferencia
@@ -189,7 +189,7 @@ class Personaje extends THREE.Object3D {
         if (intersects) {
             var point = intersects;
             var angle = Math.atan2(point.y - this.objetoCanon.position.y, point.x - this.objetoCanon.position.x);
-            this.objetoSoporte.rotation.y = angle;
+            this.objetoSemiCircun.rotation.x = angle;
         }
     }, false);
 }
@@ -339,24 +339,186 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
   }
 
   createAlonso() {
-    // Crear una esfera escalada en Y
-    var sphereGeometry = new THREE.SphereGeometry(1, 32, 32);//THREE.CapsuleGeometry(1,0.5,64,32);
+    var alonso = new THREE.Group();
+    // Cabeza
+    var sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
     sphereGeometry.scale(1, 1.2, 1.5);
-    //sphereGeometry.scale(1,0.5,1);
     var texture = new THREE.TextureLoader().load('../imgs/alonso.jpg');
-    // Ajustar las propiedades de repetición de la textura para evitar estiramiento
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(1, 1.2); // Ajustar la repetición en Y según tus necesidades
-    var sphereMaterial = new THREE.MeshStandardMaterial({
-      map: texture
-    });
+    texture.repeat.set(1, 1.2);
+    var sphereMaterial = new THREE.MeshStandardMaterial({ map: texture });
     var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-    sphere.scale.set(0.1, 0.1, 0.1); // Escalar
-    sphere.position.set(0, 0.7, 0.1); // Posicionar
-    sphere.rotation.y -= Math.PI / 2; // Rotar
-    this.personaje.add(sphere);
-  }
+    sphere.scale.set(0.1, 0.1, 0.1);
+    sphere.position.set(0, 0.7, 0);
+    sphere.rotation.y -= Math.PI / 2;
+    alonso.add(sphere);
+
+    // Cuerpo
+    var capsuleGeometry = new THREE.CapsuleGeometry(0.15, 0.1, 4, 8);
+    capsuleGeometry.scale(1, 1.2, 1.1);
+    var bodyMaterial = new THREE.MeshStandardMaterial({ map: new THREE.TextureLoader().load('../imgs/mono.jpg'),
+      roughness: 1,
+     });
+    var body = new THREE.Mesh(capsuleGeometry, bodyMaterial);
+    body.position.set(0, 0.35, 0);
+    body.rotation.y = Math.PI;
+    alonso.add(body);
+
+    // Brazos
+    var armMaterial = new THREE.MeshStandardMaterial({ color: 0x037A68 });
+    var handMaterial = new THREE.MeshStandardMaterial({ color: 0xFFE9D1 });
+
+    // Brazo derecho
+    var upperArmGeometry = new THREE.CylinderGeometry(0.05, 0.05, 0.3, 32);
+    var lowerArmGeometry = new THREE.CylinderGeometry(0.04, 0.04, 0.25, 32);
+    var jointGeometry = new THREE.SphereGeometry(0.05, 12, 12);
+    var handGeometry = new THREE.SphereGeometry(0.05, 16, 16);
+
+    var upperArmR = new THREE.Mesh(upperArmGeometry, armMaterial);
+    var lowerArmR = new THREE.Mesh(lowerArmGeometry, armMaterial);
+    var elbowR = new THREE.Mesh(jointGeometry, armMaterial);
+    var handR = new THREE.Mesh(handGeometry, handMaterial);
+
+    upperArmR.position.set(0.2, 0.4, 0);
+    upperArmR.rotation.z = Math.PI / 4;
+    upperArmR.rotation.x = -Math.PI / 4;
+    elbowR.position.set(0, -0.15, 0);
+    elbowR.rotation.x = -Math.PI / 2;
+    elbowR.rotation.z = -Math.PI / 4;
+    lowerArmR.position.set(0, -0.2, 0);
+    handR.position.set(0, -0.15, 0);
+
+    upperArmR.add(elbowR);
+    elbowR.add(lowerArmR);
+    lowerArmR.add(handR);
+    alonso.add(upperArmR);
+
+    // Brazo izquierdo (espejo del derecho)
+    var upperArmL = new THREE.Mesh(upperArmGeometry, armMaterial);
+    var lowerArmL = new THREE.Mesh(lowerArmGeometry, armMaterial);
+    var elbowL = new THREE.Mesh(jointGeometry, armMaterial);
+    var handL = new THREE.Mesh(handGeometry, handMaterial);
+
+    upperArmL.position.set(-0.2, 0.4, 0);
+    upperArmL.rotation.z = -Math.PI / 4;
+    upperArmL.rotation.x = -Math.PI / 4;
+    elbowL.position.set(0, -0.15, 0);
+    elbowL.rotation.x = -Math.PI / 2;
+    elbowL.rotation.z = Math.PI / 4;
+    lowerArmL.position.set(0, -0.2, 0);
+    handL.position.set(0, -0.15, 0);
+
+    upperArmL.add(elbowL);
+    elbowL.add(lowerArmL);
+    lowerArmL.add(handL);
+    alonso.add(upperArmL);
+
+    //Casco
+    var casco = this.createHelmet();
+    casco.scale.y = 0.8;
+    casco.position.set(0, 0.6, 0);
+    alonso.add(casco);
+
+    // General
+    alonso.scale.set(0.6, 0.6, 0.6);
+    alonso.position.set(0, 0.35, -0.05);
+    this.personaje.add(alonso);
+}
+
+createHelmet() {
+    var material = new THREE.MeshStandardMaterial({
+        color: 0x037A68,
+        metalness: 1,
+        roughness: 0.5,
+    });
+
+    var visorMaterial = new THREE.MeshPhysicalMaterial({
+        color: 0xffffff,
+        metalness: 1,
+        roughness: 0.1,
+        clearcoat: 1.0,
+        transmission: 0.5, // Simula la transparencia con un toque metálico
+        transparent: true,
+        opacity: 0.5, // Opacidad baja
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.1,
+        reflectivity: 1,
+        ior: 2.5, // Índice de refracción ajustado para simular un material metálico
+    });
+
+    // Geometrías
+    var largeCapsule = new THREE.CapsuleGeometry(1, 2, 8, 16);
+    var smallCapsule = new THREE.CapsuleGeometry(0.9, 1.9, 8, 16);
+    var cube = new THREE.BoxGeometry(2, 2, 2);
+    var visorCylinder = new THREE.CylinderGeometry(0.5, 0.5, 2, 32);
+    visorCylinder.scale(1.5, 1, 1.175);
+
+    // Meshes
+    var largeCapsuleMesh = new THREE.Mesh(largeCapsule, material);
+    var smallCapsuleMesh = new THREE.Mesh(smallCapsule, material);
+    var cubeMesh = new THREE.Mesh(cube, material);
+    var visorCylinderMesh = new THREE.Mesh(visorCylinder, material);
+
+    // Posicionar el cubo y el cilindro
+    smallCapsuleMesh.position.set(0, -0.1, 0);
+    cubeMesh.position.set(0, -1, 0);
+    visorCylinderMesh.position.set(0, 0.6, 0.9);
+    visorCylinderMesh.rotation.x = Math.PI / 2;
+
+    // Crear CSG y restar geometrías
+    var csg = new CSG();
+    csg.subtract([largeCapsuleMesh, smallCapsuleMesh, cubeMesh, visorCylinderMesh]);
+
+    var helmetMesh = csg.toMesh();
+    helmetMesh.geometry.scale(0.2, 0.2, 0.2);
+
+    // Crear la visera
+    var visorCSG = new CSG();
+    var visorgeometry = visorCylinder.clone();
+    visorgeometry.scale(0.25, 0.125, 0.2);
+    var visorMesh = new THREE.Mesh(visorgeometry, visorMaterial);
+
+    // Crear un cilindro para restar el sobrante
+    var subtractCylinder = visorMesh.geometry.clone();
+    var subtractCylinderMesh = new THREE.Mesh(subtractCylinder, visorMaterial);
+    subtractCylinderMesh.position.set(0, 0, -0.05);
+
+    visorCSG.subtract([visorMesh, subtractCylinderMesh]);
+
+    var visorResultMesh = visorCSG.toMesh();
+    visorResultMesh.position.set(0, 0.12, 0.12);
+
+    // Agregar mini cilindros en las esquinas de la visera
+    var hingeGeometry = new THREE.CylinderGeometry(0.02, 0.01, 0.025, 16);
+    hingeGeometry.rotateZ(Math.PI / 2);
+    var hingeMaterial = new THREE.MeshStandardMaterial( {
+      color: 0xffffff,
+      metalness: 0.9,
+      roughness: 0.5,
+  } );
+  
+    var hinge1 = new THREE.Mesh(hingeGeometry, hingeMaterial);
+    var hinge2 = new THREE.Mesh(hingeGeometry, hingeMaterial);
+    hinge2.rotation.y = Math.PI;
+
+    hinge1.position.set(-0.2, 0.125, 0.1);
+    hinge2.position.set(0.2, 0.125, 0.1);
+
+    helmetMesh.add(hinge1);
+    helmetMesh.add(hinge2);
+
+    // Agrupar casco y visera
+    var helmetGroup = new THREE.Group();
+    helmetGroup.add(helmetMesh);
+    helmetGroup.add(visorResultMesh);
+
+    helmetGroup.position.set(0, 0, 0);
+    return helmetGroup;
+}
+
+
+
 
   createNeumatico() {
     var llanta = this.createLlanta();
@@ -539,8 +701,8 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
 
     document.addEventListener('keydown', (event) => {
       if(event.key == 'v'){
-        this.cameraController.rotation.x = -0.005;
-        this.cameraController.position.set(0, -1.2, 5.12);
+        this.cameraController.rotation.x = -0.06;
+        this.cameraController.position.set(0, -1.05, 5.1);
       }
     });
     document.addEventListener('keyup', (event) => {
