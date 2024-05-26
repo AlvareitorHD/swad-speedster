@@ -9,6 +9,8 @@ import * as TWEEN from '../../libs/tween.esm.js'
 import { Moneda_Basica } from './Moneda_Basica/Moneda_Basica.js';
 import { Moneda_Premium } from './Moneda_Premium/Moneda_Premium.js';
 
+import { CSG } from '../libs/CSG.js';
+
 class Personaje extends THREE.Object3D {
   constructor(gui, titleGui, c) {
 
@@ -36,6 +38,8 @@ class Personaje extends THREE.Object3D {
     this.createAlonso();
     this.createReloj();
     this.createCamara();
+
+    this.createCanon();
 
     this.rot = 0;
 
@@ -88,6 +92,44 @@ class Personaje extends THREE.Object3D {
     this.createRayCaster();
     this.personaje.scale.set(0.5, 0.5, 0.5);
     
+  }
+
+  createCanon(){
+    var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+
+    //Creamos las geometrías
+    var base = new THREE.CylinderGeometry(0.05, 0.05, 0.3, 32);
+    var soporte = new THREE.CylinderGeometry(0.15, 0.15, 0.05, 32);
+    var semiSphere = new THREE.SphereGeometry(0.15, 32, 32);
+    var cuboEliminar = new THREE.BoxGeometry(0.15, 0.15, 0.15);
+
+    //Creamos los mesh
+    var baseMesh = new THREE.Mesh(base, material);
+    var soporteMesh = new THREE.Mesh(soporte, material);
+
+    var semiSphereMesh = new THREE.Mesh(semiSphere, material);
+    var cuboEliminarMesh = new THREE.Mesh(cuboEliminar, material);
+
+    //Posicionamos los mesh
+    baseMesh.position.set(0, 0.95, -0.3);
+    soporteMesh.position.set(0, 1.1, -0.3);
+
+    cuboEliminarMesh.position.set(0, 0.075, 0);
+
+    var csg = new CSG();
+    csg.subtract([semiSphereMesh, cuboEliminarMesh]);
+
+    //Creamos los object3D
+    var objetoSoporte = new THREE.Object3D();
+    var objetoSemi = new THREE.Object3D();
+
+    objetoSoporte.add(baseMesh);
+    objetoSoporte.add(soporteMesh);
+
+    objetoSemi.add(objetoSoporte);
+    objetoSemi.add(csg.toMesh());
+
+    this.personaje.add(objetoSemi);
   }
 
   createLuzTrasera(){
