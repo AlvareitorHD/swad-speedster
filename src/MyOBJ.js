@@ -34,12 +34,13 @@ class Personaje extends THREE.Object3D {
 
     this.personaje = new THREE.Object3D();
     this.createGUI(gui, titleGui);
-    this.createChasis();
+    //this.createChasis();
     this.createAlonso();
     this.createReloj();
     this.createCamara();
 
     this.createCanon();
+    this.initMouseTracking();
 
     this.rot = 0;
 
@@ -95,7 +96,9 @@ class Personaje extends THREE.Object3D {
   }
 
   createCanon(){
-    var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    var material1 = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    var material2 = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    var material3 = new THREE.MeshBasicMaterial({ color: 0x0000ff });
 
     //Creamos las geometrías
     var base = new THREE.CylinderGeometry(0.05, 0.05, 0.3, 32);
@@ -109,15 +112,15 @@ class Personaje extends THREE.Object3D {
     var canon = new THREE.CylinderGeometry(0.03, 0.03, 0.7, 32);
 
     //Creamos los mesh
-    var baseMesh = new THREE.Mesh(base, material);
-    var soporteMesh = new THREE.Mesh(soporte, material);
+    var baseMesh = new THREE.Mesh(base, material1);
+    var soporteMesh = new THREE.Mesh(soporte, material2);
 
-    var semiSphereMesh = new THREE.Mesh(semiSphere, material);
-    var cuboEliminarMesh = new THREE.Mesh(cuboEliminar, material);
+    var semiSphereMesh = new THREE.Mesh(semiSphere, material3);
+    var cuboEliminarMesh = new THREE.Mesh(cuboEliminar, material1);
 
-    var semiCylynderMesh = new THREE.Mesh(semiCylynder, material);
+    var semiCylynderMesh = new THREE.Mesh(semiCylynder, material2);
 
-    var canonMesh = new THREE.Mesh(canon, material);
+    var canonMesh = new THREE.Mesh(canon, material3);
 
     //Posicionamos los mesh
     baseMesh.position.set(0, 0.95, -0.3);
@@ -127,7 +130,8 @@ class Personaje extends THREE.Object3D {
 
     semiCylynderMesh.rotateZ(Math.PI/2);
 
-    canonMesh.position.set(0, 1.15, -0.27);
+    canonMesh.position.set(0, 1.5, -0.27);
+    canonMesh.geometry.scale(1, 0.7, 1);
 
     //Creamos un csg para crear la semicircunferencia
     var csg = new CSG();
@@ -170,6 +174,25 @@ class Personaje extends THREE.Object3D {
 
     this.personaje.add(this.objetoCanon);
   }
+
+  initMouseTracking() {
+    var mouse = new THREE.Vector2();
+    var raycaster = new THREE.Raycaster();
+    var plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+
+    window.addEventListener('mousemove', (event) => {
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, this.camera);
+        var intersects = raycaster.ray.intersectPlane(plane, new THREE.Vector3(0,0,1));
+        if (intersects) {
+            var point = intersects;
+            var angle = Math.atan2(point.y - this.objetoCanon.position.y, point.x - this.objetoCanon.position.x);
+            this.objetoSoporte.rotation.y = angle;
+        }
+    }, false);
+}
 
   createLuzTrasera(){
     var caja = new THREE.BoxGeometry(0.2, 0.25, 0.1);
@@ -272,6 +295,7 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
       }
     }
   }
+
 
 
   createReloj() {
