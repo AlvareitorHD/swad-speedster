@@ -9,7 +9,7 @@ import * as TWEEN from '../../libs/tween.esm.js'
 import { Moneda_Basica } from './Moneda_Basica/Moneda_Basica.js';
 import { Moneda_Premium } from './Moneda_Premium/Moneda_Premium.js';
 
-import { CSG } from '../libs/CSG.js';
+import { CSG } from '../../libs/CSG-v2.js';
 
 class Personaje extends THREE.Object3D {
   constructor(gui, titleGui, c) {
@@ -100,8 +100,13 @@ class Personaje extends THREE.Object3D {
     //Creamos las geometrías
     var base = new THREE.CylinderGeometry(0.05, 0.05, 0.3, 32);
     var soporte = new THREE.CylinderGeometry(0.15, 0.15, 0.05, 32);
+
     var semiSphere = new THREE.SphereGeometry(0.15, 32, 32);
-    var cuboEliminar = new THREE.BoxGeometry(0.15, 0.15, 0.15);
+    var cuboEliminar = new THREE.BoxGeometry(0.3, 0.3, 0.3);
+
+    var semiCylynder = new THREE.CylinderGeometry(0.15, 0.15, 0.07, 32);
+
+    var canon = new THREE.CylinderGeometry(0.03, 0.03, 0.7, 32);
 
     //Creamos los mesh
     var baseMesh = new THREE.Mesh(base, material);
@@ -110,26 +115,60 @@ class Personaje extends THREE.Object3D {
     var semiSphereMesh = new THREE.Mesh(semiSphere, material);
     var cuboEliminarMesh = new THREE.Mesh(cuboEliminar, material);
 
+    var semiCylynderMesh = new THREE.Mesh(semiCylynder, material);
+
+    var canonMesh = new THREE.Mesh(canon, material);
+
     //Posicionamos los mesh
     baseMesh.position.set(0, 0.95, -0.3);
     soporteMesh.position.set(0, 1.1, -0.3);
 
-    cuboEliminarMesh.position.set(0, 0.075, 0);
+    cuboEliminarMesh.position.set(0, -0.15, 0);
 
+    semiCylynderMesh.rotateZ(Math.PI/2);
+
+    canonMesh.position.set(0, 1.15, -0.27);
+
+    //Creamos un csg para crear la semicircunferencia
     var csg = new CSG();
     csg.subtract([semiSphereMesh, cuboEliminarMesh]);
 
+    var csgMesh = csg.toMesh();
+    csgMesh.position.set(0, 1.13, -0.3);
+
+    //Reposicionamos el cuboEliminar
+    cuboEliminarMesh.position.set(0, 0, -0.15);
+
+    //Creamos otro csg para crear el semicilindro
+    var csg2 = new CSG();
+    csg2.subtract([semiCylynderMesh, cuboEliminarMesh]);
+
+    cuboEliminarMesh.position.set(0, -0.15, 0);
+    csg2.subtract([cuboEliminarMesh]);
+
+    var csgMesh2 = csg2.toMesh();
+    csgMesh2.position.set(0, 1.15, -0.27);
+
+
     //Creamos los object3D
-    var objetoSoporte = new THREE.Object3D();
-    var objetoSemi = new THREE.Object3D();
+    this.objetoSoporte = new THREE.Object3D();
+    this.objetoSemiCircun = new THREE.Object3D();
+    this.objetoSemiCylin = new THREE.Object3D();
+    this.objetoCanon = new THREE.Object3D();
 
-    objetoSoporte.add(baseMesh);
-    objetoSoporte.add(soporteMesh);
+    this.objetoSoporte.add(baseMesh);
+    this.objetoSoporte.add(soporteMesh);
 
-    objetoSemi.add(objetoSoporte);
-    objetoSemi.add(csg.toMesh());
+    this.objetoSemiCircun.add(this.objetoSoporte);
+    this.objetoSemiCircun.add(csgMesh);
 
-    this.personaje.add(objetoSemi);
+    this.objetoSemiCylin.add(this.objetoSemiCircun);
+    this.objetoSemiCylin.add(csgMesh2);
+
+    this.objetoCanon.add(this.objetoSemiCylin);
+    this.objetoCanon.add(canonMesh);
+
+    this.personaje.add(this.objetoCanon);
   }
 
   createLuzTrasera(){
