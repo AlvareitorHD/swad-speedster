@@ -8,6 +8,10 @@ class Rampa extends THREE.Object3D{
         var circuito = c.tubeGeometry;
         //Creamos los materiales
         var texture = new THREE.TextureLoader().load('../../imgs/rampa.webp');
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.set(1,1);
+        texture.rotation = -Math.PI/2;
+
         var Mat = new THREE.MeshStandardMaterial({map: texture});
         
         //Creamos las geometrias

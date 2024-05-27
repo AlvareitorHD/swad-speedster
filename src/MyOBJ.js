@@ -96,9 +96,25 @@ class Personaje extends THREE.Object3D {
   }
 
   createCanon(){
-    var material1 = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    var material1 = new THREE.MeshPhysicalMaterial({
+      color: 0xffffff,            // Color del material
+      metalness: .8,               // Nivel de metalicidad (0: no metálico, 1: completamente metálico)
+      roughness: 0.5,             // Rugosidad de la superficie (0: muy pulido, 1: muy rugoso)
+      clearcoat: 0.5,             // Intensidad del recubrimiento claro (0: sin recubrimiento claro, 1: recubrimiento completo)
+      clearcoatRoughness: 0.3,    // Rugosidad del recubrimiento claro (0: muy pulido, 1: muy rugoso)
+      reflectivity: 1,            // Reflectividad del material (0: no reflectante, 1: completamente reflectante)
+      ior: 1.5,                   // Índice de refracción (para simular efectos de refracción, por ejemplo, en vidrio)
+      normalMap: new THREE.TextureLoader().load('../imgs/metal.jpg'), // Mapa de normales
+  });
     var material2 = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-    var material3 = new THREE.MeshBasicMaterial({ color: 0x0000ff });
+    var material3 = new THREE.MeshPhysicalMaterial({
+      normalMap: new THREE.TextureLoader().load('../imgs/metalnormal.jpg'),
+      color: 0x05c5a8,
+      metalness: .6,
+      roughness: 0.5,
+      clearcoat: 0.5,
+      ior: 1.5,
+  });
 
     //Creamos las geometrías
     var base = new THREE.CylinderGeometry(0.05, 0.05, 0.3, 32);
