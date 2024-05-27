@@ -748,11 +748,6 @@ createHelmet() {
         }
       }
     });
-    document.addEventListener('keyup', (event) => {
-      if(event.key == 'v'){
-
-      }
-    });
   }
 
   updateRayo(){
@@ -858,10 +853,10 @@ createHelmet() {
       this.n2.rotation.y = Math.max(this.n2.rotation.y, -Math.PI/4);
     } else if (!this.desgirar && this.rotacionLateral < 0) {
       // Alonso gira a la izquierda
-      this.upperArmR.rotation.x += this.rotacionLateral;
+      this.upperArmR.rotation.x -= this.rotacionLateral;
       this.upperArmR.rotation.x = Math.min(this.upperArmR.rotation.x, -Math.PI/6);
       this.upperArmL.rotation.x -= this.rotacionLateral;
-      this.upperArmL.rotation.x = Math.max(this.upperArmL.rotation.x, -Math.PI/3.5);
+      this.upperArmL.rotation.x = Math.min(this.upperArmL.rotation.x, -Math.PI/3.5);
       // Ruedas giran a la izquierda
       this.n1.rotation.y -= this.rotacionLateral; // Resta porque la rotación lateral es negativa
       this.n1.rotation.y = Math.min(this.n1.rotation.y, Math.PI / 4); // Limita la rotación en el rango
