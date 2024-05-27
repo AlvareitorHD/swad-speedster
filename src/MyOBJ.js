@@ -109,7 +109,8 @@ class Personaje extends THREE.Object3D {
 
     var semiCylynder = new THREE.CylinderGeometry(0.15, 0.15, 0.07, 32);
 
-    var canon = new THREE.CylinderGeometry(0.03, 0.03, 0.7, 32);
+    var canon = new THREE.CylinderGeometry(0.03, 0.03, 0.3, 32);
+    canon.translate(0, 0.15, 0);
 
     //Creamos los mesh
     var baseMesh = new THREE.Mesh(base, material1);
@@ -120,25 +121,26 @@ class Personaje extends THREE.Object3D {
 
     var semiCylynderMesh = new THREE.Mesh(semiCylynder, material2);
 
-    var canonMesh = new THREE.Mesh(canon, material3);
+    this.canonMesh = new THREE.Mesh(canon, material1);
  
     //Posicionamos los mesh
-    baseMesh.position.set(0, 0.95, 0);
-    soporteMesh.position.set(0, 1.1, 0);
+    baseMesh.position.set(0, 0.15, 0);
+    soporteMesh.position.set(0, 0.3, 0);
 
     cuboEliminarMesh.position.set(0, -0.15, 0);
 
     semiCylynderMesh.rotateZ(Math.PI/2);
 
-    canonMesh.position.set(0, 1.5, 0);
-    canonMesh.geometry.scale(1, 0.7, 1);
+    //canonMesh.geometry.scale(1, 0.7, 1);
+    this.canonMesh.position.set(0, 0.35, 0);
+    
 
     //Creamos un csg para crear la semicircunferencia
     var csg = new CSG();
     csg.subtract([semiSphereMesh, cuboEliminarMesh]);
 
     var csgMesh = csg.toMesh();
-    csgMesh.position.set(0, 1.13, -0.3);
+    csgMesh.position.set(0, 0.325, 0);
 
     //Reposicionamos el cuboEliminar
     cuboEliminarMesh.position.set(0, 0, -0.15);
@@ -151,7 +153,7 @@ class Personaje extends THREE.Object3D {
     csg2.subtract([cuboEliminarMesh]);
 
     var csgMesh2 = csg2.toMesh();
-    csgMesh2.position.set(0, 1.15, -0.27);
+    csgMesh2.position.set(0, 0.33, 0.005);
 
 
     //Creamos los object3D
@@ -160,17 +162,19 @@ class Personaje extends THREE.Object3D {
     this.objetoSemiCylin = new THREE.Object3D();
     this.objetoCanon = new THREE.Object3D();
 
-    this.objetoSoporte.add(baseMesh);
-    this.objetoSoporte.add(soporteMesh);
-
-    this.objetoSemiCircun.add(this.objetoSoporte);
-    this.objetoSemiCircun.add(csgMesh);
-
-    this.objetoSemiCylin.add(this.objetoSemiCircun);
+    this.objetoSemiCylin.add(this.canonMesh);
     this.objetoSemiCylin.add(csgMesh2);
 
-    this.objetoCanon.add(this.objetoSemiCylin);
-    this.objetoCanon.add(canonMesh);
+    this.objetoSemiCircun.add(this.objetoSemiCylin);
+    this.objetoSemiCircun.add(csgMesh);
+
+    this.objetoSoporte.add(this.objetoSemiCircun);
+    this.objetoSoporte.add(soporteMesh);
+
+    this.objetoCanon.add(this.objetoSoporte);
+    this.objetoCanon.add(baseMesh);
+
+    this.objetoCanon.position.set(0, 0.8, -0.3);
 
     this.personaje.add(this.objetoCanon);
   }
@@ -179,20 +183,37 @@ class Personaje extends THREE.Object3D {
     var mouse = new THREE.Vector2();
     var raycaster = new THREE.Raycaster();
     var plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
-
+    var lastMouseX = window.innerWidth / 2;
+    var lastMouseY = window.innerHeight / 2;
+  
     window.addEventListener('mousemove', (event) => {
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-        raycaster.setFromCamera(mouse, this.camera);
-        var intersects = raycaster.ray.intersectPlane(plane, new THREE.Vector3(0,0,1));
-        if (intersects) {
-            var point = intersects;
-            var angle = Math.atan2(point.y - this.objetoCanon.position.y, point.x - this.objetoCanon.position.x);
-            this.objetoSemiCircun.rotation.x = angle;
-        }
-    }, false);
-}
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  
+      raycaster.setFromCamera(mouse, this.camera);
+      var intersects = raycaster.ray.intersectPlane(plane, new THREE.Vector3(0,0,1));
+      if (intersects) {
+          var point = intersects;
+          if (lastMouseX !== null) {
+              var deltaX = event.clientX - lastMouseX;
+              var deltaY = event.clientY - lastMouseY;
+              var newYRotation = this.objetoSemiCircun.rotation.y += deltaX * 0.005;
+              var newXRotation = this.canonMesh.rotation.x += deltaY * 0.005;
+              
+              if (newYRotation >= 0 && newYRotation <= Math.PI/2){
+                this.objetoSemiCircun.rotation.y = newYRotation;
+              }
+  
+              // Mover esta condición fuera de la condición de newYRotation
+              if (newXRotation >= Math.PI/2 && newXRotation <= Math.PI){
+                this.canonMesh.rotation.x = newXRotation;
+              }
+          }
+          lastMouseX = event.clientX;
+          lastMouseY = event.clientY;
+      }
+  }, false);
+  }
 
   createLuzTrasera(){
     var caja = new THREE.BoxGeometry(0.2, 0.25, 0.1);

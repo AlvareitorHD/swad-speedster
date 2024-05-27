@@ -79,7 +79,7 @@ class MyScene extends THREE.Scene {
     this.circuito.add(this.rampa);
 
     this.punto_escudo = new Punto_Escudo(this.gui,"a");
-    this.add(this.punto_escudo);
+    //this.add(this.punto_escudo);
 
     // Construimos los distinos elementos que tendremos en la escena
 
@@ -91,7 +91,7 @@ class MyScene extends THREE.Scene {
     this.createCamera();
 
     // Un suelo 
-    this.createGround();
+    //this.createGround();
 
     // Y unos ejes. Imprescindibles para orientarnos sobre dónde están las cosas
     // Todas las unidades están en metros
