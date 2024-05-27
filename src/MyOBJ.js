@@ -197,8 +197,6 @@ class Personaje extends THREE.Object3D {
 
   initMouseTracking() {
     var mouse = new THREE.Vector2();
-    var raycaster = new THREE.Raycaster();
-    var plane = new THREE.Plane(new THREE.Vector3(), 0);
     var lastMouseX = window.innerWidth / 2;
     var lastMouseY = window.innerHeight / 2;
   
@@ -206,30 +204,24 @@ class Personaje extends THREE.Object3D {
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       mouse.y = (event.clientY / window.innerHeight) * 2 + 1;
   
-      raycaster.setFromCamera(mouse, this.camera);
-      var intersects = raycaster.ray.intersectPlane(plane, new THREE.Vector3(0,0,1));
-      if (intersects) {
-          var point = intersects;
-          if (lastMouseX !== null) {
-              var deltaX = event.clientX - lastMouseX;
-              var deltaY = event.clientY - lastMouseY;
-              var newYRotation = (this.objetoSemiCircun.rotation.y -= deltaX * 0.005);
-              var newXRotation = -(this.canonMesh.rotation.x += deltaY * 0.005);
-              
+      if (lastMouseX !== null) {
+          var deltaX = event.clientX - lastMouseX;
+          var deltaY = event.clientY - lastMouseY;
+          var newYRotation = (this.objetoSemiCircun.rotation.y -= deltaX * 0.005);
+          var newXRotation = -(this.canonMesh.rotation.x += deltaY * 0.005);
 
-              // Esto mueve el cañón horizontalmente
-             if (newYRotation <= Math.PI*2 && newYRotation >= Math.PI){
-                this.objetoSemiCircun.rotation.y = newYRotation;
-              }
-  
-              // Esto mueve el cañón verticalmente
-              if (newXRotation >= 0 && newXRotation <= Math.PI/2){
-                this.canonMesh.rotation.x = newXRotation;
-             }
-
+          // Esto mueve el cañón horizontalmente
+          if (newYRotation <= Math.PI*2 && newYRotation >= Math.PI){
+            this.objetoSemiCircun.rotation.y = newYRotation;
           }
-          lastMouseX = event.clientX;
-          lastMouseY = event.clientY;
+
+          // Esto mueve el cañón verticalmente
+          if (newXRotation >= 0 && newXRotation <= Math.PI/2){
+            this.canonMesh.rotation.x = newXRotation;
+          }
+      
+        lastMouseX = event.clientX;
+        lastMouseY = event.clientY;
       }
   }, false);
   }
