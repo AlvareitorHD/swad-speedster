@@ -204,24 +204,17 @@ class Personaje extends THREE.Object3D {
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       mouse.y = (event.clientY / window.innerHeight) * 2 + 1;
 
-          if (lastMouseX !== null) {
-              var deltaX = event.clientX - lastMouseX;
-              var deltaY = event.clientY - lastMouseY;
-              var newYRotation = (this.objetoSemiCircun.rotation.y -= deltaX * 0.005);
-              var newXRotation = -(this.canonMesh.rotation.x += deltaY * 0.005);
-              
+      if (lastMouseX !== null) {
+        var deltaX = event.clientX - lastMouseX;
+        var deltaY = event.clientY - lastMouseY;
+        var newYRotation = (this.objetoSemiCircun.rotation.y -= deltaX * 0.001);
+        var newXRotation = -(this.canonMesh.rotation.x += deltaY * 0.001);
+        
+        this.objetoSemiCircun.rotation.y = newYRotation;
+        this.canonMesh.rotation.x = newXRotation;
 
-              // Esto mueve el cañón horizontalmente
-             if (newYRotation <= Math.PI*2 && newYRotation >= Math.PI){
-                this.objetoSemiCircun.rotation.y = newYRotation;
-              }
-  
-              // Esto mueve el cañón verticalmente
-              if (newXRotation >= 0 && newXRotation <= Math.PI/2){
-                this.canonMesh.rotation.x = newXRotation;
-             }
-          lastMouseX = event.clientX;
-          lastMouseY = event.clientY;
+        lastMouseX = event.clientX;
+        lastMouseY = event.clientY;
       }
   }, false);
   }
@@ -903,6 +896,7 @@ createHelmet() {
     this.updateRayo();
     this.actualizarRayoVisual();
     this.animate();
+
     if(this.speed == 0){
       this.aceleracion.pause();
       this.ralenti.play();
