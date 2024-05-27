@@ -197,7 +197,6 @@ class Personaje extends THREE.Object3D {
 
   initMouseTracking() {
     var mouse = new THREE.Vector2();
-    var raycaster = new THREE.Raycaster();
     var plane = new THREE.Plane(new THREE.Vector3(), 0);
     var lastMouseX = window.innerWidth / 2;
     var lastMouseY = window.innerHeight / 2;
@@ -205,11 +204,6 @@ class Personaje extends THREE.Object3D {
     window.addEventListener('mousemove', (event) => {
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       mouse.y = (event.clientY / window.innerHeight) * 2 + 1;
-  
-      raycaster.setFromCamera(mouse, this.camera);
-      var intersects = raycaster.ray.intersectPlane(plane, new THREE.Vector3(0,0,1));
-      if (intersects) {
-          var point = intersects;
           if (lastMouseX !== null) {
               var deltaX = event.clientX - lastMouseX;
               var deltaY = event.clientY - lastMouseY;
@@ -226,8 +220,6 @@ class Personaje extends THREE.Object3D {
               if (newXRotation >= 0 && newXRotation <= Math.PI/2){
                 this.canonMesh.rotation.x = newXRotation;
              }
-
-          }
           lastMouseX = event.clientX;
           lastMouseY = event.clientY;
       }
@@ -415,44 +407,44 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
     var jointGeometry = new THREE.SphereGeometry(0.05, 12, 12);
     var handGeometry = new THREE.SphereGeometry(0.05, 16, 16);
 
-    var upperArmR = new THREE.Mesh(upperArmGeometry, armMaterial);
+    this.upperArmR = new THREE.Mesh(upperArmGeometry, armMaterial);
     var lowerArmR = new THREE.Mesh(lowerArmGeometry, armMaterial);
     var elbowR = new THREE.Mesh(jointGeometry, armMaterial);
     var handR = new THREE.Mesh(handGeometry, handMaterial);
 
-    upperArmR.position.set(0.2, 0.4, 0);
-    upperArmR.rotation.z = Math.PI / 4;
-    upperArmR.rotation.x = -Math.PI / 4;
+    this.upperArmR.position.set(0.2, 0.4, 0);
+    this.upperArmR.rotation.z = Math.PI / 4;
+    this.upperArmR.rotation.x = -Math.PI / 4;
     elbowR.position.set(0, -0.15, 0);
     elbowR.rotation.x = -Math.PI / 2;
     elbowR.rotation.z = -Math.PI / 4;
     lowerArmR.position.set(0, -0.2, 0);
     handR.position.set(0, -0.15, 0);
 
-    upperArmR.add(elbowR);
+    this.upperArmR.add(elbowR);
     elbowR.add(lowerArmR);
     lowerArmR.add(handR);
-    alonso.add(upperArmR);
+    alonso.add(this.upperArmR);
 
     // Brazo izquierdo (espejo del derecho)
-    var upperArmL = new THREE.Mesh(upperArmGeometry, armMaterial);
+    this.upperArmL = new THREE.Mesh(upperArmGeometry, armMaterial);
     var lowerArmL = new THREE.Mesh(lowerArmGeometry, armMaterial);
     var elbowL = new THREE.Mesh(jointGeometry, armMaterial);
     var handL = new THREE.Mesh(handGeometry, handMaterial);
 
-    upperArmL.position.set(-0.2, 0.4, 0);
-    upperArmL.rotation.z = -Math.PI / 4;
-    upperArmL.rotation.x = -Math.PI / 4;
+    this.upperArmL.position.set(-0.2, 0.4, 0);
+    this.upperArmL.rotation.z = -Math.PI / 4;
+    this.upperArmL.rotation.x = -Math.PI / 4;
     elbowL.position.set(0, -0.15, 0);
     elbowL.rotation.x = -Math.PI / 2;
     elbowL.rotation.z = Math.PI / 4;
     lowerArmL.position.set(0, -0.2, 0);
     handL.position.set(0, -0.15, 0);
 
-    upperArmL.add(elbowL);
+    this.upperArmL.add(elbowL);
     elbowL.add(lowerArmL);
     lowerArmL.add(handL);
-    alonso.add(upperArmL);
+    alonso.add(this.upperArmL);
 
     //Casco
     var casco = this.createHelmet();
@@ -731,27 +723,41 @@ createHelmet() {
   }
 
   alternarVista(){
+    var c = false;
     document.addEventListener('keydown', (event) => {
       if(event.key == 'c'){
-        this.cameraController.rotation.y = (Math.PI);
+          this.cameraController.rotation.x = 0;
+          this.cameraController.position.set(0, 0, 0);
+          this.cameraController.rotation.y = (Math.PI);
       }
     });
     document.addEventListener('keyup', (event) => {
       if(event.key == 'c'){
+          if(!c){
+          this.cameraController.rotation.x = 0;
+          this.cameraController.position.set(0, 0, 0);
+        } else{
+          this.cameraController.rotation.x = -0.06;
+          this.cameraController.position.set(0, -1.05, 5.1);
+        }
         this.cameraController.rotation.y = 0;
       }
     });
-
     document.addEventListener('keydown', (event) => {
       if(event.key == 'v'){
-        this.cameraController.rotation.x = -0.06;
-        this.cameraController.position.set(0, -1.05, 5.1);
+        c = !c;
+        if(c){
+          this.cameraController.rotation.x = -0.06;
+          this.cameraController.position.set(0, -1.05, 5.1);
+        } else{
+          this.cameraController.rotation.x = 0;
+          this.cameraController.position.set(0, 0, 0);
+        }
       }
     });
     document.addEventListener('keyup', (event) => {
       if(event.key == 'v'){
-        this.cameraController.rotation.x = 0;
-        this.cameraController.position.set(0, 0, 0);
+
       }
     });
   }
@@ -847,22 +853,43 @@ createHelmet() {
       this.n4.geometry.rotateX(this.speed*2*Math.PI);
     }
     if(!this.desgirar && this.rotacionLateral > 0){
+      // Alonso gira a la derecha
+      this.upperArmR.rotation.x -= this.rotacionLateral;
+      this.upperArmR.rotation.x = Math.max(this.upperArmR.rotation.x, -Math.PI/3.5);
+      this.upperArmL.rotation.x += this.rotacionLateral;
+      this.upperArmL.rotation.x = Math.min(this.upperArmL.rotation.x, -Math.PI/6);
+      // Ruedas giran a la derecha
       this.n1.rotation.y -= this.rotacionLateral;
       this.n1.rotation.y = Math.max(this.n1.rotation.y, -Math.PI/4);
       this.n2.rotation.y -= this.rotacionLateral;
       this.n2.rotation.y = Math.max(this.n2.rotation.y, -Math.PI/4);
     } else if (!this.desgirar && this.rotacionLateral < 0) {
+      // Alonso gira a la izquierda
+      this.upperArmR.rotation.x += this.rotacionLateral;
+      this.upperArmR.rotation.x = Math.min(this.upperArmR.rotation.x, -Math.PI/6);
+      this.upperArmL.rotation.x -= this.rotacionLateral;
+      this.upperArmL.rotation.x = Math.max(this.upperArmL.rotation.x, -Math.PI/3.5);
+      // Ruedas giran a la izquierda
       this.n1.rotation.y -= this.rotacionLateral; // Resta porque la rotación lateral es negativa
       this.n1.rotation.y = Math.min(this.n1.rotation.y, Math.PI / 4); // Limita la rotación en el rango
       this.n2.rotation.y -= this.rotacionLateral; // Resta porque la rotación lateral es negativa
       this.n2.rotation.y = Math.min(this.n2.rotation.y, Math.PI / 4); // Limita la rotación en el rango
   } else{
     if(this.desgirar && this.rotacionLateral > 0){
+      // Alonso gira vuelve a la posición inicial
+      this.upperArmR.rotation.x = -Math.PI/4;
+      this.upperArmL.rotation.x = -Math.PI/4;
+
       this.n1.rotation.y -= this.friction;
       this.n1.rotation.y = Math.max(this.rotacionLateral, 0); // Velocidad mínima es cero
       this.n2.rotation.y -= this.friction;
       this.n2.rotation.y = Math.max(this.rotacionLateral, 0); // Velocidad mínima es cero
   }else if(this.desgirar && this.rotacionLateral < 0){
+
+    // Alonso gira vuelve a la posición inicial
+    this.upperArmR.rotation.x = -Math.PI/4;
+    this.upperArmL.rotation.x = -Math.PI/4;
+    
       this.n1.rotation.y += this.friction;
       this.n1.rotation.y = Math.min(this.rotacionLateral, 0); // Velocidad máxima es cero
       this.n2.rotation.y += this.friction;
