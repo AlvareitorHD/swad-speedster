@@ -191,23 +191,26 @@ class Personaje extends THREE.Object3D {
       mouse.y = (event.clientY / window.innerHeight) * 2 + 1;
   
       raycaster.setFromCamera(mouse, this.camera);
-      var intersects = raycaster.ray.intersectPlane(plane, new THREE.Vector3());
+      var intersects = raycaster.ray.intersectPlane(plane, new THREE.Vector3(0,0,1));
       if (intersects) {
           var point = intersects;
           if (lastMouseX !== null) {
               var deltaX = event.clientX - lastMouseX;
               var deltaY = event.clientY - lastMouseY;
-              var newYRotation = -(this.objetoSemiCircun.rotation.y += deltaX * 0.005);
+              var newYRotation = (this.objetoSemiCircun.rotation.y -= deltaX * 0.005);
               var newXRotation = -(this.canonMesh.rotation.x += deltaY * 0.005);
               
-              if (newYRotation <= Math.PI/2 && newYRotation >= -Math.PI/2){
-                this.objetoSemiCircun.rotation.y = newYRotation/Math.PI/2;
+
+              // Esto mueve el cañón horizontalmente
+             if (newYRotation <= Math.PI*2 && newYRotation >= Math.PI){
+                this.objetoSemiCircun.rotation.y = newYRotation;
               }
   
-              // Mover esta condición fuera de la condición de newYRotation
-              if (newXRotation >= 0 && newXRotation <= Math.PI){
-                this.canonMesh.rotation.x = newXRotation/Math.PI/2;
+              // Esto mueve el cañón verticalmente
+              if (newXRotation >= 0 && newXRotation <= Math.PI/2){
+                this.canonMesh.rotation.x = newXRotation;
              }
+
           }
           lastMouseX = event.clientX;
           lastMouseY = event.clientY;
