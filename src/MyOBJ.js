@@ -182,32 +182,32 @@ class Personaje extends THREE.Object3D {
   initMouseTracking() {
     var mouse = new THREE.Vector2();
     var raycaster = new THREE.Raycaster();
-    var plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+    var plane = new THREE.Plane(new THREE.Vector3(), 0);
     var lastMouseX = window.innerWidth / 2;
     var lastMouseY = window.innerHeight / 2;
   
     window.addEventListener('mousemove', (event) => {
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      mouse.y = (event.clientY / window.innerHeight) * 2 + 1;
   
       raycaster.setFromCamera(mouse, this.camera);
-      var intersects = raycaster.ray.intersectPlane(plane, new THREE.Vector3(0,0,1));
+      var intersects = raycaster.ray.intersectPlane(plane, new THREE.Vector3());
       if (intersects) {
           var point = intersects;
           if (lastMouseX !== null) {
               var deltaX = event.clientX - lastMouseX;
               var deltaY = event.clientY - lastMouseY;
-              var newYRotation = this.objetoSemiCircun.rotation.y += deltaX * 0.005;
-              var newXRotation = this.canonMesh.rotation.x += deltaY * 0.005;
+              var newYRotation = -(this.objetoSemiCircun.rotation.y += deltaX * 0.005);
+              var newXRotation = -(this.canonMesh.rotation.x += deltaY * 0.005);
               
-              if (newYRotation >= 0 && newYRotation <= Math.PI/2){
-                this.objetoSemiCircun.rotation.y = newYRotation;
+              if (newYRotation <= Math.PI/2 && newYRotation >= -Math.PI/2){
+                this.objetoSemiCircun.rotation.y = newYRotation/Math.PI/2;
               }
   
               // Mover esta condición fuera de la condición de newYRotation
-              if (newXRotation >= Math.PI/2 && newXRotation <= Math.PI){
-                this.canonMesh.rotation.x = newXRotation;
-              }
+              if (newXRotation >= 0 && newXRotation <= Math.PI){
+                this.canonMesh.rotation.x = newXRotation/Math.PI/2;
+             }
           }
           lastMouseX = event.clientX;
           lastMouseY = event.clientY;
@@ -646,6 +646,9 @@ createHelmet() {
   }
 
   movimientoPrincipal() {
+    var luz_freno = new THREE.Color(0xff0000);
+    var color_bombilla = new THREE.Color(0xaaaaaa);
+    var luz_blanca = new THREE.Color(0xffffff);
     // Lógica de movimiento del personaje
     // Actualiza la velocidad según la entrada del usuario
     document.addEventListener('keydown', (event) => {
@@ -657,12 +660,12 @@ createHelmet() {
       } else if (event.key === 's'|| event.key == KeyCode.KEY_DOWN) {
         this.luz_trasera.material.emissiveIntensity = 1;
         if(this.speed < 0){
-          this.luz.color = new THREE.Color(0xffffff);
-          this.luz_trasera.material.emissive = new THREE.Color(0xaaaaaa);
+          this.luz.color = luz_blanca;
+          this.luz_trasera.material.emissive = color_bombilla;
         }
         else{
-          this.luz_trasera.material.emissive = new THREE.Color(0xff0000);
-          this.luz.color = new THREE.Color(0xff0000);
+          this.luz_trasera.material.emissive = luz_freno;
+          this.luz.color = luz_freno;
         }
 
         this.luz.intensity = 1;
