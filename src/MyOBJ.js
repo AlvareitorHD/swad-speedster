@@ -781,12 +781,13 @@ createHelmet() {
           this.timeout = false;
         }, 3000);
 
+        console.log("Colisión con un cono de tráfico");
+
         if (this.tengoEscudo) {
           this.tengoEscudo = false;
         }
         else{
           impactados[0].object.userData.colision();
-          console.log("Colisión con un cono de tráfico");
           this.speed *= 0.2; // Reduce la velocidad
           if(this.score > 0)
           this.score -= 1;
@@ -795,38 +796,40 @@ createHelmet() {
       }
       // Si el objeto impactado es un neumático
       else if (impactados[0].object.userData instanceof Neumatico && !this.timeout) {
-        if (this.tengoEscudo) {
-          this.tengoEscudo = false;
-            return;
-        }
-        
         this.timeout = true;
         setTimeout(() => {
           this.timeout = false;
         }, 3000);
+
         console.log("Colisión con neumatico");
-        this.speed = 0; // Paramos el personaje por completo
-        impactados[0].object.userData.colision();
-        //Simular choque
-        var origen = { rot: 0};
-        var destino = { rot: Math.PI/8 };
-        // Crear una animación de choque y recuperación
-        var tween = new TWEEN.Tween(origen).to(destino, 500);
-        tween.easing(TWEEN.Easing.Quadratic.InOut);
-        tween.onUpdate(() => {
-            this.personaje.rotation.x = origen.rot;
-        });
-        tween.start();
-        setTimeout(() => {
-        origen = { rot: Math.PI/8};
-        destino = {rot: 0};
-        var tween = new TWEEN.Tween(origen).to(destino, 500);
-        tween.easing(TWEEN.Easing.Linear.None);
-        tween.onUpdate(() => {
-            this.personaje.rotation.x = origen.rot;
-        });
-        tween.start();
-        },500);
+
+        if (this.tengoEscudo) {
+          this.tengoEscudo = false;
+        }
+        else{
+          this.speed = 0; // Paramos el personaje por completo
+          impactados[0].object.userData.colision();
+          //Simular choque
+          var origen = { rot: 0};
+          var destino = { rot: Math.PI/8 };
+          // Crear una animación de choque y recuperación
+          var tween = new TWEEN.Tween(origen).to(destino, 500);
+          tween.easing(TWEEN.Easing.Quadratic.InOut);
+          tween.onUpdate(() => {
+              this.personaje.rotation.x = origen.rot;
+          });
+          tween.start();
+          setTimeout(() => {
+          origen = { rot: Math.PI/8};
+          destino = {rot: 0};
+          var tween = new TWEEN.Tween(origen).to(destino, 500);
+          tween.easing(TWEEN.Easing.Linear.None);
+          tween.onUpdate(() => {
+              this.personaje.rotation.x = origen.rot;
+          });
+          tween.start();
+          },500);
+        }
       }
       // Si el objeto impactado es una rampa y no estamos saltando y la velocidad es positiva
       else if (impactados[0].object.userData instanceof Rampa && !this.salto && this.speed > 0) {
