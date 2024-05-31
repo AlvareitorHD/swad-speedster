@@ -80,7 +80,15 @@ class MyScene extends THREE.Scene {
     this.rampa = new Rampa(this.circuito,0.05,Math.PI/2);
     this.circuito.add(this.rampa);
 
-    this.punto_escudo = new Punto_Escudo(this.gui,"a");
+    var rot2 = -Math.PI / 2;
+    this.punto_escudos = [];
+    for (var i = 0; i < 5; i++) {
+      var punto_escudo = new Punto_Escudo(this.circuito, this.t, rot2);
+      this.punto_escudos.push(punto_escudo);
+      this.t = (i/5+0.3)%1;
+      rot2 += Math.PI / 4;
+    }
+    this.circuito.add(...this.punto_escudos);
     //this.add(this.punto_escudo);
 
     // Construimos los distinos elementos que tendremos en la escena

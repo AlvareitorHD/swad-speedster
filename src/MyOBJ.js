@@ -10,12 +10,12 @@ import { Moneda_Basica } from './Moneda_Basica/Moneda_Basica.js';
 import { Moneda_Premium } from './Moneda_Premium/Moneda_Premium.js';
 
 import { CSG } from '../../libs/CSG-v2.js';
+import { Punto_Escudo } from './Punto_Escudo/Punto_Escudo.js';
 
 class Personaje extends THREE.Object3D {
   constructor(gui, titleGui, c) {
 
     super();
-
     var circuito = c.tubeGeometry;
     this.circuito = c;
     this.vueltas = 0;
@@ -215,8 +215,8 @@ class Personaje extends THREE.Object3D {
       if (lastMouseX !== null) {
         var deltaX = event.clientX - lastMouseX;
         var deltaY = event.clientY - lastMouseY;
-        var newYRotation = (this.objetoSemiCircun.rotation.y -= deltaX * 0.005);
-        var newXRotation = -(this.canonMesh.rotation.x += deltaY * 0.005);
+        var newYRotation = (this.objetoSemiCircun.rotation.y -= deltaX * 0.001);
+        var newXRotation = -(this.canonMesh.rotation.x += deltaY * 0.0015);
          // Esto mueve el cañón horizontalmente
          if (newYRotation <= Math.PI*2 && newYRotation >= Math.PI){
           this.objetoSemiCircun.rotation.y = newYRotation;
@@ -780,15 +780,26 @@ createHelmet() {
         setTimeout(() => {
           this.timeout = false;
         }, 3000);
-        impactados[0].object.userData.colision();
-        console.log("Colisión con un cono de tráfico");
-        this.speed *= 0.2; // Reduce la velocidad
-        if(this.score > 0)
-        this.score -= 1;
-        else this.score = 0;
+
+        if (this.tengoEscudo) {
+          this.tengoEscudo = false;
+        }
+        else{
+          impactados[0].object.userData.colision();
+          console.log("Colisión con un cono de tráfico");
+          this.speed *= 0.2; // Reduce la velocidad
+          if(this.score > 0)
+          this.score -= 1;
+          else this.score = 0;
+        }
       }
       // Si el objeto impactado es un neumático
       else if (impactados[0].object.userData instanceof Neumatico && !this.timeout) {
+        if (this.tengoEscudo) {
+          this.tengoEscudo = false;
+            return;
+        }
+        
         this.timeout = true;
         setTimeout(() => {
           this.timeout = false;
@@ -850,6 +861,13 @@ createHelmet() {
           this.salto = false;
         }, 1000);// Tiempo de salto 1 segundo
       }
+      else if (impactados[0].object.userData instanceof Punto_Escudo) {
+        console.log("Colisión con punto de escudo");
+        impactados[0].object.userData.colision();
+        this.tengoEscudo = true;
+      }
+
+      console.log(this.tengoEscudo);
     }
   }
 
