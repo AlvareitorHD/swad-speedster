@@ -23,6 +23,12 @@ class Personaje extends THREE.Object3D {
     this.score = 0;
     this.puntuar = true;
 
+
+    // Posición y dirección para el updateRayo
+    this.pos = new THREE.Vector3();
+    this.direccion = new THREE.Vector3();
+
+
     this.speed = 0; // Velocidad inicial del personaje
     this.acceleration = 0.0005; // Aceleración del personaje
     this.maxSpeed = 0.075; // Velocidad máxima del personaje
@@ -104,11 +110,13 @@ class Personaje extends THREE.Object3D {
       clearcoatRoughness: 0.3,    // Rugosidad del recubrimiento claro (0: muy pulido, 1: muy rugoso)
       reflectivity: 1,            // Reflectividad del material (0: no reflectante, 1: completamente reflectante)
       ior: 1.5,                   // Índice de refracción (para simular efectos de refracción, por ejemplo, en vidrio)
-      normalMap: new THREE.TextureLoader().load('../imgs/metal.jpg'), // Mapa de normales
+      normalMap: new THREE.TextureLoader().load('../imgs/metalnormal.jpg'), // Mapa de normales
+      normalScale: new THREE.Vector2(2, 2), // Escala del mapa de normales
   });
     var material2 = new THREE.MeshBasicMaterial({ color: 0xff0000 });
     var material3 = new THREE.MeshPhysicalMaterial({
       normalMap: new THREE.TextureLoader().load('../imgs/metalnormal.jpg'),
+      normalScale: new THREE.Vector2(1, 1),
       color: 0x05c5a8,
       metalness: .6,
       roughness: 0.5,
@@ -117,15 +125,15 @@ class Personaje extends THREE.Object3D {
   });
 
     //Creamos las geometrías
-    var base = new THREE.CylinderGeometry(0.05, 0.05, 0.3, 32);
-    var soporte = new THREE.CylinderGeometry(0.15, 0.15, 0.05, 32);
+    var base = new THREE.CylinderGeometry(0.05, 0.05, 0.3, 12);
+    var soporte = new THREE.CylinderGeometry(0.15, 0.15, 0.05, 12);
 
-    var semiSphere = new THREE.SphereGeometry(0.15, 32, 32);
+    var semiSphere = new THREE.SphereGeometry(0.15, 16, 16);
     var cuboEliminar = new THREE.BoxGeometry(0.3, 0.3, 0.3);
 
-    var semiCylynder = new THREE.CylinderGeometry(0.15, 0.15, 0.07, 32);
+    var semiCylynder = new THREE.CylinderGeometry(0.15, 0.15, 0.07, 12);
 
-    var canon = new THREE.CylinderGeometry(0.03, 0.03, 0.3, 32);
+    var canon = new THREE.CylinderGeometry(0.03, 0.03, 0.3, 12);
     canon.translate(0, 0.15, 0);
 
     //Creamos los mesh
@@ -207,12 +215,17 @@ class Personaje extends THREE.Object3D {
       if (lastMouseX !== null) {
         var deltaX = event.clientX - lastMouseX;
         var deltaY = event.clientY - lastMouseY;
-        var newYRotation = (this.objetoSemiCircun.rotation.y -= deltaX * 0.001);
-        var newXRotation = -(this.canonMesh.rotation.x += deltaY * 0.001);
-        
-        this.objetoSemiCircun.rotation.y = newYRotation;
-        this.canonMesh.rotation.x = newXRotation;
+        var newYRotation = (this.objetoSemiCircun.rotation.y -= deltaX * 0.005);
+        var newXRotation = -(this.canonMesh.rotation.x += deltaY * 0.005);
+         // Esto mueve el cañón horizontalmente
+         if (newYRotation <= Math.PI*2 && newYRotation >= Math.PI){
+          this.objetoSemiCircun.rotation.y = newYRotation;
+        }
 
+        // Esto mueve el cañón verticalmente
+        if (newXRotation >= 0 && newXRotation <= Math.PI/2){
+          this.canonMesh.rotation.x = newXRotation;
+       }
         lastMouseX = event.clientX;
         lastMouseY = event.clientY;
       }
@@ -229,7 +242,7 @@ class Personaje extends THREE.Object3D {
     var sujetador = new THREE.Mesh(caja, material);
 
     this.luz = new THREE.PointLight(0xff0000, 0, 10);
-    var luminaria = new THREE.SphereGeometry(0.075, 16, 16);
+    var luminaria = new THREE.SphereGeometry(0.075, 12, 12);
     var material = new THREE.MeshPhysicalMaterial({ 
       color: 0xff0000,        // Color rojo
       emissive: 0xff0000,     // Emisión de luz roja
@@ -275,22 +288,24 @@ class Personaje extends THREE.Object3D {
       0.03
     );
     // Crea un rayo visual
-  this.rayoVisual = new THREE.Line(
+  /*this.rayoVisual = new THREE.Line(
   new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3(0, 0, 1)]),
   new THREE.LineBasicMaterial({ color: 0xff0000 }) // Color rojo
 );
 this.rayoVisual.visible = true; // Oculta el rayo por defecto
 this.add(this.rayoVisual); // Añade el rayo al raycaster
-
+*/
     // PICKING
     this.raycaster = new THREE.Raycaster();
     document.addEventListener('mousedown', this.onDocumentMouseDown.bind(this), false);
   }
-
+/*
   actualizarRayoVisual() {
     this.rayoVisual.geometry.setFromPoints([this.rayo.ray.origin, this.rayo.ray.origin.clone().add(this.rayo.ray.direction)]);
   }
+*/
 
+  // Método para picking de monedas básicas y premium
   onDocumentMouseDown(event) {
     var mouse = new THREE.Vector2();
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -316,12 +331,10 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
         this.score += 5;
         setTimeout(() =>{
           this.puntuar = true;
-        },1000); //Aumenta el giro de la moneda durante un 1 segundo
+        },1500); // No volver a puntuar durante 1.5 segundos
       }
     }
   }
-
-
 
   createReloj() {
     this.reloj = new THREE.Clock();
@@ -340,9 +353,9 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
     this.cameraController.add(this.camera);
     this.personaje.add(this.cameraController);
   }
-
+  
+  // Método para crear el chasis del coche
   createChasis() {
-
     var ml = new MTLLoader();
     var ol = new OBJLoader();
     ml.load('../models/f1.mtl',
@@ -363,10 +376,11 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
       });
   }
 
+  // Método para crear el piloto del coche (Alonso)
   createAlonso() {
     var alonso = new THREE.Group();
     // Cabeza
-    var sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
+    var sphereGeometry = new THREE.SphereGeometry(1, 16, 16);
     sphereGeometry.scale(1, 1.2, 1.5);
     var texture = new THREE.TextureLoader().load('../imgs/alonso.jpg');
     texture.wrapS = THREE.RepeatWrapping;
@@ -384,7 +398,8 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
     capsuleGeometry.scale(1, 1.2, 1.1);
     var bodyMaterial = new THREE.MeshStandardMaterial({ map: new THREE.TextureLoader().load('../imgs/mono.jpg'),
       roughness: 1,
-     });
+      normalMap: new THREE.TextureLoader().load('../imgs/telanormal.jpg'),
+    });
     var body = new THREE.Mesh(capsuleGeometry, bodyMaterial);
     body.position.set(0, 0.35, 0);
     body.rotation.y = Math.PI;
@@ -395,10 +410,10 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
     var handMaterial = new THREE.MeshStandardMaterial({ color: 0xFFE9D1 });
 
     // Brazo derecho
-    var upperArmGeometry = new THREE.CylinderGeometry(0.05, 0.05, 0.3, 32);
-    var lowerArmGeometry = new THREE.CylinderGeometry(0.04, 0.04, 0.25, 32);
+    var upperArmGeometry = new THREE.CylinderGeometry(0.05, 0.05, 0.3, 12);
+    var lowerArmGeometry = new THREE.CylinderGeometry(0.04, 0.04, 0.25, 12);
     var jointGeometry = new THREE.SphereGeometry(0.05, 12, 12);
-    var handGeometry = new THREE.SphereGeometry(0.05, 16, 16);
+    var handGeometry = new THREE.SphereGeometry(0.05, 12, 12);
 
     this.upperArmR = new THREE.Mesh(upperArmGeometry, armMaterial);
     var lowerArmR = new THREE.Mesh(lowerArmGeometry, armMaterial);
@@ -411,7 +426,7 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
     elbowR.position.set(0, -0.15, 0);
     elbowR.rotation.x = -Math.PI / 2;
     elbowR.rotation.z = -Math.PI / 4;
-    lowerArmR.position.set(0, -0.2, 0);
+    lowerArmR.position.set(0, -0.15, 0);
     handR.position.set(0, -0.15, 0);
 
     this.upperArmR.add(elbowR);
@@ -431,7 +446,7 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
     elbowL.position.set(0, -0.15, 0);
     elbowL.rotation.x = -Math.PI / 2;
     elbowL.rotation.z = Math.PI / 4;
-    lowerArmL.position.set(0, -0.2, 0);
+    lowerArmL.position.set(0, -0.15, 0);
     handL.position.set(0, -0.15, 0);
 
     this.upperArmL.add(elbowL);
@@ -454,7 +469,7 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
 createHelmet() {
     var material = new THREE.MeshStandardMaterial({
         color: 0x037A68,
-        metalness: 1,
+        metalness: 0.6,
         roughness: 0.5,
     });
 
@@ -473,10 +488,10 @@ createHelmet() {
     });
 
     // Geometrías
-    var largeCapsule = new THREE.CapsuleGeometry(1, 2, 8, 16);
-    var smallCapsule = new THREE.CapsuleGeometry(0.9, 1.9, 8, 16);
+    var largeCapsule = new THREE.CapsuleGeometry(1, 2, 8, 12);
+    var smallCapsule = new THREE.CapsuleGeometry(0.9, 1.9, 8, 12);
     var cube = new THREE.BoxGeometry(2, 2, 2);
-    var visorCylinder = new THREE.CylinderGeometry(0.5, 0.5, 2, 32);
+    var visorCylinder = new THREE.CylinderGeometry(0.5, 0.5, 2, 12);
     visorCylinder.scale(1.5, 1, 1.175);
 
     // Meshes
@@ -515,7 +530,7 @@ createHelmet() {
     visorResultMesh.position.set(0, 0.12, 0.12);
 
     // Agregar mini cilindros en las esquinas de la visera
-    var hingeGeometry = new THREE.CylinderGeometry(0.02, 0.01, 0.025, 16);
+    var hingeGeometry = new THREE.CylinderGeometry(0.02, 0.01, 0.025, 8);
     hingeGeometry.rotateZ(Math.PI / 2);
     var hingeMaterial = new THREE.MeshStandardMaterial( {
       color: 0xffffff,
@@ -542,13 +557,10 @@ createHelmet() {
     return helmetGroup;
 }
 
-
-
-
   createNeumatico() {
     var llanta = this.createLlanta();
     // Crear un toro estirado para representar el neumático
-    var tireGeometry = new THREE.TorusGeometry(0.5, 0.2, 16, 100);
+    var tireGeometry = new THREE.TorusGeometry(0.5, 0.2, 16, 32);
     tireGeometry.scale(1, 1, 2);
     tireGeometry.scale(0.35, 0.35, 0.35);
     tireGeometry.rotateY(Math.PI / 2);
@@ -750,14 +762,19 @@ createHelmet() {
     });
   }
 
+  // Método para compronar si el personaje ha colisionado con un obstáculo y actuar en consecuencia
   updateRayo(){
-    var pos = new THREE.Vector3();
-    this.personaje.getWorldPosition(pos);
-    var direccion = new THREE.Vector3();
-    this.personaje.getWorldDirection(direccion);
-    this.rayo.set(pos, direccion.normalize());
+    // Actualiza la posición del rayo
+    this.personaje.getWorldPosition(this.pos);
+    // Actualiza la dirección del rayo
+    this.personaje.getWorldDirection(this.direccion);
+    // Actualiza la posición del rayo y su dirección
+    this.rayo.set(this.pos, this.direccion.normalize());
+    // Calcula los objetos impactados por el rayo
     var impactados = this.rayo.intersectObjects(this.hijos, true);
+    // Si hay impactos y la distancia al primer objeto es menor que 0.5
     if (impactados.length > 0 && impactados[0].distance < 0.5) {
+      // Si el objeto impactado es un cono de tráfico
       if (impactados[0].object.userData instanceof Cono_Trafico && !this.timeout) {
         this.timeout = true;
         setTimeout(() => {
@@ -770,17 +787,19 @@ createHelmet() {
         this.score -= 1;
         else this.score = 0;
       }
+      // Si el objeto impactado es un neumático
       else if (impactados[0].object.userData instanceof Neumatico && !this.timeout) {
         this.timeout = true;
         setTimeout(() => {
           this.timeout = false;
         }, 3000);
         console.log("Colisión con neumatico");
-        this.speed = 0; // Reduce la velocidad
+        this.speed = 0; // Paramos el personaje por completo
         impactados[0].object.userData.colision();
         //Simular choque
         var origen = { rot: 0};
         var destino = { rot: Math.PI/8 };
+        // Crear una animación de choque y recuperación
         var tween = new TWEEN.Tween(origen).to(destino, 500);
         tween.easing(TWEEN.Easing.Quadratic.InOut);
         tween.onUpdate(() => {
@@ -798,11 +817,13 @@ createHelmet() {
         tween.start();
         },500);
       }
+      // Si el objeto impactado es una rampa y no estamos saltando y la velocidad es positiva
       else if (impactados[0].object.userData instanceof Rampa && !this.salto && this.speed > 0) {
         this.salto = true;
         this.speed *=1.5;
         var origen = { y: this.radio, rot: 0};
         var destino = { y: this.radio + 1, rot: -Math.PI/4 };
+        // Crear una animación de salto y caída
         var tween = new TWEEN.Tween(origen).to(destino, 500);
         tween.easing(TWEEN.Easing.Quadratic.InOut);
         tween.onUpdate(() => {
@@ -819,16 +840,15 @@ createHelmet() {
         tween.onUpdate(() => {
             this.posSuperficie.position.y = origen.y;
             this.personaje.rotation.x = origen.rot;
-
         });
         tween.start();
         },500);
         console.log("Colisión con rampa");
-
         setTimeout(() => {
+          // Vuelve a la velocidad normal
           this.speed /= 1.5;
           this.salto = false;
-        }, 1000);//3 segundos
+        }, 1000);// Tiempo de salto 1 segundo
       }
     }
   }
@@ -889,7 +909,7 @@ createHelmet() {
 
   update() {
     this.updateRayo();
-    this.actualizarRayoVisual();
+    //this.actualizarRayoVisual();
     this.animate();
 
     if(this.speed == 0){
@@ -918,17 +938,18 @@ createHelmet() {
         this.rotacionLateral = Math.min(this.rotacionLateral, 0); // Velocidad máxima es cero
       }
     }
+    // Comprobamos que el personaje haya recorrido media vuelta al menos
     if(this.t >= 0.5 && this.t < 0.65 && !this.mitad){
       this.mitad = true;
-      console.log("Mitad del circuito");
     }
+    // Comprobamos que el personaje haya recorrido una vuelta entera y le aumentamos la velocidad máxima
     if(this.t >= 0 && this.t <= 0.1 && this.mitad){
-      this.vueltas++; this.mitad = false; console.log("Vuelta completada");
+      this.vueltas++; this.mitad = false;
       this.maxSpeed *= 1.1;
       this.activaVuelta = true;
     }
     // Actualiza la posición del personaje según la velocidad
-    this.t = (this.t + this.speed * this.reloj.getDelta()) % 1;
+    this.t = (this.t + this.speed * this.reloj.getDelta()) % 1.0;
     if (this.t < 0) this.t = 1 + this.t;
     var posTemp = this.path.getPointAt(this.t);
     this.nodoPosOrientTubo.position.copy(posTemp);

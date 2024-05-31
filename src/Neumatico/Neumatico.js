@@ -10,9 +10,10 @@ class Neumatico extends THREE.Object3D{
 
         // Creamos la textura del neumatico
         var texture = new THREE.TextureLoader().load('../../imgs/neumatico.jpeg');
+        var normalMap = new THREE.TextureLoader().load('../../imgs/normal-neu.png');
         //Le aplicamos la textura
-        var Mat = new THREE.MeshStandardMaterial({map: texture, side: THREE.DoubleSide, color: 0x666666,
-          normalMap: texture
+        var Mat = new THREE.MeshStandardMaterial({map: texture, side: THREE.DoubleSide, color: 0xaaaaaa,
+          normalMap: normalMap, normalScale: new THREE.Vector2(1, 1)
         });
         
         var shape = new THREE.Shape();
@@ -23,10 +24,10 @@ class Neumatico extends THREE.Object3D{
         shape.bezierCurveTo(1.2, -0.2, 1.2, 0.2, 1, 0.4);
         shape.quadraticCurveTo(0.5, 0.3, 0.5, 0.25);
 
-        var points = shape.extractPoints(20).shape;
+        var points = shape.extractPoints(24).shape;
 
         // Un Mesh se compone de geometría y material
-        var neumaticoGeom = new THREE.LatheGeometry(points, 30, 0, Math.PI * 2);
+        var neumaticoGeom = new THREE.LatheGeometry(points, 16, 0, Math.PI * 2);
 
         //Contruimos el mesh
         this.neumatico = new THREE.Mesh(neumaticoGeom, Mat);

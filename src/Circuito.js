@@ -3,10 +3,6 @@ import * as THREE from '../libs/three.module.js'
 class Circuito extends THREE.Object3D {
     constructor(gui, titleGui) {
         super();
-        // Se crea la parte de la interfaz que corresponde a la caja
-        // Se crea primero porque otros métodos usan las variables que se definen para la interfaz
-        //this.createGUI(gui, titleGui);
-
         var vertices = [
             new THREE.Vector3(3.513597, 0.000000, 9.059264),
             new THREE.Vector3(-36.441284, 0.000000, 8.497508),
@@ -101,18 +97,18 @@ class Circuito extends THREE.Object3D {
             new THREE.Vector3(12.875489, -3.630991, 9.430302),
             new THREE.Vector3(9.690588, -2.420661, 9.196302),
             new THREE.Vector3(6.505686, -1.210331, 8.962302),
-            new THREE.Vector3(5.0096415, -0.6051655, 8.962302)
-
+            new THREE.Vector3(5.0096415, -0.6051655, 8.962302),
+            new THREE.Vector3(3.518201575, 0.00, 9.05835862)
         ];
         // Crear una curva a partir de los vértices
         var curve = new THREE.CatmullRomCurve3(vertices);
 
         // Parámetros del tubo
         var radius = 1.5;
-        var segments = 1000;
+        var segments = 800;
 
         // Crear la geometría del tubo
-        this.tubeGeometry = new THREE.TubeGeometry(curve, segments, radius, 40, true);
+        this.tubeGeometry = new THREE.TubeGeometry(curve, segments, radius, 20, true);
 
         // Material para el tubo
         var textura = new THREE.TextureLoader().load('../imgs/carretera1.jpg');

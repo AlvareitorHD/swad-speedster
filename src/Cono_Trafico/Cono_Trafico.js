@@ -43,9 +43,10 @@ class Cono_Trafico extends THREE.Object3D{
         this.add(this.cono_trafico);
         this.posicionar(circuito,t,rot);
         this.createColision();
+        this.sonido = new Audio('/sound/cono.mp3');
     }
+
     colision(){
-        console.log("Caer al suelo");
         var origen = { x: 0};
         var destino = { x: Math.PI/2};
         var tween = new TWEEN.Tween(origen).to(destino, 500);
@@ -55,8 +56,7 @@ class Cono_Trafico extends THREE.Object3D{
         });
         tween.start();
 
-        var sonido = new Audio('/sound/cono.mp3');
-        sonido.play();
+        this.sonido.play();
 
         setTimeout(() => {
           this.cono_trafico.rotation.x = 0;

@@ -10,7 +10,7 @@ class Moneda_Premium extends THREE.Object3D{
         this.velocidad = 5;
         // Se crea la parte de la interfaz que corresponde a la caja
         // Se crea primero porque otros métodos usan las variables que se definen para la interfaz
-        this.createGUI(gui,titleGui);
+        //this.createGUI(gui,titleGui);
 
         //Creamos los materiales
         var Mat = new THREE.MeshStandardMaterial({color: 0x00AA00}); // Color verde
@@ -125,8 +125,9 @@ class Moneda_Premium extends THREE.Object3D{
         new THREE.Vector3(14.250999, 6.114858, -8.917201),
         new THREE.Vector3(16.187572, 6.114858, -10.997223)
       ],true);
+
       var geometrLine = new THREE.BufferGeometry();
-      geometrLine.setFromPoints(this.ruta.getPoints(100));
+      geometrLine.setFromPoints(this.ruta.getPoints(80));
       // Linea de la ruta visible
       //var materialLine = new THREE.LineBasicMaterial({color: 0xff0000});
       //var line = new THREE.Line(geometrLine, materialLine);
@@ -159,7 +160,7 @@ class Moneda_Premium extends THREE.Object3D{
       var box = new THREE.Box3();
       box.setFromObject(this.premium);
       var boxHelper = new THREE.Box3Helper(box, 0xffff00);
-      boxHelper.visible = true;
+      boxHelper.visible = false;
       boxHelper.userData = this;
       this.premium.add(boxHelper);
     }

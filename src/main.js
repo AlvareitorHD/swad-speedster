@@ -42,6 +42,8 @@ class MyScene extends THREE.Scene {
     this.add(this.circuito);
     this.personaje = new Personaje(this.gui, "Controles de la Caja", this.circuito);
     this.add(this.personaje);
+    var neumatico = new Neumatico(this.gui, "Controles del neumático", this.circuito,0.1);
+    this.circuito.add(neumatico);
 
     this.t = 0.03;
     var rot = Math.PI / 2;
@@ -63,7 +65,7 @@ class MyScene extends THREE.Scene {
     this.circuito.add(...this.neumaticos);
 
     this.basicas = [];
-    for (var i = 0; i < 20; i++) {
+    for (var i = 0; i < 19; i++) {
       var basica = new Moneda_Basica(this.gui, "Controles de la moneda", this.circuito,this.t);
       this.basicas.push(basica);
       this.t = (i/20+0.2)%1;
