@@ -1059,61 +1059,63 @@ updateSpeedParticles() {
 
 
   update() {
-    this.updateRayo();
-    if(this.impulso){
-      this.speedParticles.visible = true;
-      this.updateSpeedParticles();
-    }
-    //this.actualizarRayoVisual();
-    this.animate();
+    if (this.circuito.puedeSalir) {
+      this.updateRayo();
 
-    if(this.speed == 0){
-      this.aceleracion.pause();
-      this.ralenti.play();
-    } else{
-      this.aceleracion.play();
-      this.ralenti.pause();
-    }
-
-    if (this.desacelerar) {
-      if (this.speed > 0) {
-        this.speed -= this.friction;
-        this.speed = Math.max(this.speed, 0); // Velocidad mínima es cero
-      } else if (this.speed < 0) {
-        this.speed += this.friction;
-        this.speed = Math.min(this.speed, 0); // Velocidad máxima es cero
+      if(this.impulso){
+        this.speedParticles.visible = true;
+        this.updateSpeedParticles();
       }
-    }
-    if(this.desgirar){
-      if(this.rotacionLateral > 0){
-        this.rotacionLateral -= this.friction;
-        this.rotacionLateral = Math.max(this.rotacionLateral, 0); // Velocidad mínima es cero
-      }else if(this.rotacionLateral < 0){
-        this.rotacionLateral += this.friction;
-        this.rotacionLateral = Math.min(this.rotacionLateral, 0); // Velocidad máxima es cero
-      }
-    }
-    // Comprobamos que el personaje haya recorrido media vuelta al menos
-    if(this.t >= 0.5 && this.t < 0.65 && !this.mitad){
-      this.mitad = true;
-    }
-    // Comprobamos que el personaje haya recorrido una vuelta entera y le aumentamos la velocidad máxima
-    if(this.t >= 0 && this.t <= 0.1 && this.mitad){
-      this.vueltas++; this.mitad = false;
-      this.maxSpeed *= 1.1;
-      this.activaVuelta = true;
-    }
-    // Actualiza la posición del personaje según la velocidad
-    this.t = (this.t + this.speed * this.reloj.getDelta()) % 1.0;
-    if (this.t < 0) this.t = 1 + this.t;
-    var posTemp = this.path.getPointAt(this.t);
-    this.nodoPosOrientTubo.position.copy(posTemp);
-    var tangente = this.path.getTangentAt(this.t);
-    posTemp.add(tangente);
-    var segmentoActual = Math.floor(this.t * this.segmentos);
-    this.nodoPosOrientTubo.up = this.tubo.binormals[segmentoActual];
-    this.nodoPosOrientTubo.lookAt(posTemp);
+      //this.actualizarRayoVisual();
+      this.animate();
 
+      if(this.speed == 0){
+        this.aceleracion.pause();
+        this.ralenti.play();
+      } else{
+        this.aceleracion.play();
+        this.ralenti.pause();
+      }
+
+      if (this.desacelerar) {
+        if (this.speed > 0) {
+          this.speed -= this.friction;
+          this.speed = Math.max(this.speed, 0); // Velocidad mínima es cero
+        } else if (this.speed < 0) {
+          this.speed += this.friction;
+          this.speed = Math.min(this.speed, 0); // Velocidad máxima es cero
+        }
+      }
+      if(this.desgirar){
+        if(this.rotacionLateral > 0){
+          this.rotacionLateral -= this.friction;
+          this.rotacionLateral = Math.max(this.rotacionLateral, 0); // Velocidad mínima es cero
+        }else if(this.rotacionLateral < 0){
+          this.rotacionLateral += this.friction;
+          this.rotacionLateral = Math.min(this.rotacionLateral, 0); // Velocidad máxima es cero
+        }
+      }
+      // Comprobamos que el personaje haya recorrido media vuelta al menos
+      if(this.t >= 0.5 && this.t < 0.65 && !this.mitad){
+        this.mitad = true;
+      }
+      // Comprobamos que el personaje haya recorrido una vuelta entera y le aumentamos la velocidad máxima
+      if(this.t >= 0 && this.t <= 0.1 && this.mitad){
+        this.vueltas++; this.mitad = false;
+        this.maxSpeed *= 1.1;
+        this.activaVuelta = true;
+      }
+      // Actualiza la posición del personaje según la velocidad
+      this.t = (this.t + this.speed * this.reloj.getDelta()) % 1.0;
+      if (this.t < 0) this.t = 1 + this.t;
+      var posTemp = this.path.getPointAt(this.t);
+      this.nodoPosOrientTubo.position.copy(posTemp);
+      var tangente = this.path.getTangentAt(this.t);
+      posTemp.add(tangente);
+      var segmentoActual = Math.floor(this.t * this.segmentos);
+      this.nodoPosOrientTubo.up = this.tubo.binormals[segmentoActual];
+      this.nodoPosOrientTubo.lookAt(posTemp);
+    }
     TWEEN.update();
   }
 }

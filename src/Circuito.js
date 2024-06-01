@@ -3,6 +3,8 @@ import * as THREE from '../libs/three.module.js'
 class Circuito extends THREE.Object3D {
     constructor(gui, titleGui) {
         super();
+        this.puedeSalir = false;
+        
         var vertices = [
             new THREE.Vector3(3.513597, 0.000000, 9.059264),
             new THREE.Vector3(-36.441284, 0.000000, 8.497508),
@@ -182,6 +184,7 @@ class Circuito extends THREE.Object3D {
                     this.lights.forEach(light => light.material = lightMaterialGreen);
                     clearInterval(interval); // Detener el intervalo después de cambiar a verde
                     audio2.play();
+                    this.puedeSalir = true;
                 }
             }, 1500); // Cambia cada 1.5 segundos
         }
