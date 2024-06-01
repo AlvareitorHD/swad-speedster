@@ -11,8 +11,16 @@ class Punto_Escudo extends THREE.Object3D{
         //this.createGUI(gui,titleGui);
 
         //Creamos los materiales
-        var texture = new THREE.TextureLoader().load('../../imgs/wood.jpg');
-        var Mat = new THREE.MeshStandardMaterial({color: 0xFFFF00});
+        var texture = new THREE.TextureLoader().load('/imgs/wood.jpg');
+        var metal = new THREE.TextureLoader().load('/imgs/metalnormal2.jpg');
+        metal.wrapS = THREE.RepeatWrapping;
+        metal.wrapT = THREE.RepeatWrapping;
+        var Mat = new THREE.MeshStandardMaterial({
+          color: 0xFFD700,  // Color dorado
+          metalness: 0.7,   // Material completamente metálico
+          roughness: 0.3,    // Ajustar para obtener un brillo dorado
+          normalMap: metal,
+      });
 
         var bordeMat = new THREE.MeshStandardMaterial({map: texture});        
         //Creamos las geometrias
@@ -38,27 +46,30 @@ class Punto_Escudo extends THREE.Object3D{
 
         var bordeescudoMesh = new THREE.Mesh(bordeGeom, bordeMat);
         var escudoMesh = new THREE.Mesh(escudoGeom, Mat);
-
         
         this.escudo = new THREE.Object3D();
 
         // Y añadirlo como hijo del Object3D (el this)
         this.escudo.add(escudoMesh);
         this.escudo.add(bordeescudoMesh);
+        this.escudo.scale.set(0.4, 0.4, 0.4);
 
         this.escudo.userData = this;
 
         this.posicionar(circuito, t, rot);
         this.createColision();
+        this.sonido = new Audio('/sound/escudo.mp3');
     }
 
     colision(){
+      this.sonido.play();
       var tween = new TWEEN.Tween(this.posSuperficie.position)
-      .to({y: this.radio + 0.5}, 500)
+      .to({y: this.radio + 1}, 500)
       .onComplete(() => {
         this.escudo.visible = false;
         setTimeout(() => {
           this.escudo.visible = true;
+          this.posSuperficie.position.y = this.radio + 0.3;
         }, 5000);
       })
       .start();
@@ -77,7 +88,7 @@ class Punto_Escudo extends THREE.Object3D{
       this.nodoPosOrientTubo = new THREE.Object3D();
       this.movimientoLateral = new THREE.Object3D();
       this.posSuperficie = new THREE.Object3D();
-      this.posSuperficie.position.y = circuito.parameters.radius;
+      this.posSuperficie.position.y = circuito.parameters.radius+0.3;
   
       this.add(this.nodoPosOrientTubo);
       this.nodoPosOrientTubo.add(this.movimientoLateral);
@@ -100,6 +111,10 @@ class Punto_Escudo extends THREE.Object3D{
       this.nodoPosOrientTubo.lookAt(posTemp);
 
       TWEEN.update();
+    }
+
+    update(){
+      this.escudo.rotation.y += 0.01;
     }
 }
 

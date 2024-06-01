@@ -11,6 +11,7 @@ import { Moneda_Premium } from './Moneda_Premium/Moneda_Premium.js';
 
 import { CSG } from '../../libs/CSG-v2.js';
 import { Punto_Escudo } from './Punto_Escudo/Punto_Escudo.js';
+import { Impulsor } from './Impulsor/Impulsor.js';
 
 class Personaje extends THREE.Object3D {
   constructor(gui, titleGui, c) {
@@ -98,7 +99,7 @@ class Personaje extends THREE.Object3D {
     this.createColision();
     this.createRayCaster();
     this.personaje.scale.set(0.5, 0.5, 0.5);
-    
+    this.createSpeedParticles();
   }
 
   createCanon(){
@@ -231,7 +232,7 @@ class Personaje extends THREE.Object3D {
       }
   }, false);
   }
-
+  
   createLuzTrasera(){
     var caja = new THREE.BoxGeometry(0.2, 0.25, 0.1);
     var material = new THREE.MeshStandardMaterial({
@@ -601,6 +602,7 @@ createHelmet() {
     this.aceleracion = new Audio('/sound/car-acceleration-inside-car.mp3');
     this.ralenti = new Audio('/sound/ralenti.mp3');
     this.ralenti.volume = 0.1;
+    this.noEscudo = new Audio('/sound/noEscudo.mp3');
   }
 
   getCamara() {
@@ -762,6 +764,49 @@ createHelmet() {
     });
   }
 
+  createSpeedParticles() {
+    const particles = new THREE.Group();
+    const particleMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
+
+    for (let i = 0; i < 50; i++) {
+        const particleGeometry = new THREE.BufferGeometry();
+        const vertices = new Float32Array([
+            0, 0, 0,
+            0, 0, 5 // Línea horizontal de longitud 1
+        ]);
+        particleGeometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+        
+        const particle = new THREE.Line(particleGeometry, particleMaterial);
+        
+        // Posicionar partículas aleatoriamente alrededor del coche
+        particle.position.set(
+            (Math.random() - 0.5) * 5, 
+            (Math.random() - 0.5) * 5, 
+            (Math.random() - 0.5) * 2
+        );
+
+        particles.add(particle);
+    }
+
+    this.speedParticles = particles;
+    this.speedParticles.visible = false;
+    this.personaje.add(this.speedParticles);
+}
+
+
+
+updateSpeedParticles() {
+  if (this.speedParticles.visible) {
+      this.speedParticles.children.forEach(particle => {
+          // Hacer que las partículas se muevan hacia atrás
+          //particle.position.z -= 0.1; // Ajusta la velocidad del movimiento
+          particle.position.x += (Math.random() - 0.5) * 0.05;
+          particle.position.y += (Math.random() - 0.5) * 0.05;
+      });
+  }
+}
+
+
   // Método para compronar si el personaje ha colisionado con un obstáculo y actuar en consecuencia
   updateRayo(){
     // Actualiza la posición del rayo
@@ -784,6 +829,7 @@ createHelmet() {
         console.log("Colisión con un cono de tráfico");
 
         if (this.tengoEscudo) {
+          this.noEscudo.play();
           this.tengoEscudo = false;
         }
         else{
@@ -804,6 +850,7 @@ createHelmet() {
         console.log("Colisión con neumatico");
 
         if (this.tengoEscudo) {
+          this.noEscudo.play();
           this.tengoEscudo = false;
         }
         else{
@@ -864,13 +911,25 @@ createHelmet() {
           this.salto = false;
         }, 1000);// Tiempo de salto 1 segundo
       }
-      else if (impactados[0].object.userData instanceof Punto_Escudo) {
+      else if (impactados[0].object.userData instanceof Punto_Escudo && !this.tengoEscudo) {
         console.log("Colisión con punto de escudo");
         impactados[0].object.userData.colision();
         this.tengoEscudo = true;
       }
-
-      console.log(this.tengoEscudo);
+      else if (impactados[0].object.userData instanceof Impulsor && !this.timeout && this.speed > 0){
+        this.timeout = true;
+        console.log("Colisión con impulsor");
+        impactados[0].object.userData.colision();
+        this.speed = this.maxSpeed;
+        this.impulso = true;
+        setTimeout(() => {
+          this.impulso = false;
+          this.speedParticles.visible = false;
+        }, 1500);
+        setTimeout(() => {
+          this.timeout = false;
+        }, 500);
+      }
     }
   }
 
@@ -930,6 +989,10 @@ createHelmet() {
 
   update() {
     this.updateRayo();
+    if(this.impulso){
+      this.speedParticles.visible = true;
+      this.updateSpeedParticles();
+    }
     //this.actualizarRayoVisual();
     this.animate();
 

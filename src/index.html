@@ -191,6 +191,29 @@
   transform: translateY(-50%);
 }
 
+#escudo {
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    display: none;
+    /* Ocultar el escudo al inicio */
+    justify-content: center;
+    align-items: center;
+}
+#escudo img {
+    transform: rotate(45deg);
+    max-width: 20%;
+    max-height: 20%;
+    filter: brightness(1.5); /* Aclara la imagen en un 50% */
+}
+#escudo p {
+    font-size: 2em;
+    font-family: 'Arial Black', sans-serif;
+    color: rgb(238, 255, 0);
+    -webkit-text-stroke-width: 0.05em; /* Ancho del borde */
+    -webkit-text-stroke-color: #000; /* Color del borde */
+}
+
     </style>
 </head>
 
@@ -219,6 +242,11 @@
         </div>
         <div id="speed">Speed: 0</div>
         <div id="max_speed">Max Speed: </div>
+    </div>
+
+    <div id="escudo">
+        <p>Escudo</p>
+        <img src="/imgs/escudo.png" alt="Escudo">
     </div>
 
     <div id="vuelta"> ( Vuelta ) </div>

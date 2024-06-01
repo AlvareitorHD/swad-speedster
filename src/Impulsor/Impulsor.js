@@ -1,4 +1,6 @@
 import * as THREE from '../../libs/three.module.js'
+import * as TWEEN from '../../libs/tween.esm.js'
+
 
 import { CSG } from '../../libs/CSG-v2.js'
 
@@ -41,6 +43,7 @@ class Impulsor extends THREE.Object3D {
     this.video.play();
     this.posicionar(circuito, t, rot);
     this.createColision();
+    this.sonido = new Audio('/sound/impulsor.mp3');
   }
 
   posicionar(circuito,ti,rot){
@@ -48,7 +51,7 @@ class Impulsor extends THREE.Object3D {
     this.nodoPosOrientTubo = new THREE.Object3D();
     this.movimientoLateral = new THREE.Object3D();
     this.posSuperficie = new THREE.Object3D();
-    this.posSuperficie.position.y = circuito.parameters.radius;
+    this.posSuperficie.position.y = circuito.parameters.radius - 0.025;
 
     this.add(this.nodoPosOrientTubo);
     this.nodoPosOrientTubo.add(this.movimientoLateral);
@@ -69,6 +72,17 @@ class Impulsor extends THREE.Object3D {
     var segmentoActual = Math.floor(this.t * this.segmentos);
     this.nodoPosOrientTubo.up = this.tubo.binormals[segmentoActual];
     this.nodoPosOrientTubo.lookAt(posTemp);
+  }
+
+  colision(){
+    this.sonido.play();
+    var tween = new TWEEN.Tween(this.posSuperficie.position)
+    .to({y: this.radio + 0.5}, 500)
+    .onComplete(() => {
+
+      this.posSuperficie.position.y = this.radio - 0.025;
+    })
+    .start();
   }
 
   createColision(){

@@ -18,6 +18,7 @@ import { Rampa } from './Rampa/Rampa.js'
 import { Moneda_Basica } from './Moneda_Basica/Moneda_Basica.js'
 import { Moneda_Premium } from './Moneda_Premium/Moneda_Premium.js'
 import { Punto_Escudo } from './Punto_Escudo/Punto_Escudo.js'
+import { Impulsor } from './Impulsor/Impulsor.js'
 
 
 /// La clase fachada del modelo
@@ -44,6 +45,9 @@ class MyScene extends THREE.Scene {
     this.add(this.personaje);
     var neumatico = new Neumatico(this.gui, "Controles del neumático", this.circuito,0.1);
     this.circuito.add(neumatico);
+
+    var impulsor = new Impulsor(this.gui, "Controles del impulsor", this.circuito,0.01,Math.PI/2);
+    this.circuito.add(impulsor); 
 
     this.t = 0.03;
     var rot = Math.PI / 2;
@@ -302,6 +306,12 @@ toggleButton.addEventListener('click', toggleMusic);
     return renderer;
   }
   updateHUD(){
+    const escudo = document.getElementById("escudo");
+    if(this.personaje.tengoEscudo){
+      escudo.style.display = "flex";}
+    else{
+      escudo.style.display = "none";
+    }
     const speed = document.getElementById("speed");
     speed.innerHTML = "Speed: " + (this.personaje.speed * 1600).toFixed(2) + " km/h";
     const max_speed = document.getElementById("max_speed");
@@ -380,6 +390,7 @@ toggleButton.addEventListener('click', toggleMusic);
     this.neumaticos.forEach(neumatico => neumatico.update());
     this.basicas.forEach(basica => basica.update());
     this.premium.update();
+    this.punto_escudos.forEach(punto_escudo => punto_escudo.update());
 
     // Le decimos al renderizador "visualiza la escena que te indico usando la cámara que te estoy pasando"
     this.renderer.render(this, this.getCamera());
