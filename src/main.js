@@ -37,7 +37,6 @@ class MyScene extends THREE.Scene {
     this.musicEnabled = true; // Música activada por defecto
     this.alternarMusica();
 
-    // Se añade a la gui los controles para manipular los elementos de esta clase
     this.gui = this.createGUI();
     this.circuito = new Circuito(this.gui, "Controles circuito");
     this.add(this.circuito);

@@ -86,7 +86,7 @@ class Circuito extends THREE.Object3D {
             new THREE.Vector3(41.915764, -8.141637, -2.823272),
             new THREE.Vector3(43.053581, -8.141637, -1.604183),
             new THREE.Vector3(44.597759, -8.141637, -0.994639),
-            new THREE.Vector3(46.101303, -8.11104 , 0.288976 ),
+            new THREE.Vector3(46.101303, -8.11104, 0.288976),
             new THREE.Vector3(47.686115, -8.141637, 2.174991),
             new THREE.Vector3(48.255024, -8.141637, 5.588439),
             new THREE.Vector3(47.523571, -8.751181, 7.498344),
@@ -111,8 +111,8 @@ class Circuito extends THREE.Object3D {
         this.tubeGeometry = new THREE.TubeGeometry(curve, segments, radius, 20, true);
 
         // Material para el tubo
-        var textura = new THREE.TextureLoader().load('../imgs/carretera1.jpg');
-        var normal = new THREE.TextureLoader().load('../imgs/normalcarretera.png');
+        var textura = new THREE.TextureLoader().load('/imgs/carretera1.jpg');
+        var normal = new THREE.TextureLoader().load('/imgs/normalcarretera.png');
         textura.wrapS = THREE.RepeatWrapping;
         textura.wrapT = THREE.RepeatWrapping;
         textura.repeat.set(10, 1); // Ajusta el factor de repetición según tus necesidades
@@ -125,72 +125,133 @@ class Circuito extends THREE.Object3D {
         // Crear el mesh del tubo y agregarlo al circuito
         this.tubeMesh = new THREE.Mesh(this.tubeGeometry, material);
         this.add(this.tubeMesh);
+        var mat = new THREE.TextureLoader().load('/imgs/textura-ajedrezada.jpg');
+        mat.wrapS = THREE.RepeatWrapping;
+        mat.wrapT = THREE.RepeatWrapping;
+        mat.repeat.set(5, 1); // Ajusta el factor de repetición según tus necesidades
+        this.meta = new THREE.Mesh(new THREE.CylinderGeometry(radius + 0.025, radius + 0.025, 1.5, 32),
+            new THREE.MeshStandardMaterial({ map: mat }));
+        this.meta.position.set(vertices[0].x - 1, vertices[0].y, vertices[0].z);
+        this.meta.rotation.z = Math.PI / 2;
+        this.add(this.meta);
+        this.createSemaforo(vertices[0]);
     }
 
-    createGUI(gui, titleGui) {
-        // Controles para el tamaño, la orientación y la posición de la caja
-        this.guiControls = {
-            sizeX: 1.0,
-            sizeY: 1.0,
-            sizeZ: 1.0,
+    createSemaforo(vertice) {
+        // Crear la geometría y el material del cubo estirado
+        var geometry = new THREE.BoxGeometry(2.1, 0.5, 0.25);
+        var material = new THREE.MeshStandardMaterial({ color: 0x000000 });
+        var semaforo = new THREE.Mesh(geometry, material);
+        semaforo.position.set(vertice.x - 2, vertice.y + 3, vertice.z);
+        semaforo.rotation.y = Math.PI / 2; // Tumba el semáforo horizontalmente
+        this.add(semaforo);
 
-            rotX: 0.0,
-            rotY: 0.0,
-            rotZ: 0.0,
+        // Crear las luces en pares
+        this.lights = [];
+        var lightGeometry = new THREE.SphereGeometry(0.1, 12, 12); // Tamaño más pequeño para encajar dentro del cubo
+        var lightMaterialBlack = new THREE.MeshBasicMaterial({ color: 0x444444 });
+        var lightMaterialRed = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        var lightMaterialGreen = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
 
-            posX: 0.0,
-            posY: 0.0,
-            posZ: 0.0,
-
-            anim: false,
-            // Un botón para dejarlo todo en su posición inicial
-            // Cuando se pulse se ejecutará esta función.
-            reset: () => {
-                this.guiControls.sizeX = 1.0;
-                this.guiControls.sizeY = 1.0;
-                this.guiControls.sizeZ = 1.0;
-
-                this.guiControls.rotX = 0.0;
-                this.guiControls.rotY = 0.0;
-                this.guiControls.rotZ = 0.0;
-
-                this.guiControls.posX = 0.0;
-                this.guiControls.posY = 0.0;
-                this.guiControls.posZ = 0.0;
-                this.guiControls.anim = false;
-            }
-        };
-
-        // Se crea una sección para los controles de la caja
-        var folder = gui.addFolder(titleGui);
-        // Estas lineas son las que añaden los componentes de la interfaz
-        // Las tres cifras indican un valor mínimo, un máximo y el incremento
-        // El método   listen()   permite que si se cambia el valor de la variable en código, el deslizador de la interfaz se actualice
-        folder.add(this.guiControls, 'sizeX', 0.1, 5.0, 0.01).name('Tamaño X : ').listen();
-        folder.add(this.guiControls, 'sizeY', 0.1, 5.0, 0.01).name('Tamaño Y : ').listen();
-        folder.add(this.guiControls, 'sizeZ', 0.1, 5.0, 0.01).name('Tamaño Z : ').listen();
-
-        folder.add(this.guiControls, 'rotX', 0.0, Math.PI / 2, 0.01).name('Rotación X : ').listen();
-        folder.add(this.guiControls, 'rotY', 0.0, Math.PI / 2, 0.01).name('Rotación Y : ').listen();
-        folder.add(this.guiControls, 'rotZ', 0.0, Math.PI / 2, 0.01).name('Rotación Z : ').listen();
-
-        folder.add(this.guiControls, 'posX', -20.0, 20.0, 0.01).name('Posición X : ').listen();
-        folder.add(this.guiControls, 'posY', 0.0, 10.0, 0.01).name('Posición Y : ').listen();
-        folder.add(this.guiControls, 'posZ', -20.0, 20.0, 0.01).name('Posición Z : ').listen();
-        folder.add(this.guiControls, 'anim').name('Girar: ').listen();
-        folder.add(this.guiControls, 'reset').name('[ Reset ]');
-    }
-    
-    update() {
-        this.position.set(this.guiControls.posX, this.guiControls.posY, this.guiControls.posZ);
-        if (this.guiControls.anim) {
-            this.rot = (this.rot + 0.01) % (Math.PI * 2);
-            this.rotation.set(this.guiControls.rotX, this.rot, this.guiControls.rotZ);
-        } else {
-            this.rotation.set(this.guiControls.rotX, this.guiControls.rotY, this.guiControls.rotZ);
+        for (var i = 7; i >= 0; i--) {
+            var light = new THREE.Mesh(lightGeometry, lightMaterialBlack);
+            var offsetY = i % 2 === 0 ? 0.15 : -0.15; // Ajusta la posición en Y para los pares
+            var offsetX = 0.75 - Math.floor(i / 2) * 0.5; // Ajusta la posición en X para distribuir las luces
+            light.position.set(offsetX, offsetY, 0.1); // Posiciona la luz dentro del cubo
+            semaforo.add(light);
+            this.lights.push(light);
         }
-        this.scale.set(this.guiControls.sizeX, this.guiControls.sizeY, this.guiControls.sizeZ);
+
+        var audio = new Audio('/sound/rojo.mp3');
+        audio.volume = 0.5;
+        var audio2 = new Audio('/sound/verde.mp3');
+        audio2.volume = 0.5;
+
+        // Añadir animación para cambiar el color de las luces
+        setTimeout(() => {
+            var lightIndex = 0;
+            var redPairs = 0;
+            var interval = setInterval(() => {
+                if (redPairs < 4) { // Encender pares de luces a rojo
+                    this.lights[lightIndex].material = lightMaterialRed;
+                    this.lights[(lightIndex + 1) % 8].material = lightMaterialRed;
+                    lightIndex = (lightIndex + 2) % 8;
+                    redPairs++;
+                    audio.play();
+                } else { // Cambiar todas las luces a verde
+                    this.lights.forEach(light => light.material = lightMaterialGreen);
+                    clearInterval(interval); // Detener el intervalo después de cambiar a verde
+                    audio2.play();
+                }
+            }, 1500); // Cambia cada 1.5 segundos
+        }
+            , 3000); // Espera 3 segundos antes de iniciar la animación}
     }
-}
+
+        createGUI(gui, titleGui) {
+            // Controles para el tamaño, la orientación y la posición de la caja
+            this.guiControls = {
+                sizeX: 1.0,
+                sizeY: 1.0,
+                sizeZ: 1.0,
+
+                rotX: 0.0,
+                rotY: 0.0,
+                rotZ: 0.0,
+
+                posX: 0.0,
+                posY: 0.0,
+                posZ: 0.0,
+
+                anim: false,
+                // Un botón para dejarlo todo en su posición inicial
+                // Cuando se pulse se ejecutará esta función.
+                reset: () => {
+                    this.guiControls.sizeX = 1.0;
+                    this.guiControls.sizeY = 1.0;
+                    this.guiControls.sizeZ = 1.0;
+
+                    this.guiControls.rotX = 0.0;
+                    this.guiControls.rotY = 0.0;
+                    this.guiControls.rotZ = 0.0;
+
+                    this.guiControls.posX = 0.0;
+                    this.guiControls.posY = 0.0;
+                    this.guiControls.posZ = 0.0;
+                    this.guiControls.anim = false;
+                }
+            };
+
+            // Se crea una sección para los controles de la caja
+            var folder = gui.addFolder(titleGui);
+            // Estas lineas son las que añaden los componentes de la interfaz
+            // Las tres cifras indican un valor mínimo, un máximo y el incremento
+            // El método   listen()   permite que si se cambia el valor de la variable en código, el deslizador de la interfaz se actualice
+            folder.add(this.guiControls, 'sizeX', 0.1, 5.0, 0.01).name('Tamaño X : ').listen();
+            folder.add(this.guiControls, 'sizeY', 0.1, 5.0, 0.01).name('Tamaño Y : ').listen();
+            folder.add(this.guiControls, 'sizeZ', 0.1, 5.0, 0.01).name('Tamaño Z : ').listen();
+
+            folder.add(this.guiControls, 'rotX', 0.0, Math.PI / 2, 0.01).name('Rotación X : ').listen();
+            folder.add(this.guiControls, 'rotY', 0.0, Math.PI / 2, 0.01).name('Rotación Y : ').listen();
+            folder.add(this.guiControls, 'rotZ', 0.0, Math.PI / 2, 0.01).name('Rotación Z : ').listen();
+
+            folder.add(this.guiControls, 'posX', -20.0, 20.0, 0.01).name('Posición X : ').listen();
+            folder.add(this.guiControls, 'posY', 0.0, 10.0, 0.01).name('Posición Y : ').listen();
+            folder.add(this.guiControls, 'posZ', -20.0, 20.0, 0.01).name('Posición Z : ').listen();
+            folder.add(this.guiControls, 'anim').name('Girar: ').listen();
+            folder.add(this.guiControls, 'reset').name('[ Reset ]');
+        }
+
+        update() {
+            this.position.set(this.guiControls.posX, this.guiControls.posY, this.guiControls.posZ);
+            if (this.guiControls.anim) {
+                this.rot = (this.rot + 0.01) % (Math.PI * 2);
+                this.rotation.set(this.guiControls.rotX, this.rot, this.guiControls.rotZ);
+            } else {
+                this.rotation.set(this.guiControls.rotX, this.guiControls.rotY, this.guiControls.rotZ);
+            }
+            this.scale.set(this.guiControls.sizeX, this.guiControls.sizeY, this.guiControls.sizeZ);
+        }
+    }
 
 export { Circuito };

@@ -461,6 +461,57 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
     casco.position.set(0, 0.6, 0);
     alonso.add(casco);
 
+    // Volante
+// Crear las geometrías del volante
+var toro = new THREE.TorusGeometry(0.1, 0.02, 16, 100);
+var cubo = new THREE.BoxGeometry(0.2, 0.02, 0.01);
+var cilindro = new THREE.CylinderGeometry(0.01, 0.01, 0.2, 16);
+
+// Posicionar el cubo en el centro del toro
+cubo.translate(0, 0, 0);
+
+// Posicionar el cilindro perpendicularmente en el eje Z positivo
+cilindro.rotateX(Math.PI / 2); // Rotar el cilindro para que quede perpendicular
+cilindro.translate(0, 0, 0.08); // Posicionar el cilindro
+
+// Cargar las texturas para el material de cuero
+var textureLoader = new THREE.TextureLoader();
+var leatherColor = textureLoader.load('/imgs/black-leather-bl/black-leather_albedo.png');
+var leatherNormal = textureLoader.load('/imgs/black-leather-bl/black-leather_normal-ogl.png');
+var leatherRoughness = textureLoader.load('/imgs/black-leather-bl/black-leather_roughness.png');
+var leatherMetalness = textureLoader.load('/imgs/black-leather-bl/black-leather_metallic.png');
+
+// Crear el material con las texturas cargadas
+var materialVolante = new THREE.MeshStandardMaterial({
+  color: 0x444444, // Color base del material
+  map: leatherColor,
+  normalMap: leatherNormal,
+  roughnessMap: leatherRoughness,
+  roughness: 0.8, // Ajusta según el nivel de rugosidad deseado
+  metalnessMap: leatherMetalness,
+  metalness: 0.2 // Ajusta según el nivel de metalicidad deseado
+});
+
+// Crear los meshes de las geometrías
+var toroMesh = new THREE.Mesh(toro, materialVolante);
+var cuboMesh = new THREE.Mesh(cubo, materialVolante);
+var cilindroMesh = new THREE.Mesh(cilindro, materialVolante);
+
+// Utilizar CSG para combinar las geometrías
+var csg = new CSG();
+csg.union([toroMesh, cuboMesh, cilindroMesh]);
+
+// Convertir el resultado de CSG a un mesh de THREE.js
+this.volante = csg.toMesh();
+
+// Posicionar el volante
+this.volante.position.set(0, 0.35, 0.3);
+this.volante.rotation.x = Math.PI / 4;
+
+// Añadir el volante al objeto alonso
+alonso.add(this.volante);
+
+
     // General
     alonso.scale.set(0.6, 0.6, 0.6);
     alonso.position.set(0, 0.35, -0.05);
@@ -744,8 +795,8 @@ createHelmet() {
           this.cameraController.rotation.x = 0;
           this.cameraController.position.set(0, 0, 0);
         } else{
-          this.cameraController.rotation.x = -0.06;
-          this.cameraController.position.set(0, -1.05, 5.1);
+          this.cameraController.rotation.x = -0.05;
+          this.cameraController.position.set(0, -1.08, 5);
         }
         this.cameraController.rotation.y = 0;
       }
@@ -754,8 +805,8 @@ createHelmet() {
       if(event.key == 'v'){
         c = !c;
         if(c){
-          this.cameraController.rotation.x = -0.06;
-          this.cameraController.position.set(0, -1.05, 5.1);
+          this.cameraController.rotation.x = -0.05;
+          this.cameraController.position.set(0, -1.08, 5);
         } else{
           this.cameraController.rotation.x = 0;
           this.cameraController.position.set(0, 0, 0);
@@ -942,6 +993,8 @@ updateSpeedParticles() {
     }
     if(!this.desgirar && this.rotacionLateral > 0){
       // Alonso gira a la derecha
+      this.volante.rotation.z += this.rotacionLateral;
+      this.volante.rotation.z = Math.min(this.volante.rotation.z, Math.PI/2);
       this.upperArmR.rotation.x -= this.rotacionLateral;
       this.upperArmR.rotation.x = Math.max(this.upperArmR.rotation.x, -Math.PI/3.5);
       this.upperArmL.rotation.x += this.rotacionLateral;
@@ -953,6 +1006,8 @@ updateSpeedParticles() {
       this.n2.rotation.y = Math.max(this.n2.rotation.y, -Math.PI/4);
     } else if (!this.desgirar && this.rotacionLateral < 0) {
       // Alonso gira a la izquierda
+      this.volante.rotation.z += this.rotacionLateral;
+      this.volante.rotation.z = Math.max(this.volante.rotation.z, -Math.PI/2);
       this.upperArmR.rotation.x -= this.rotacionLateral;
       this.upperArmR.rotation.x = Math.min(this.upperArmR.rotation.x, -Math.PI/6);
       this.upperArmL.rotation.x -= this.rotacionLateral;
@@ -967,6 +1022,7 @@ updateSpeedParticles() {
       // Alonso gira vuelve a la posición inicial
       this.upperArmR.rotation.x = -Math.PI/4;
       this.upperArmL.rotation.x = -Math.PI/4;
+      this.volante.rotation.z = 0;
 
       this.n1.rotation.y -= this.friction;
       this.n1.rotation.y = Math.max(this.rotacionLateral, 0); // Velocidad mínima es cero
@@ -977,6 +1033,7 @@ updateSpeedParticles() {
     // Alonso gira vuelve a la posición inicial
     this.upperArmR.rotation.x = -Math.PI/4;
     this.upperArmL.rotation.x = -Math.PI/4;
+    this.volante.rotation.z = 0;
     
       this.n1.rotation.y += this.friction;
       this.n1.rotation.y = Math.min(this.rotacionLateral, 0); // Velocidad máxima es cero
