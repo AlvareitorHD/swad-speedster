@@ -44,6 +44,9 @@ class Punto_Escudo extends THREE.Object3D{
         escudoGeom.scale(0.93, 0.93, 1.2);
         escudoGeom.translate(0, 0, -0.02);
 
+        escudoGeom.scale(0.4, 0.4, 0.4);
+        bordeGeom.scale(0.4, 0.4, 0.4);
+
         var bordeescudoMesh = new THREE.Mesh(bordeGeom, bordeMat);
         var escudoMesh = new THREE.Mesh(escudoGeom, Mat);
         
@@ -52,7 +55,6 @@ class Punto_Escudo extends THREE.Object3D{
         // Y añadirlo como hijo del Object3D (el this)
         this.escudo.add(escudoMesh);
         this.escudo.add(bordeescudoMesh);
-        this.escudo.scale.set(0.4, 0.4, 0.4);
 
         this.escudo.userData = this;
 

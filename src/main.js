@@ -19,6 +19,7 @@ import { Moneda_Basica } from './Moneda_Basica/Moneda_Basica.js'
 import { Moneda_Premium } from './Moneda_Premium/Moneda_Premium.js'
 import { Punto_Escudo } from './Punto_Escudo/Punto_Escudo.js'
 import { Impulsor } from './Impulsor/Impulsor.js'
+import { Punto_Energia } from './Punto_Energia/Punto_Energia.js'
 
 
 /// La clase fachada del modelo
@@ -45,7 +46,7 @@ class MyScene extends THREE.Scene {
     var neumatico = new Neumatico(this.gui, "Controles del neumático", this.circuito,0.1);
     this.circuito.add(neumatico);
 
-    var impulsor = new Impulsor(this.gui, "Controles del impulsor", this.circuito,0.01,Math.PI/2);
+    var impulsor = new Impulsor(this.gui, "Controles del impulsor", this.circuito,0.91,Math.PI/2);
     this.circuito.add(impulsor); 
 
     this.t = 0.03;
@@ -92,7 +93,16 @@ class MyScene extends THREE.Scene {
       rot2 += Math.PI / 4;
     }
     this.circuito.add(...this.punto_escudos);
-    //this.add(this.punto_escudo);
+
+    var rot3 = 0;
+    this.puntos_energia = [];
+    for (var i = 0; i < 5; i++) {
+      var punto_energia = new Punto_Energia(this.circuito, this.t, rot3);
+      this.puntos_energia.push(punto_energia);
+      this.t = (i/5+0.2)%1;
+      rot3 += Math.PI / 8;
+    }
+    this.circuito.add(...this.puntos_energia);
 
     // Construimos los distinos elementos que tendremos en la escena
 
@@ -193,28 +203,6 @@ toggleButton.addEventListener('click', toggleMusic);
     // Debe orbitar con respecto al punto de mira de la cámara
     this.cameraControl.target = look;
     this.cambioCamara();
-  }
-
-
-  createGround() {
-    // El suelo es un Mesh, necesita una geometría y un material.
-
-    // La geometría es una caja con muy poca altura
-    var geometryGround = new THREE.BoxGeometry(10, 0.2, 10);
-
-    // El material se hará con una textura de madera
-    var texture = new THREE.TextureLoader().load('../imgs/wood.jpg');
-    var materialGround = new THREE.MeshStandardMaterial({ map: texture });
-
-    // Ya se puede construir el Mesh
-    var ground = new THREE.Mesh(geometryGround, materialGround);
-
-    // Todas las figuras se crean centradas en el origen.
-    // El suelo lo bajamos la mitad de su altura para que el origen del mundo se quede en su lado superior
-    ground.position.y = -0.1;
-
-    // Que no se nos olvide añadirlo a la escena, que en este caso es  this
-    this.add(ground);
   }
 
   createGUI() {
