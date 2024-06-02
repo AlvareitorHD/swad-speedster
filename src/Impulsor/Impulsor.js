@@ -14,7 +14,7 @@ class Impulsor extends THREE.Object3D {
     this.video.crossOrigin = 'anonymous';
     this.video.preload = '';
     this.video.loop = true;
-    this.video.src = '/imgs/flechas.mp4';
+    this.video.src = '../imgs/flechas.mp4';
     this.video.load();
     var texture = new THREE.VideoTexture(this.video);
     texture.generateMipmaps = false; // si el video no es cuadrado
