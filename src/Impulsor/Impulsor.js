@@ -14,7 +14,7 @@ class Impulsor extends THREE.Object3D {
     this.video.crossOrigin = 'anonymous';
     this.video.preload = '';
     this.video.loop = true;
-    this.video.src = '../imgs/flechas.mp4';
+    this.video.src = '../imgs/flechas1.mp4';
     this.video.load();
     var texture = new THREE.VideoTexture(this.video);
     texture.generateMipmaps = false; // si el video no es cuadrado
@@ -51,7 +51,7 @@ class Impulsor extends THREE.Object3D {
     this.nodoPosOrientTubo = new THREE.Object3D();
     this.movimientoLateral = new THREE.Object3D();
     this.posSuperficie = new THREE.Object3D();
-    this.posSuperficie.position.y = circuito.parameters.radius - 0.025;
+    this.posSuperficie.position.y = circuito.parameters.radius;
 
     this.add(this.nodoPosOrientTubo);
     this.nodoPosOrientTubo.add(this.movimientoLateral);

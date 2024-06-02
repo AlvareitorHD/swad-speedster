@@ -39,17 +39,21 @@ class MyScene extends THREE.Scene {
     this.musicEnabled = true; // Música activada por defecto
     this.alternarMusica();
 
+    // Se añaden los objetos únicos a la escena
     this.gui = this.createGUI();
     this.circuito = new Circuito(this.gui, "Controles circuito");
     this.add(this.circuito);
     this.personaje = new Personaje(this.gui, "Controles de la Caja", this.circuito);
     this.add(this.personaje);
-    var neumatico = new Neumatico(this.gui, "Controles del neumático", this.circuito,0.1);
-    this.circuito.add(neumatico);
+    this.premium = new Moneda_Premium(this.gui, "Controles de la moneda", this.circuito);
+    this.circuito.add(this.premium);
+    
+    this.initStats();
 
-    var impulsor = new Impulsor(this.gui, "Controles del impulsor", this.circuito,0.91,Math.PI/2);
+    // Se añaden los objetos que se repiten en la escena
+    /*var impulsor = new Impulsor(this.gui, "Controles del impulsor", this.circuito,0.91,Math.PI/2);
     this.circuito.add(impulsor); 
-
+    
     this.t = 0.03;
     var rot = Math.PI / 2;
     var conos = [];
@@ -77,11 +81,6 @@ class MyScene extends THREE.Scene {
     }
     this.circuito.add(...this.basicas);
 
-    this.premium = new Moneda_Premium(this.gui, "Controles de la moneda", this.circuito);
-    this.circuito.add(this.premium);
-
-    this.initStats();
-
     this.rampa = new Rampa(this.circuito,0.05,Math.PI/2);
     this.circuito.add(this.rampa);
 
@@ -105,11 +104,9 @@ class MyScene extends THREE.Scene {
     }
     this.circuito.add(...this.puntos_energia);
 
-    this.turbulencia = new Turbulencias(this.circuito,0.45, Math.PI/2);
-    this.circuito.add(this.turbulencia);
-
-    // Construimos los distinos elementos que tendremos en la escena
-
+    this.turbulencia = new Turbulencias(this.circuito,0.04, Math.PI/2);
+    this.circuito.add(this.turbulencia);*/
+    this.createObjetos();
     // Todo elemento que se desee sea tenido en cuenta en el renderizado de la escena debe pertenecer a esta. Bien como hijo de la escena (this en esta clase) o como hijo de un elemento que ya esté en la escena.
     // Tras crear cada elemento se añadirá a la escena con   this.add(variable)
     this.createLights();
@@ -117,13 +114,10 @@ class MyScene extends THREE.Scene {
     // Tendremos una cámara con un control de movimiento con el ratón
     this.createCamera();
 
-    // Un suelo 
-    //this.createGround();
-
     // Y unos ejes. Imprescindibles para orientarnos sobre dónde están las cosas
     // Todas las unidades están en metros
-    this.axis = new THREE.AxesHelper(2);
-    this.add(this.axis);
+    //this.axis = new THREE.AxesHelper(2);
+    //this.add(this.axis);
 
     this.cambiaCam = false;
     this.personajeCam = this.personaje.getCamara();
@@ -131,6 +125,86 @@ class MyScene extends THREE.Scene {
     var hijos = this.circuito.children.filter(child => !(child == this.circuito.tubeMesh));
     this.personaje.setObstaculos(hijos);
   }
+
+  createObjetos(){
+// Se añaden los objetos que se repiten en la escena
+var impulsor = new Impulsor(this.gui, "Controles del impulsor", this.circuito, 0.94, Math.PI / 2);
+this.circuito.add(impulsor);
+
+// Función para generar valores de t evitando t=0
+function generarPosiciones(n, offset) {
+  let posiciones = [];
+  for (let i = 0; i < n; i++) {
+    let t = ((i + 1) / (n + 1) + offset) % 1;
+    posiciones.push(t);
+  }
+  return posiciones;
+}
+
+// Conos de Tráfico
+var rot = Math.PI / 2;
+var conos = [];
+let posicionesConos = generarPosiciones(10, 0.1);
+for (var i = 0; i < 10; i++) {
+  var cono = new Cono_Trafico(this.circuito, posicionesConos[i], rot);
+  conos.push(cono);
+  rot += Math.PI / 4;
+}
+this.circuito.add(...conos);
+
+// Neumáticos
+this.neumaticos = [];
+let posicionesNeumaticos = generarPosiciones(5, 0.2);
+for (var i = 0; i < 5; i++) {
+  var neumatico = new Neumatico(this.gui, "Controles del neumático", this.circuito, posicionesNeumaticos[i]);
+  this.neumaticos.push(neumatico);
+}
+this.circuito.add(...this.neumaticos);
+
+// Monedas Básicas
+this.basicas = [];
+let posicionesBasicas = generarPosiciones(20, 0.15);
+for (var i = 0; i < 20; i++) {
+  var basica = new Moneda_Basica(this.gui, "Controles de la moneda", this.circuito, posicionesBasicas[i]);
+  this.basicas.push(basica);
+}
+this.circuito.add(...this.basicas);
+
+// Rampa
+this.rampa = new Rampa(this.circuito, 0.05, Math.PI / 2);
+this.circuito.add(this.rampa);
+
+// Puntos de Escudos
+var rot2 = -Math.PI / 2;
+this.punto_escudos = [];
+let posicionesEscudos = generarPosiciones(5, 0.3);
+for (var i = 0; i < 5; i++) {
+  var punto_escudo = new Punto_Escudo(this.circuito, posicionesEscudos[i], rot2);
+  this.punto_escudos.push(punto_escudo);
+  rot2 += Math.PI / 4;
+}
+this.circuito.add(...this.punto_escudos);
+
+// Puntos de Energía
+var rot3 = -Math.PI / 4;
+this.puntos_energia = [];
+let posicionesEnergia = generarPosiciones(5, 0.25);
+for (var i = 0; i < 5; i++) {
+  var punto_energia = new Punto_Energia(this.circuito, posicionesEnergia[i], rot3);
+  this.puntos_energia.push(punto_energia);
+  rot3 += Math.PI / 8;
+}
+this.circuito.add(...this.puntos_energia);
+
+// Turbulencia
+this.turbulencias = [];
+let posicionesTurbulencias = generarPosiciones(3, 0.1);
+for (var i = 0; i < 3; i++) {
+  var turbulencia = new Turbulencias(this.circuito, posicionesTurbulencias[i], Math.PI / 2 + i * Math.PI);
+  this.turbulencias.push(turbulencia);
+  }
+  this.circuito.add(...this.turbulencias);
+}
 
   alternarMusica() {
         // Seleccionar el botón y el audio

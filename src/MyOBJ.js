@@ -69,7 +69,7 @@ class Personaje extends THREE.Object3D {
     this.personaje.add(this.n4);
 
     this.createLuzTrasera();
- 
+
     this.nodoPosOrientTubo = new THREE.Object3D();
     this.movimientoLateral = new THREE.Object3D();
     this.posSuperficie = new THREE.Object3D();
@@ -873,10 +873,10 @@ updateSpeedParticles() {
     // Si hay impactos y la distancia al primer objeto es menor que 0.5
     if (impactados.length > 0 && impactados[0].distance < 0.5) {
       // Si el objeto impactado es un cono de tráfico
-      if (impactados[0].object.userData instanceof Cono_Trafico && !this.timeout) {
-        this.timeout = true;
+      if (impactados[0].object.userData instanceof Cono_Trafico && !this.timeout1) {
+        this.timeout1 = true;
         setTimeout(() => {
-          this.timeout = false;
+          this.timeout1 = false;
         }, 3000);
 
         console.log("Colisión con un cono de tráfico");
@@ -894,10 +894,10 @@ updateSpeedParticles() {
         }
       }
       // Si el objeto impactado es un neumático
-      else if (impactados[0].object.userData instanceof Neumatico && !this.timeout) {
-        this.timeout = true;
+      else if (impactados[0].object.userData instanceof Neumatico && !this.timeout2) {
+        this.timeout2 = true;
         setTimeout(() => {
-          this.timeout = false;
+          this.timeout2 = false;
         }, 3000);
 
         console.log("Colisión con neumatico");
@@ -929,6 +929,13 @@ updateSpeedParticles() {
           });
           tween.start();
           },500);
+          
+          if(this.score > 0){
+            this.score -= 3;
+            if(this.score < 0) this.score = 0;
+          }else{
+            this.score = 0;
+          }
         }
       }
       // Si el objeto impactado es una rampa y no estamos saltando y la velocidad es positiva
@@ -969,8 +976,8 @@ updateSpeedParticles() {
         impactados[0].object.userData.colision();
         this.tengoEscudo = true;
       }
-      else if (impactados[0].object.userData instanceof Impulsor && !this.timeout && this.speed > 0){
-        this.timeout = true;
+      else if (impactados[0].object.userData instanceof Impulsor && !this.timeout3 && this.speed > 0){
+        this.timeout3 = true;
         console.log("Colisión con impulsor");
         impactados[0].object.userData.colision();
         this.speed = this.maxSpeed;
@@ -980,33 +987,26 @@ updateSpeedParticles() {
           this.speedParticles.visible = false;
         }, 1500);
         setTimeout(() => {
-          this.timeout = false;
+          this.timeout3 = false;
         }, 500);
       }
-      else if (impactados[0].object.userData instanceof Punto_Energia && !this.timeout){
+      else if (impactados[0].object.userData instanceof Punto_Energia && !this.timeout4){
         console.log("Colisión con punto de energía");
         impactados[0].object.userData.colision();
-        this.speed += this.speed * 0.1;
-
-        this.timeout = true;
+        this.speed *=2;
+        this.timeout4 = true;
         setTimeout(() => {
-          this.timeout = false;
-        }, 500);
-        setTimeout(() => {
-          this.timeout = false;
-        }, 1000);
+          this.timeout4 = false;
+        }, 2500);
       }
-      else if (impactados[0].object.userData instanceof Turbulencias && !this.timeout){
+      else if (impactados[0].object.userData instanceof Turbulencias && !this.timeout_pinchado){
         console.log("Colisión con turbulencia");
-        
-        this.timeout = true;
-        this.speed *= 0.75;
+          impactados[0].object.userData.colision();
+        this.timeout_pinchado = true;
+        this.speed *= 0.5;
         setTimeout(() => {
-          this.timeout = false;
-        }, 500);
-        setTimeout(() => {
-          this.timeout = false;
-        }, 1000);
+          this.timeout_pinchado = false;
+        }, 250);
       }
     }
   }

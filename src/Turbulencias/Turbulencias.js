@@ -51,6 +51,8 @@ class Turbulencias extends THREE.Object3D{
         // Y añadirlo como hijo del Object3D (el this)
         this.turbulencias.userData = this;
 
+        this.sonido = new Audio('/sound/pinchazo.mp3');
+
         this.posicionar(circuito, t, rot);
         this.createColision();
     }
@@ -64,11 +66,15 @@ class Turbulencias extends THREE.Object3D{
       this.turbulencias.add(boxHelper);
     }
 
+    colision(){
+      this.sonido.play();
+    }
+
     posicionar(circuito, ti, rot){
       this.nodoPosOrientTubo = new THREE.Object3D();
       this.movimientoLateral = new THREE.Object3D();
       this.posSuperficie = new THREE.Object3D();
-      this.posSuperficie.position.y = circuito.parameters.radius+0.1;
+      this.posSuperficie.position.y = circuito.parameters.radius;
   
       this.add(this.nodoPosOrientTubo);
       this.nodoPosOrientTubo.add(this.movimientoLateral);
@@ -90,7 +96,6 @@ class Turbulencias extends THREE.Object3D{
       this.nodoPosOrientTubo.up = this.tubo.binormals[segmentoActual];
       this.nodoPosOrientTubo.lookAt(posTemp);
 
-      TWEEN.update();
     }
 }
 

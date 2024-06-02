@@ -82,12 +82,12 @@ class Moneda_Basica extends THREE.Object3D{
         this.reloj = new THREE.Clock();
         this.createColision();
         this.posicionar(c.tubeGeometry,t);
+        this.initialPosY = this.posSuperficie.position.y;
     }
 
     picked() {
       console.log("Moneda recogida");
       var rot = this.movimientoLateral.rotation.z;
-      var initialPosY = this.posSuperficie.position.y;
       var audio = new Audio('/sound/coin.flac');
       audio.volume = 0.5;
       audio.play();
@@ -108,7 +108,7 @@ class Moneda_Basica extends THREE.Object3D{
       //Después de 10 segundos, la moneda vuelve a ser visible y vuelve a la posición inicial
       setTimeout(() =>{
         this.posSuperficie.visible = true;
-        this.posSuperficie.position.y = initialPosY; // Restore the initial y position
+        this.posSuperficie.position.y = this.initialPosY; // Restore the initial y position
       }, 10000);
       }, 1000);
     }
