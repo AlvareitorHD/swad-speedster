@@ -1,14 +1,12 @@
 import * as THREE from '../../libs/three.module.js'
 
 import { CSG } from '../../libs/CSG-v2.js'
+import * as TWEEN from '../../libs/tween.esm.js'
 
 class Turbulencias extends THREE.Object3D{
-    constructor(gui,titleGui) {
+    constructor(c, t, rot) {
         super();
-
-        // Se crea la parte de la interfaz que corresponde a la caja
-        // Se crea primero porque otros métodos usan las variables que se definen para la interfaz
-        this.createGUI(gui,titleGui);
+        var circuito = c.tubeGeometry;
 
         //Creamos los materiales
         var texture = new THREE.TextureLoader().load('../../imgs/acero.jpeg');
@@ -23,7 +21,8 @@ class Turbulencias extends THREE.Object3D{
         var cono = new THREE.CylinderGeometry(0.001, 0.4, 1, 30, 5);
 
         //Se posiciona y se orienta
-        cono.scale(0.4, 0.4, 0.4);
+        base.scale(0.4, 0.4, 0.4);
+        cono.scale(0.1, 0.1, 0.1);
 
         // Un Mesh se compone de geometría y material
         var baseMesh = new THREE.Mesh(base, Mat);
@@ -37,85 +36,61 @@ class Turbulencias extends THREE.Object3D{
 
         for (let i = 0; i < 8; i++){
           if (i % 2 == 0){
-            conoMesh.position.set(-0.75+avanzar_delante, 0.2, 0.3);
-            avanzar_delante += 0.5;
+            conoMesh.position.set(-0.25+avanzar_delante, 0.05, 0.1);
+            avanzar_delante += 0.15;
           }
           else{
-            conoMesh.position.set(-0.75+avanzar_detras, 0.2, -0.3);
-            avanzar_detras += 0.5;
+            conoMesh.position.set(-0.25+avanzar_detras, 0.05, -0.1);
+            avanzar_detras += 0.15;
           }
 
           csg.union([baseMesh, conoMesh]);
         }
 
-        this.cono_trafico = csg.toMesh();
+        this.turbulencias = csg.toMesh();
         // Y añadirlo como hijo del Object3D (el this)
-        this.add(this.cono_trafico);
+        this.turbulencias.userData = this;
+
+        this.posicionar(circuito, t, rot);
+        this.createColision();
     }
 
-    createGUI (gui,titleGui) {
-        // Controles para el tamaño, la orientación y la posición de la caja
-        this.guiControls = {
-          sizeX : 1.0,
-          sizeY : 1.0,
-          sizeZ : 1.0,
-          
-          rotX : 0.0,
-          rotY : 0.0,
-          rotZ : 0.0,
-          
-          posX : 0.0,
-          posY : 0.0,
-          posZ : 0.0,
-          
-          // Un botón para dejarlo todo en su posición inicial
-          // Cuando se pulse se ejecutará esta función.
-          reset : () => {
-            this.guiControls.sizeX = 1.0;
-            this.guiControls.sizeY = 1.0;
-            this.guiControls.sizeZ = 1.0;
-            
-            this.guiControls.rotX = 0.0;
-            this.guiControls.rotY = 0.0;
-            this.guiControls.rotZ = 0.0;
-            
-            this.guiControls.posX = 0.0;
-            this.guiControls.posY = 0.0;
-            this.guiControls.posZ = 0.0;
-          }
-        }
-
-    // Se crea una sección para los controles de la caja
-    var folder = gui.addFolder (titleGui);
-    // Estas lineas son las que añaden los componentes de la interfaz
-    // Las tres cifras indican un valor mínimo, un máximo y el incremento
-    // El método   listen()   permite que si se cambia el valor de la variable en código, el deslizador de la interfaz se actualice
-    folder.add (this.guiControls, 'sizeX', 0.1, 5.0, 0.01).name ('Tamaño X : ').listen();
-    folder.add (this.guiControls, 'sizeY', 0.1, 5.0, 0.01).name ('Tamaño Y : ').listen();
-    folder.add (this.guiControls, 'sizeZ', 0.1, 5.0, 0.01).name ('Tamaño Z : ').listen();
-    
-    folder.add (this.guiControls, 'rotX', 0.0, Math.PI/2, 0.01).name ('Rotación X : ').listen();
-    folder.add (this.guiControls, 'rotY', 0.0, Math.PI/2, 0.01).name ('Rotación Y : ').listen();
-    folder.add (this.guiControls, 'rotZ', 0.0, Math.PI/2, 0.01).name ('Rotación Z : ').listen();
-    
-    folder.add (this.guiControls, 'posX', -20.0, 20.0, 0.01).name ('Posición X : ').listen();
-    folder.add (this.guiControls, 'posY', 0.0, 10.0, 0.01).name ('Posición Y : ').listen();
-    folder.add (this.guiControls, 'posZ', -20.0, 20.0, 0.01).name ('Posición Z : ').listen();
-
-    folder.add (this.guiControls, 'reset').name ('[ Reset ]');
+    createColision(){
+      var box = new THREE.Box3();
+      box.setFromObject(this.turbulencias);
+      var boxHelper = new THREE.Box3Helper( box, 0xffff00 );
+      boxHelper.visible = true;
+      boxHelper.userData = this;
+      this.turbulencias.add(boxHelper);
     }
 
-    update () {
-        // Con independencia de cómo se escriban las 3 siguientes líneas, el orden en el que se aplican las transformaciones es:
-        // Primero, el escalado
-        // Segundo, la rotación en Z
-        // Después, la rotación en Y
-        // Luego, la rotación en X
-        // Y por último la traslación
-       
-        this.position.set (this.guiControls.posX,this.guiControls.posY,this.guiControls.posZ);
-        this.scale.set (this.guiControls.sizeX,this.guiControls.sizeY,this.guiControls.sizeZ);
-        this.rotation.set (this.guiControls.rotX,this.guiControls.rotY,this.guiControls.rotZ);
+    posicionar(circuito, ti, rot){
+      this.nodoPosOrientTubo = new THREE.Object3D();
+      this.movimientoLateral = new THREE.Object3D();
+      this.posSuperficie = new THREE.Object3D();
+      this.posSuperficie.position.y = circuito.parameters.radius+0.1;
+  
+      this.add(this.nodoPosOrientTubo);
+      this.nodoPosOrientTubo.add(this.movimientoLateral);
+      this.movimientoLateral.add(this.posSuperficie);
+      this.movimientoLateral.rotateZ(rot);
+      this.posSuperficie.add(this.turbulencias);
+      //pergarlo al tubo
+      this.t = ti;
+      this.tubo = circuito;
+      this.path = circuito.parameters.path;
+      this.radio = circuito.parameters.radius;
+      this.segmentos = circuito.parameters.tubularSegments;
+  
+      var posTemp = this.path.getPointAt(this.t);
+      this.nodoPosOrientTubo.position.copy(posTemp);
+      var tangente = this.path.getTangentAt(this.t);
+      posTemp.add(tangente);
+      var segmentoActual = Math.floor(this.t * this.segmentos);
+      this.nodoPosOrientTubo.up = this.tubo.binormals[segmentoActual];
+      this.nodoPosOrientTubo.lookAt(posTemp);
+
+      TWEEN.update();
     }
 }
 

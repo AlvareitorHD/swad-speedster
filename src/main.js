@@ -20,6 +20,7 @@ import { Moneda_Premium } from './Moneda_Premium/Moneda_Premium.js'
 import { Punto_Escudo } from './Punto_Escudo/Punto_Escudo.js'
 import { Impulsor } from './Impulsor/Impulsor.js'
 import { Punto_Energia } from './Punto_Energia/Punto_Energia.js'
+import { Turbulencias } from './Turbulencias/Turbulencias.js'
 
 
 /// La clase fachada del modelo
@@ -103,6 +104,9 @@ class MyScene extends THREE.Scene {
       rot3 += Math.PI / 8;
     }
     this.circuito.add(...this.puntos_energia);
+
+    this.turbulencia = new Turbulencias(this.circuito,0.45, Math.PI/2);
+    this.circuito.add(this.turbulencia);
 
     // Construimos los distinos elementos que tendremos en la escena
 
@@ -378,6 +382,7 @@ toggleButton.addEventListener('click', toggleMusic);
     this.basicas.forEach(basica => basica.update());
     this.premium.update();
     this.punto_escudos.forEach(punto_escudo => punto_escudo.update());
+    this.puntos_energia.forEach(punto_energia => punto_energia.update());
 
     // Le decimos al renderizador "visualiza la escena que te indico usando la cámara que te estoy pasando"
     this.renderer.render(this, this.getCamera());

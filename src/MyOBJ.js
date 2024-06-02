@@ -13,6 +13,7 @@ import { CSG } from '../../libs/CSG-v2.js';
 import { Punto_Escudo } from './Punto_Escudo/Punto_Escudo.js';
 import { Impulsor } from './Impulsor/Impulsor.js';
 import { Punto_Energia } from './Punto_Energia/Punto_Energia.js';
+import { Turbulencias } from './Turbulencias/Turbulencias.js';
 
 class Personaje extends THREE.Object3D {
   constructor(gui, titleGui, c) {
@@ -988,6 +989,18 @@ updateSpeedParticles() {
         this.speed += this.speed * 0.1;
 
         this.timeout = true;
+        setTimeout(() => {
+          this.timeout = false;
+        }, 500);
+        setTimeout(() => {
+          this.timeout = false;
+        }, 1000);
+      }
+      else if (impactados[0].object.userData instanceof Turbulencias && !this.timeout){
+        console.log("Colisión con turbulencia");
+        
+        this.timeout = true;
+        this.speed *= 0.75;
         setTimeout(() => {
           this.timeout = false;
         }, 500);
