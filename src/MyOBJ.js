@@ -17,7 +17,6 @@ import { Turbulencias } from './Turbulencias/Turbulencias.js';
 
 class Personaje extends THREE.Object3D {
   constructor(gui, titleGui, c) {
-
     super();
     var circuito = c.tubeGeometry;
     this.circuito = c;
@@ -26,11 +25,9 @@ class Personaje extends THREE.Object3D {
     this.score = 0;
     this.puntuar = true;
 
-
     // Posición y dirección para el updateRayo
     this.pos = new THREE.Vector3();
     this.direccion = new THREE.Vector3();
-
 
     this.speed = 0; // Velocidad inicial del personaje
     this.acceleration = 0.0005; // Aceleración del personaje
@@ -116,7 +113,14 @@ class Personaje extends THREE.Object3D {
       normalMap: new THREE.TextureLoader().load('../imgs/metalnormal.jpg'), // Mapa de normales
       normalScale: new THREE.Vector2(2, 2), // Escala del mapa de normales
   });
-    var material2 = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    var material2 = new THREE.MeshPhongMaterial({
+      color: 0xff0000, // Rojo
+      shininess: 100, // Brillo alto para simular el plástico
+      specular: 0x555555, // Reflejo sutil
+      emissive: 0x220000, // Emisión muy tenue
+      opacity: 1.0, // Material completamente opaco
+      transparent: false // No es transparente
+    });
     var material3 = new THREE.MeshPhysicalMaterial({
       normalMap: new THREE.TextureLoader().load('../imgs/metalnormal.jpg'),
       normalScale: new THREE.Vector2(1, 1),
@@ -265,7 +269,7 @@ class Personaje extends THREE.Object3D {
   }
 
   setObstaculos(h){
-    console.log(h);
+    //console.log(h);
     this.hijos = h;
   }
 
@@ -276,7 +280,7 @@ class Personaje extends THREE.Object3D {
     this.colision.setFromObject(this.personaje);
     // Crea un Box3Helper para visualizar el Box3
     var helper = new THREE.Box3Helper(this.colision, 0xffffff);
-    helper.visible = true;
+    helper.visible = false;
     // Añade el Box3Helper al personaje como hijo para que se mueva con él
     this.personaje.add(helper);
   }
@@ -383,7 +387,7 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
   createAlonso() {
     var alonso = new THREE.Group();
     // Cabeza
-    var sphereGeometry = new THREE.SphereGeometry(1, 16, 16);
+    var sphereGeometry = new THREE.SphereGeometry(1, 12, 12);
     sphereGeometry.scale(1, 1.2, 1.5);
     var texture = new THREE.TextureLoader().load('../imgs/alonso.jpg');
     texture.wrapS = THREE.RepeatWrapping;
@@ -413,9 +417,9 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
     var handMaterial = new THREE.MeshStandardMaterial({ color: 0xFFE9D1 });
 
     // Brazo derecho
-    var upperArmGeometry = new THREE.CylinderGeometry(0.05, 0.05, 0.3, 12);
-    var lowerArmGeometry = new THREE.CylinderGeometry(0.04, 0.04, 0.25, 12);
-    var jointGeometry = new THREE.SphereGeometry(0.05, 12, 12);
+    var upperArmGeometry = new THREE.CylinderGeometry(0.05, 0.05, 0.3, 8);
+    var lowerArmGeometry = new THREE.CylinderGeometry(0.04, 0.04, 0.25, 8);
+    var jointGeometry = new THREE.SphereGeometry(0.05, 8, 8);
     var handGeometry = new THREE.SphereGeometry(0.05, 12, 12);
 
     this.upperArmR = new THREE.Mesh(upperArmGeometry, armMaterial);
@@ -465,9 +469,9 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
 
     // Volante
 // Crear las geometrías del volante
-var toro = new THREE.TorusGeometry(0.1, 0.02, 16, 100);
+var toro = new THREE.TorusGeometry(0.1, 0.02, 12);
 var cubo = new THREE.BoxGeometry(0.2, 0.02, 0.01);
-var cilindro = new THREE.CylinderGeometry(0.01, 0.01, 0.2, 16);
+var cilindro = new THREE.CylinderGeometry(0.01, 0.01, 0.2, 8);
 
 // Posicionar el cubo en el centro del toro
 cubo.translate(0, 0, 0);
@@ -634,22 +638,28 @@ createHelmet() {
   }
 
   createLlanta() {
-    // Crear un objeto por revolución
+    // Crear un objeto por revolución con un perfil adecuado
     var shape = new THREE.Shape();
-    shape.moveTo(0, 0);
+    shape.moveTo(0.0001, 0);
     shape.lineTo(1, 0);
-    shape.lineTo(1, 0.1);
-    shape.quadraticCurveTo(1, 0.2, 0.9, 0.3);
-    shape.lineTo(0.1, 0.3);
-    shape.lineTo(0,0.3);
-  
+    shape.lineTo(1, 0.5);
+    shape.quadraticCurveTo(0.25, 0, 0, 0);
+
     var geometry = new THREE.LatheGeometry(shape.getPoints(), 32);
     geometry.scale(0.2, 0.2, 0.2);
     geometry.rotateZ(-Math.PI / 2);
-    var material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
-    var mesh = new THREE.Mesh(geometry, material);
-    return mesh;
-  }
+    geometry.translate(0.025, 0, 0);
+
+    var material = new THREE.MeshStandardMaterial({
+      color: 0xff0000,
+      metalness: 0.5,
+      roughness: 0.5,
+    });
+
+    var llanta = new THREE.Mesh(geometry, material);
+    
+    return llanta;
+}
 
   createSonido(){
     this.aceleracion = new Audio('/sound/car-acceleration-inside-car.mp3');
@@ -929,7 +939,7 @@ updateSpeedParticles() {
           });
           tween.start();
           },500);
-          
+
           if(this.score > 0){
             this.score -= 3;
             if(this.score < 0) this.score = 0;

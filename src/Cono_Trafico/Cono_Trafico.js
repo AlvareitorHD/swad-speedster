@@ -14,10 +14,8 @@ class Cono_Trafico extends THREE.Object3D{
         
         //Creamos las geometrias
         var base = new THREE.BoxGeometry(1, 0.05, 1);
-        var cono = new THREE.CylinderGeometry(0.05, 0.4, 1);
-
-        var conoExtraer = new THREE.CylinderGeometry(0.001, 0.5, 1.6);
-
+        var cono = new THREE.CylinderGeometry(0.05, 0.4, 1, 8); // 8 segmentos
+        var conoExtraer = new THREE.CylinderGeometry(0.001, 0.5, 1.6, 8); // 8 segmentos
         //Se posiciona y se orienta
         cono.translate(0, 0.5, 0);
 

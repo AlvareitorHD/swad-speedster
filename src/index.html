@@ -18,37 +18,51 @@
             margin: 0;
             overflow: hidden;
         }
+
         @font-face {
             font-family: 'titulo';
             src: url('/imgs/SpeedRacing-NegativeItalic.ttf') format('truetype');
         }
 
         /* Estilo base del botón */
-#toggleMusic {
-    position: absolute; /* Fijar el botón en la esquina inferior derecha */
-    bottom: 1em;
-    right: 1em;
-  background-color: #ff0000; /* Color de fondo rojo */
-  color: #fff; /* Color del texto blanco */
-  padding: 10px 20px; /* Espacio alrededor del texto */
-  font-size: 16px; /* Tamaño de fuente */
-  border: none; /* Sin borde */
-  cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
-  border-radius: 5px; /* Bordes redondeados */
-  text-transform: uppercase; /* Convertir el texto a mayúsculas */
-  font-weight: bold; /* Texto en negrita */
-  transition: background-color 0.3s, color 0.3s; /* Transición suave al cambiar de color */
-}
+        #toggleMusic {
+            position: absolute;
+            /* Fijar el botón en la esquina inferior derecha */
+            bottom: 1em;
+            right: 1em;
+            background-color: #ff0000;
+            /* Color de fondo rojo */
+            color: #fff;
+            /* Color del texto blanco */
+            padding: 10px 20px;
+            /* Espacio alrededor del texto */
+            font-size: 16px;
+            /* Tamaño de fuente */
+            border: none;
+            /* Sin borde */
+            cursor: pointer;
+            /* Cambia el cursor al pasar sobre el botón */
+            border-radius: 5px;
+            /* Bordes redondeados */
+            text-transform: uppercase;
+            /* Convertir el texto a mayúsculas */
+            font-weight: bold;
+            /* Texto en negrita */
+            transition: background-color 0.3s, color 0.3s;
+            /* Transición suave al cambiar de color */
+        }
 
-/* Estilo cuando el cursor está encima */
-#toggleMusic:hover {
-  background-color: #cc0000; /* Color de fondo rojo oscuro */
-}
+        /* Estilo cuando el cursor está encima */
+        #toggleMusic:hover {
+            background-color: #cc0000;
+            /* Color de fondo rojo oscuro */
+        }
 
-/* Estilo cuando se hace clic */
-#toggleMusic:active {
-  background-color: #00fa43; /* Color de fondo rojo más oscuro */
-}
+        /* Estilo cuando se hace clic */
+        #toggleMusic:active {
+            background-color: #00fa43;
+            /* Color de fondo rojo más oscuro */
+        }
 
 
         #title {
@@ -101,6 +115,7 @@
             margin-left: auto;
             padding: 10%;
         }
+
         #max_speed {
             font-weight: bold;
             font-family: 'Courier New', Courier, monospace;
@@ -150,6 +165,7 @@
         }
 
         .contenedor {
+            display: none;
             position: fixed;
             bottom: 20px;
             /* Ajusta la distancia desde el borde inferior de la ventana */
@@ -168,56 +184,158 @@
             font-style: boold;
         }
 
-.numero0 {
-  top: 90%;
-  left: 50%;
-  transform: translateX(-50%);
-}
+        .numero0 {
+            top: 90%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
 
-.numero1 {
-  top: 45%;
-  left: 10%;
-  transform: translateX(-50%);
-}
+        .numero1 {
+            top: 45%;
+            left: 10%;
+            transform: translateX(-50%);
+        }
 
-.numero2 {
-  top: 10%;
-  left: 45%;
-  transform: translateY(-50%);
-}
-.numero3 {
-  top: 50%;
-  left: 85%;
-  transform: translateY(-50%);
-}
+        .numero2 {
+            top: 10%;
+            left: 45%;
+            transform: translateY(-50%);
+        }
 
-#escudo {
-    position: absolute;
-    top: 5%;
-    left: 50%;
-    display: none;
-    /* Ocultar el escudo al inicio */
-    justify-content: center;
-    align-items: center;
-}
-#escudo img {
-    transform: rotate(45deg);
-    max-width: 20%;
-    max-height: 20%;
-    filter: brightness(1.5); /* Aclara la imagen en un 50% */
-}
-#escudo p {
-    font-size: 2em;
-    font-family: 'Arial Black', sans-serif;
-    color: rgb(238, 255, 0);
-    -webkit-text-stroke-width: 0.05em; /* Ancho del borde */
-    -webkit-text-stroke-color: #000; /* Color del borde */
-}
+        .numero3 {
+            top: 50%;
+            left: 85%;
+            transform: translateY(-50%);
+        }
 
+        #escudo {
+            position: absolute;
+            top: 5%;
+            left: 50%;
+            display: none;
+            /* Ocultar el escudo al inicio */
+            justify-content: center;
+            align-items: center;
+        }
+
+        #escudo img {
+            transform: rotate(45deg);
+            max-width: 20%;
+            max-height: 20%;
+            filter: brightness(1.5);
+            /* Aclara la imagen en un 50% */
+        }
+
+        #escudo p {
+            font-size: 2em;
+            font-family: 'Arial Black', sans-serif;
+            color: rgb(238, 255, 0);
+            -webkit-text-stroke-width: 0.05em;
+            /* Ancho del borde */
+            -webkit-text-stroke-color: #000;
+            /* Color del borde */
+        }
+
+        #hud {
+            display: none;
+            /* Ocultar el contenido al inicio */
+        }
+
+        #startMenu {
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.2);
+            color: black;
+            font-family: 'titulo';
+            font-size: 3em;
+        }
+
+        #startMenu h1 {
+            background-color: #ff0;
+            font-size: 3em;
+        }
+
+        #startButton {
+            padding: 1em 2em;
+            font-size: 1.5em;
+            background-color: #ff0;
+            border: none;
+            cursor: pointer;
+            border-radius: 1em;
+            font-family: 'titulo';
+            font-weight: bold;
+            color: black;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        #startButton:hover {
+            animation: pulse 1s infinite;
+            /* La animación pulse se ejecutará infinitamente */
+            background-color: #ff0000;
+            color: white;
+        }
+
+        #startMenu h1 {
+            animation: float 1s infinite;
+            /* La animación float se ejecutará infinitamente */
+        }
+
+        #video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            min-width: 100%;
+            min-height: 100%;
+            z-index: -1;
+            object-fit: cover;
+        }
     </style>
 </head>
 
 <body>
+    <!-- Contenido visible al inicio -->
+    <div id="startMenu">
+        <h1>( SWAD Speedster )</h1>
+        <button id="startButton">Start</button>
+    </div>
+<!-- Video de fondo -->
+<video id="video" autoplay muted loop>
+    <source src="/imgs/menu_inicio.mp4" type="video/mp4">
+    <!-- Fallback para navegadores que no soportan videos -->
+    Your browser does not support the video tag.
+</video>
 
     <!-- Div which will hold the Output -->
     <div id="WebGL-output">
@@ -230,6 +348,8 @@
         </div>
 
     </div>
+
+    <div id="Stats-output"></div>
 
     <div class="contenedor">
         <div class="cuentakilometros">

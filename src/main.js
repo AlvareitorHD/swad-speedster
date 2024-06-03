@@ -35,10 +35,6 @@ class MyScene extends THREE.Scene {
     // Lo primero, crear el visualizador, pasándole el lienzo sobre el que realizar los renderizados.
     this.renderer = this.createRenderer(myCanvas);
     this.createSky();
-    // Establecer el estado inicial del botón y el audio
-    this.musicEnabled = true; // Música activada por defecto
-    this.alternarMusica();
-
     // Se añaden los objetos únicos a la escena
     this.gui = this.createGUI();
     this.circuito = new Circuito(this.gui, "Controles circuito");
@@ -47,73 +43,15 @@ class MyScene extends THREE.Scene {
     this.add(this.personaje);
     this.premium = new Moneda_Premium(this.gui, "Controles de la moneda", this.circuito);
     this.circuito.add(this.premium);
-    
+
     this.initStats();
-
     // Se añaden los objetos que se repiten en la escena
-    /*var impulsor = new Impulsor(this.gui, "Controles del impulsor", this.circuito,0.91,Math.PI/2);
-    this.circuito.add(impulsor); 
-    
-    this.t = 0.03;
-    var rot = Math.PI / 2;
-    var conos = [];
-    for (var i = 0; i < 8; i++) {
-      var cono = new Cono_Trafico(this.circuito, this.t, rot);
-      conos.push(cono);
-      this.t = (i/8+0.1)%1;
-      rot += Math.PI / 4;
-    }
-    this.circuito.add(...conos);
-
-    this.neumaticos = [];
-    for (var i = 0; i < 5; i++) {
-      var neumatico = new Neumatico(this.gui, "Controles del neumático", this.circuito,this.t);
-      this.neumaticos.push(neumatico);
-      this.t = (i/5+0.2)%1;
-    }
-    this.circuito.add(...this.neumaticos);
-
-    this.basicas = [];
-    for (var i = 0; i < 19; i++) {
-      var basica = new Moneda_Basica(this.gui, "Controles de la moneda", this.circuito,this.t);
-      this.basicas.push(basica);
-      this.t = (i/20+0.2)%1;
-    }
-    this.circuito.add(...this.basicas);
-
-    this.rampa = new Rampa(this.circuito,0.05,Math.PI/2);
-    this.circuito.add(this.rampa);
-
-    var rot2 = -Math.PI / 2;
-    this.punto_escudos = [];
-    for (var i = 0; i < 5; i++) {
-      var punto_escudo = new Punto_Escudo(this.circuito, this.t, rot2);
-      this.punto_escudos.push(punto_escudo);
-      this.t = (i/5+0.3)%1;
-      rot2 += Math.PI / 4;
-    }
-    this.circuito.add(...this.punto_escudos);
-
-    var rot3 = 0;
-    this.puntos_energia = [];
-    for (var i = 0; i < 5; i++) {
-      var punto_energia = new Punto_Energia(this.circuito, this.t, rot3);
-      this.puntos_energia.push(punto_energia);
-      this.t = (i/5+0.2)%1;
-      rot3 += Math.PI / 8;
-    }
-    this.circuito.add(...this.puntos_energia);
-
-    this.turbulencia = new Turbulencias(this.circuito,0.04, Math.PI/2);
-    this.circuito.add(this.turbulencia);*/
     this.createObjetos();
     // Todo elemento que se desee sea tenido en cuenta en el renderizado de la escena debe pertenecer a esta. Bien como hijo de la escena (this en esta clase) o como hijo de un elemento que ya esté en la escena.
     // Tras crear cada elemento se añadirá a la escena con   this.add(variable)
     this.createLights();
-
     // Tendremos una cámara con un control de movimiento con el ratón
     this.createCamera();
-
     // Y unos ejes. Imprescindibles para orientarnos sobre dónde están las cosas
     // Todas las unidades están en metros
     //this.axis = new THREE.AxesHelper(2);
@@ -126,109 +64,85 @@ class MyScene extends THREE.Scene {
     this.personaje.setObstaculos(hijos);
   }
 
-  createObjetos(){
-// Se añaden los objetos que se repiten en la escena
-var impulsor = new Impulsor(this.gui, "Controles del impulsor", this.circuito, 0.94, Math.PI / 2);
-this.circuito.add(impulsor);
+  createObjetos() {
+    // Se añaden los objetos que se repiten en la escena
+    var impulsor = new Impulsor(this.gui, "Controles del impulsor", this.circuito, 0.94, Math.PI / 2);
+    this.circuito.add(impulsor);
 
-// Función para generar valores de t evitando t=0
-function generarPosiciones(n, offset) {
-  let posiciones = [];
-  for (let i = 0; i < n; i++) {
-    let t = ((i + 1) / (n + 1) + offset) % 1;
-    posiciones.push(t);
+    // Función para generar valores de t evitando t=0
+    function generarPosiciones(n, offset) {
+      let posiciones = [];
+      for (let i = 0; i < n; i++) {
+        let t = ((i + 1) / (n + 1) + offset) % 1;
+        posiciones.push(t);
+      }
+      return posiciones;
+    }
+
+    // Conos de Tráfico
+    var rot = Math.PI / 2;
+    var conos = [];
+    let posicionesConos = generarPosiciones(8, 0.1);
+    for (var i = 0; i < 8; i++) {
+      var cono = new Cono_Trafico(this.circuito, posicionesConos[i], rot);
+      conos.push(cono);
+      rot += Math.PI / 4;
+    }
+    this.circuito.add(...conos);
+
+    // Neumáticos
+    this.neumaticos = [];
+    let posicionesNeumaticos = generarPosiciones(5, 0.2);
+    for (var i = 0; i < 5; i++) {
+      var neumatico = new Neumatico(this.gui, "Controles del neumático", this.circuito, posicionesNeumaticos[i]);
+      this.neumaticos.push(neumatico);
+    }
+    this.circuito.add(...this.neumaticos);
+
+    // Monedas Básicas
+    this.basicas = [];
+    let posicionesBasicas = generarPosiciones(10, 0.15);
+    for (var i = 0; i < 10; i++) {
+      var basica = new Moneda_Basica(this.gui, "Controles de la moneda", this.circuito, posicionesBasicas[i]);
+      this.basicas.push(basica);
+    }
+    this.circuito.add(...this.basicas);
+
+    // Rampa
+    this.rampa = new Rampa(this.circuito, 0.05, Math.PI / 2);
+    this.circuito.add(this.rampa);
+
+    // Puntos de Escudos
+    var rot2 = -Math.PI / 2;
+    this.punto_escudos = [];
+    let posicionesEscudos = generarPosiciones(5, 0.3);
+    for (var i = 0; i < 5; i++) {
+      var punto_escudo = new Punto_Escudo(this.circuito, posicionesEscudos[i], rot2);
+      this.punto_escudos.push(punto_escudo);
+      rot2 += Math.PI / 4;
+    }
+    this.circuito.add(...this.punto_escudos);
+
+    // Puntos de Energía
+    var rot3 = -Math.PI / 4;
+    this.puntos_energia = [];
+    let posicionesEnergia = generarPosiciones(5, 0.25);
+    for (var i = 0; i < 5; i++) {
+      var punto_energia = new Punto_Energia(this.circuito, posicionesEnergia[i], rot3);
+      this.puntos_energia.push(punto_energia);
+      rot3 += Math.PI / 8;
+    }
+    this.circuito.add(...this.puntos_energia);
+
+    // Turbulencia
+    this.turbulencias = [];
+    let posicionesTurbulencias = generarPosiciones(3, 0.1);
+    for (var i = 0; i < 3; i++) {
+      var turbulencia = new Turbulencias(this.circuito, posicionesTurbulencias[i], Math.PI / 2 + i * Math.PI);
+      this.turbulencias.push(turbulencia);
+    }
+    this.circuito.add(...this.turbulencias);
   }
-  return posiciones;
-}
-
-// Conos de Tráfico
-var rot = Math.PI / 2;
-var conos = [];
-let posicionesConos = generarPosiciones(10, 0.1);
-for (var i = 0; i < 10; i++) {
-  var cono = new Cono_Trafico(this.circuito, posicionesConos[i], rot);
-  conos.push(cono);
-  rot += Math.PI / 4;
-}
-this.circuito.add(...conos);
-
-// Neumáticos
-this.neumaticos = [];
-let posicionesNeumaticos = generarPosiciones(5, 0.2);
-for (var i = 0; i < 5; i++) {
-  var neumatico = new Neumatico(this.gui, "Controles del neumático", this.circuito, posicionesNeumaticos[i]);
-  this.neumaticos.push(neumatico);
-}
-this.circuito.add(...this.neumaticos);
-
-// Monedas Básicas
-this.basicas = [];
-let posicionesBasicas = generarPosiciones(20, 0.15);
-for (var i = 0; i < 20; i++) {
-  var basica = new Moneda_Basica(this.gui, "Controles de la moneda", this.circuito, posicionesBasicas[i]);
-  this.basicas.push(basica);
-}
-this.circuito.add(...this.basicas);
-
-// Rampa
-this.rampa = new Rampa(this.circuito, 0.05, Math.PI / 2);
-this.circuito.add(this.rampa);
-
-// Puntos de Escudos
-var rot2 = -Math.PI / 2;
-this.punto_escudos = [];
-let posicionesEscudos = generarPosiciones(5, 0.3);
-for (var i = 0; i < 5; i++) {
-  var punto_escudo = new Punto_Escudo(this.circuito, posicionesEscudos[i], rot2);
-  this.punto_escudos.push(punto_escudo);
-  rot2 += Math.PI / 4;
-}
-this.circuito.add(...this.punto_escudos);
-
-// Puntos de Energía
-var rot3 = -Math.PI / 4;
-this.puntos_energia = [];
-let posicionesEnergia = generarPosiciones(5, 0.25);
-for (var i = 0; i < 5; i++) {
-  var punto_energia = new Punto_Energia(this.circuito, posicionesEnergia[i], rot3);
-  this.puntos_energia.push(punto_energia);
-  rot3 += Math.PI / 8;
-}
-this.circuito.add(...this.puntos_energia);
-
-// Turbulencia
-this.turbulencias = [];
-let posicionesTurbulencias = generarPosiciones(3, 0.1);
-for (var i = 0; i < 3; i++) {
-  var turbulencia = new Turbulencias(this.circuito, posicionesTurbulencias[i], Math.PI / 2 + i * Math.PI);
-  this.turbulencias.push(turbulencia);
-  }
-  this.circuito.add(...this.turbulencias);
-}
-
-  alternarMusica() {
-        // Seleccionar el botón y el audio
-        var toggleButton = document.getElementById('toggleMusic');
-        var audio = new Audio('/sound/main_theme.mp3');
-        audio.loop = true; // Repetir la música
-        audio.volume = 0.2; // Volumen inicial del audio
-
-        toggleButton.addEventListener('click', () => {
-          this.musicEnabled = !this.musicEnabled; // Alternar el estado de la música
-
-// Función para alternar la reproducción de la música
-if (this.musicEnabled) {
-  audio.pause(); // Pausar la música si está activada
-  toggleButton.textContent = 'Activar Música'; // Cambiar el texto del botón
-} else {
-  audio.play(); // Reproducir la música si está desactivada
-  toggleButton.textContent = 'Desactivar Música'; // Cambiar el texto del botón
-}
-// Agregar un evento de clic al botón para llamar a la función toggleMusic
-toggleButton.addEventListener('click', toggleMusic);
-        });
-  }
-
 
   createSky() {
     var path = "/imgs/cube/";
@@ -250,8 +164,8 @@ toggleButton.addEventListener('click', toggleMusic);
 
     // Align top-left
     stats.domElement.style.position = 'absolute';
-    stats.domElement.style.left = '0px';
-    stats.domElement.style.top = '0px';
+    stats.domElement.style.right = '10%';
+    stats.domElement.style.top = '20%';
 
     $("#Stats-output").append(stats.domElement);
 
@@ -370,11 +284,12 @@ toggleButton.addEventListener('click', toggleMusic);
 
     return renderer;
   }
-  updateHUD(){
+  updateHUD() {
     const escudo = document.getElementById("escudo");
-    if(this.personaje.tengoEscudo){
-      escudo.style.display = "flex";}
-    else{
+    if (this.personaje.tengoEscudo) {
+      escudo.style.display = "flex";
+    }
+    else {
       escudo.style.display = "none";
     }
     const speed = document.getElementById("speed");
@@ -385,14 +300,14 @@ toggleButton.addEventListener('click', toggleMusic);
     var aguja = document.getElementById('aguja');
     // Aplica la rotación a la aguja mediante CSS
     // Calcula el ángulo de rotación de la aguja basado en la velocidad
-    var angle = (this.personaje.speed*1600/ 120) * 300;
+    var angle = (this.personaje.speed * 1600 / 120) * 300;
     aguja.style.transform = 'rotate(' + angle + 'deg)';
     const vueltas = document.getElementById("vueltas");
     vueltas.innerHTML = "Vueltas: " + this.personaje.vueltas;
 
     const vuelta = document.getElementById("vuelta");
-    if(this.personaje.activaVuelta){
-      vuelta.innerHTML = "( Vuelta " + this.personaje.vueltas+ " de 5 )";
+    if (this.personaje.activaVuelta) {
+      vuelta.innerHTML = "( Vuelta " + this.personaje.vueltas + " de 5 )";
       vuelta.style.display = "block";
       setTimeout(() => {
         this.personaje.activaVuelta = false;
@@ -400,7 +315,7 @@ toggleButton.addEventListener('click', toggleMusic);
       }, 3000);
     }
     const score = document.getElementById("score");
-    score.innerHTML = "Score: " + this.personaje.score+ " pts";
+    score.innerHTML = "Score: " + this.personaje.score + " pts";
   }
   getCamera() {
     // En principio se devuelve la única cámara que tenemos
@@ -463,19 +378,137 @@ toggleButton.addEventListener('click', toggleMusic);
     // Este método debe ser llamado cada vez que queramos visualizar la escena de nuevo.
     // Literalmente le decimos al navegador: "La próxima vez que haya que refrescar la pantalla, llama al método que te indico".
     // Si no existiera esta línea,  update()  se ejecutaría solo la primera vez.
-    requestAnimationFrame(() => this.update())
+    // Limite de 144 fps
+    //setTimeout(() =>
+    requestAnimationFrame(() => this.update());
+    // 1000 / 144);
   }
 }
 
-/// La función   main
-$(function () {
+var musicEnabled = true;
+
+function alternarMusica() {
+  // Seleccionar el botón y el audio
+  var toggleButton = document.getElementById('toggleMusic');
+  var audio = new Audio('/sound/main_theme.mp3');
+  audio.loop = true; // Repetir la música
+  audio.volume = 0.2; // Volumen inicial del audio
+
+  if (musicEnabled) {
+    audio.play(); // Reproducir la música si está activada
+    toggleButton.textContent = 'Desactivar Música'; // Cambiar el texto del botón
+  }
+
+  toggleButton.addEventListener('click', () => {
+    musicEnabled = !musicEnabled; // Alternar el estado de la música
+
+    // Función para alternar la reproducción de la música
+    if (!musicEnabled) {
+      audio.pause(); // Pausar la música si está activada
+      toggleButton.textContent = 'Activar Música'; // Cambiar el texto del botón
+    } else {
+      audio.play(); // Reproducir la música si está desactivada
+      toggleButton.textContent = 'Desactivar Música'; // Cambiar el texto del botón
+    }
+    // Agregar un evento de clic al botón para llamar a la función toggleMusic
+    toggleButton.addEventListener('click', toggleMusic);
+  });
+}
+
+// Función para mostrar la animación de carga
+function mostrarCargando() {
+  var cargandoDiv = document.createElement('div');
+  cargandoDiv.id = 'cargando';
+  cargandoDiv.innerHTML = '<p>Cargando...</p>';
+  cargandoDiv.style.position = 'fixed';
+  cargandoDiv.style.top = '50%';
+  cargandoDiv.style.left = '50%';
+  cargandoDiv.style.transform = 'translate(-50%, -50%)';
+  cargandoDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+  cargandoDiv.style.padding = '20px';
+  cargandoDiv.style.borderRadius = '10px';
+  cargandoDiv.style.zIndex = '9999';
+
+  // Crear un elemento <div> para la animación de la rueda giratoria
+  var spinner = document.createElement('div');
+  spinner.classList.add('spinner');
+  cargandoDiv.appendChild(spinner);
+
+  document.body.appendChild(cargandoDiv);
+}
+
+// Estilos CSS para la animación de la rueda giratoria
+var styles = `
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spinner {
+  border: 8px solid rgba(0, 0, 0, 0.3);
+  border-top: 8px solid #333;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+`;
+
+// Crear un elemento <style> para aplicar los estilos CSS
+var styleElement = document.createElement('style');
+styleElement.innerHTML = styles;
+document.head.appendChild(styleElement);
+
+
+// Función para ocultar la animación de carga
+function ocultarCargando() {
+  var cargandoDiv = document.getElementById('cargando');
+  if (cargandoDiv) {
+    cargandoDiv.parentNode.removeChild(cargandoDiv);
+  }
+}
+
+function cargarEscena(scene){
+  document.getElementById('startMenu').style.display = 'none';
+  // Se muestran el div de la clase contenedor y el Output
+  document.getElementsByClassName('contenedor')[0].style.display = 'block';
+  document.getElementById('hud').style.display = 'block';
+  // Pausamos el video de inicio y lo quitamos
+  var video = document.getElementById('video');
+  video.pause();
+  video.style.display = 'none';
+  video.currentTime = 0;
 
   // Se instancia la escena pasándole el  div  que se ha creado en el html para visualizar
-  var scene = new MyScene("#WebGL-output");
-
+  scene = new MyScene("#WebGL-output");
   // Se añaden los listener de la aplicación. En este caso, el que va a comprobar cuándo se modifica el tamaño de la ventana de la aplicación.
   window.addEventListener("resize", () => scene.onWindowResize());
-
   // Que no se nos olvide, la primera visualización.
   scene.update();
+}
+
+// La función main
+$(function () {
+  alternarMusica(); // Alternar la música al cargar la página
+
+  var scene; // Variable global para almacenar la escena
+
+  var startButton = document.getElementById('startButton');
+  startButton.addEventListener('click', () => {
+
+    // Mostrar la animación de carga
+    mostrarCargando();
+
+    // Esperar medio segundo para cargar la escena
+    setTimeout(() => {
+      // Ocultar la animación de carga
+      ocultarCargando();
+      cargarEscena(scene);
+    }, 500);
+  });
 });
+

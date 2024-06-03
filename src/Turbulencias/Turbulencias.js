@@ -18,7 +18,7 @@ class Turbulencias extends THREE.Object3D{
         
         //Creamos las geometrias
         var base = new THREE.BoxGeometry(2, 0.05, 1);
-        var cono = new THREE.CylinderGeometry(0.001, 0.4, 1, 30, 5);
+        var cono = new THREE.CylinderGeometry(0.001, 0.4, 1, 8, 5);
 
         //Se posiciona y se orienta
         base.scale(0.4, 0.4, 0.4);

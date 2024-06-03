@@ -37,7 +37,7 @@ class Punto_Energia extends THREE.Object3D {
     shape.lineTo(-0.5, 0.1);
     shape.lineTo(-0.2, 0.1);
 
-    var esfera = new THREE.SphereGeometry(0.95, 16, 16);
+    var esfera = new THREE.SphereGeometry(0.95, 12, 12);
 
     // Un Mesh se compone de geometría y material
     var options = { depth: 0.2, steps: 1, bevelEnabled: false };
@@ -119,9 +119,6 @@ class Punto_Energia extends THREE.Object3D {
         particle.rotation.z += (Math.random() - 0.5) * 0.2; // Rotación aleatoria en el eje Z
     });
 }
-
-
-
 
   createColision() {
     var box = new THREE.Box3();

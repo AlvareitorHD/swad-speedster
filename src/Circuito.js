@@ -107,7 +107,7 @@ class Circuito extends THREE.Object3D {
 
         // Parámetros del tubo
         var radius = 1.5;
-        var segments = 800;
+        var segments = 600;
 
         // Crear la geometría del tubo
         this.tubeGeometry = new THREE.TubeGeometry(curve, segments, radius, 20, true);
@@ -131,7 +131,7 @@ class Circuito extends THREE.Object3D {
         mat.wrapS = THREE.RepeatWrapping;
         mat.wrapT = THREE.RepeatWrapping;
         mat.repeat.set(5, 1); // Ajusta el factor de repetición según tus necesidades
-        this.meta = new THREE.Mesh(new THREE.CylinderGeometry(radius + 0.025, radius + 0.025, 1.5, 32),
+        this.meta = new THREE.Mesh(new THREE.CylinderGeometry(radius + 0.025, radius + 0.025, 1.5, 20),
             new THREE.MeshStandardMaterial({ map: mat }));
         this.meta.position.set(vertices[0].x - 1, vertices[0].y, vertices[0].z);
         this.meta.rotation.z = Math.PI / 2;
