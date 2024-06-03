@@ -16,7 +16,7 @@ import { Punto_Energia } from './Punto_Energia/Punto_Energia.js';
 import { Turbulencias } from './Turbulencias/Turbulencias.js';
 
 class Personaje extends THREE.Object3D {
-  constructor(gui, titleGui, c) {
+  constructor(c) {
     super();
     var circuito = c.tubeGeometry;
     this.circuito = c;
@@ -39,7 +39,6 @@ class Personaje extends THREE.Object3D {
     this.desgirar = false; // Bandera para desacelerar el giro
 
     this.personaje = new THREE.Object3D();
-    this.createGUI(gui, titleGui);
     this.createChasis();
     this.createAlonso();
     this.createReloj();
@@ -322,18 +321,18 @@ this.add(this.rayoVisual); // Añade el rayo al raycaster
     var pickedObjects = this.raycaster.intersectObjects(h, true);
 
     if (pickedObjects.length > 0) {
-      console.log("PICKING");
+      //console.log("PICKING");
       var selectedObject = pickedObjects[0].object;
       var selectedPoint = pickedObjects[0].point;
 
       if(selectedObject.userData instanceof Moneda_Basica){
-        console.log("Colisión con moneda básica");
+        //console.log("Colisión con moneda básica");
         selectedObject.userData.picked();
         this.score += 1;
       }
       else if(selectedObject.userData instanceof Moneda_Premium && this.puntuar){
         this.puntuar = false;
-        console.log("Colisión con moneda premium");
+        //console.log("Colisión con moneda premium");
         selectedObject.userData.picked();
         this.score += 5;
         setTimeout(() =>{
@@ -672,60 +671,6 @@ createHelmet() {
     return this.camera;
   }
 
-  createGUI(gui, titleGui) {
-    // Controles para el tamaño, la orientación y la posición de la caja
-    this.guiControls = {
-      sizeX: 1.0,
-      sizeY: 1.0,
-      sizeZ: 1.0,
-
-      rotX: 0.0,
-      rotY: 0.0,
-      rotZ: 0.0,
-
-      posX: 0.0,
-      posY: 0.0,
-      posZ: 0.0,
-
-      anim: false,
-      // Un botón para dejarlo todo en su posición inicial
-      // Cuando se pulse se ejecutará esta función.
-      reset: () => {
-        this.guiControls.sizeX = 1.0;
-        this.guiControls.sizeY = 1.0;
-        this.guiControls.sizeZ = 1.0;
-
-        this.guiControls.rotX = 0.0;
-        this.guiControls.rotY = 0.0;
-        this.guiControls.rotZ = 0.0;
-
-        this.guiControls.posX = 0.0;
-        this.guiControls.posY = 0.0;
-        this.guiControls.posZ = 0.0;
-        this.guiControls.anim = false;
-      }
-    }
-
-    // Se crea una sección para los controles de la caja
-    var folder = gui.addFolder(titleGui);
-    // Estas lineas son las que añaden los componentes de la interfaz
-    // Las tres cifras indican un valor mínimo, un máximo y el incremento
-    // El método   listen()   permite que si se cambia el valor de la variable en código, el deslizador de la interfaz se actualice
-    folder.add(this.guiControls, 'sizeX', 0.1, 5.0, 0.01).name('Tamaño X : ').listen();
-    folder.add(this.guiControls, 'sizeY', 0.1, 5.0, 0.01).name('Tamaño Y : ').listen();
-    folder.add(this.guiControls, 'sizeZ', 0.1, 5.0, 0.01).name('Tamaño Z : ').listen();
-
-    folder.add(this.guiControls, 'rotX', 0.0, Math.PI / 2, 0.01).name('Rotación X : ').listen();
-    folder.add(this.guiControls, 'rotY', 0.0, Math.PI / 2, 0.01).name('Rotación Y : ').listen();
-    folder.add(this.guiControls, 'rotZ', 0.0, Math.PI / 2, 0.01).name('Rotación Z : ').listen();
-
-    folder.add(this.guiControls, 'posX', -20.0, 20.0, 0.01).name('Posición X : ').listen();
-    folder.add(this.guiControls, 'posY', 0.0, 10.0, 0.01).name('Posición Y : ').listen();
-    folder.add(this.guiControls, 'posZ', -20.0, 20.0, 0.01).name('Posición Z : ').listen();
-    folder.add(this.guiControls, 'anim').name('Girar: ').listen();
-    folder.add(this.guiControls, 'reset').name('[ Reset ]');
-  }
-
   movimientoPrincipal() {
     var luz_freno = new THREE.Color(0xff0000);
     var color_bombilla = new THREE.Color(0xaaaaaa);
@@ -889,7 +834,7 @@ updateSpeedParticles() {
           this.timeout1 = false;
         }, 3000);
 
-        console.log("Colisión con un cono de tráfico");
+        //console.log("Colisión con un cono de tráfico");
 
         if (this.tengoEscudo) {
           this.noEscudo.play();
@@ -910,7 +855,7 @@ updateSpeedParticles() {
           this.timeout2 = false;
         }, 3000);
 
-        console.log("Colisión con neumatico");
+        //console.log("Colisión con neumatico");
 
         if (this.tengoEscudo) {
           this.noEscudo.play();
@@ -974,7 +919,7 @@ updateSpeedParticles() {
         });
         tween.start();
         },500);
-        console.log("Colisión con rampa");
+        //console.log("Colisión con rampa");
         setTimeout(() => {
           // Vuelve a la velocidad normal
           this.speed /= 1.5;
@@ -982,13 +927,13 @@ updateSpeedParticles() {
         }, 1000);// Tiempo de salto 1 segundo
       }
       else if (impactados[0].object.userData instanceof Punto_Escudo && !this.tengoEscudo) {
-        console.log("Colisión con punto de escudo");
+        //console.log("Colisión con punto de escudo");
         impactados[0].object.userData.colision();
         this.tengoEscudo = true;
       }
       else if (impactados[0].object.userData instanceof Impulsor && !this.timeout3 && this.speed > 0){
         this.timeout3 = true;
-        console.log("Colisión con impulsor");
+        //console.log("Colisión con impulsor");
         impactados[0].object.userData.colision();
         this.speed = this.maxSpeed;
         this.impulso = true;
@@ -1001,7 +946,7 @@ updateSpeedParticles() {
         }, 500);
       }
       else if (impactados[0].object.userData instanceof Punto_Energia && !this.timeout4){
-        console.log("Colisión con punto de energía");
+        //console.log("Colisión con punto de energía");
         impactados[0].object.userData.colision();
         this.speed *=2;
         this.timeout4 = true;
@@ -1010,7 +955,7 @@ updateSpeedParticles() {
         }, 2500);
       }
       else if (impactados[0].object.userData instanceof Turbulencias && !this.timeout_pinchado){
-        console.log("Colisión con turbulencia");
+        //console.log("Colisión con turbulencia");
           impactados[0].object.userData.colision();
         this.timeout_pinchado = true;
         this.speed *= 0.5;

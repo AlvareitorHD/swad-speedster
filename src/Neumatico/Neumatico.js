@@ -45,7 +45,7 @@ class Neumatico extends THREE.Object3D{
       var box = new THREE.Box3();
       box.setFromObject(this.neumatico);
       var boxHelper = new THREE.Box3Helper(box, 0xffff00);
-      boxHelper.visible = true;
+      boxHelper.visible = false;
       boxHelper.userData = this;
       this.neumatico.add(boxHelper);
     }

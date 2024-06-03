@@ -32,16 +32,18 @@ class MyScene extends THREE.Scene {
 
   constructor(myCanvas) {
     super();
+    // Fin de partida
+    this.gameOver = false;
     // Lo primero, crear el visualizador, pasándole el lienzo sobre el que realizar los renderizados.
     this.renderer = this.createRenderer(myCanvas);
     this.createSky();
     // Se añaden los objetos únicos a la escena
     this.gui = this.createGUI();
-    this.circuito = new Circuito(this.gui, "Controles circuito");
+    this.circuito = new Circuito();
     this.add(this.circuito);
-    this.personaje = new Personaje(this.gui, "Controles de la Caja", this.circuito);
+    this.personaje = new Personaje(this.circuito);
     this.add(this.personaje);
-    this.premium = new Moneda_Premium(this.gui, "Controles de la moneda", this.circuito);
+    this.premium = new Moneda_Premium();
     this.circuito.add(this.premium);
 
     this.initStats();
@@ -164,7 +166,7 @@ class MyScene extends THREE.Scene {
 
     // Align top-left
     stats.domElement.style.position = 'absolute';
-    stats.domElement.style.right = '10%';
+    stats.domElement.style.left = '95%';
     stats.domElement.style.top = '20%';
 
     $("#Stats-output").append(stats.domElement);
@@ -313,6 +315,13 @@ class MyScene extends THREE.Scene {
         this.personaje.activaVuelta = false;
         vuelta.style.display = "none";
       }, 3000);
+
+      if (this.personaje.vueltas >= 5) {
+        this.gameOver = true;
+        setTimeout(() => {
+        this.finPartida(this.personaje.score);
+        }, 1000);
+      }
     }
     const score = document.getElementById("score");
     score.innerHTML = "Score: " + this.personaje.score + " pts";
@@ -354,7 +363,68 @@ class MyScene extends THREE.Scene {
     });
   }
 
+  finPartida(puntuacion) {
+    // Crear un contenedor para el mensaje de Game Over
+    const gameOverContainer = document.createElement('div');
+    gameOverContainer.id = 'gameOverContainer';
+    gameOverContainer.style.position = 'fixed';
+    gameOverContainer.style.top = '0';
+    gameOverContainer.style.left = '0';
+    gameOverContainer.style.width = '100%';
+    gameOverContainer.style.height = '100%';
+    gameOverContainer.style.display = 'flex';
+    gameOverContainer.style.justifyContent = 'center';
+    gameOverContainer.style.alignItems = 'center';
+    gameOverContainer.style.zIndex = '9999';
+    gameOverContainer.style.backdropFilter = 'blur(5px)'; // Fondo borroso
+  
+    // Crear el mensaje de Game Over
+    const gameOverMessage = document.createElement('div');
+    gameOverMessage.style.color = '#fff';
+    gameOverMessage.style.textAlign = 'center';
+    gameOverMessage.style.padding = '2em';
+    gameOverMessage.style.borderRadius = '1em';
+    
+    const gameOverText = document.createElement('h1');
+    gameOverText.innerText = '( Game Over )';
+    
+    const scoreText = document.createElement('p');
+    scoreText.innerText = `Score: ${puntuacion} pts`;
+
+    // Crear el botón de reinicio
+    const restartButton = document.createElement('button');
+    restartButton.innerText = 'Reiniciar';
+    restartButton.style.fontFamily = 'titulo';
+    restartButton.style.marginTop = '20%';
+    restartButton.style.padding = '1em';
+    restartButton.style.fontSize = '2em';
+    restartButton.style.cursor = 'pointer';
+    restartButton.style.backgroundColor = '#ff0000';
+    restartButton.style.color = '#000';
+    restartButton.style.border = 'none';
+    restartButton.style.borderRadius = '1em';
+    restartButton.onclick = function() {
+        location.reload();
+    };
+  
+    // Añadir el texto y el botón al mensaje
+    gameOverMessage.appendChild(gameOverText);
+    gameOverMessage.appendChild(scoreText);
+    gameOverMessage.appendChild(restartButton);
+  
+    // Añadir el mensaje al contenedor
+    gameOverContainer.appendChild(gameOverMessage);
+  
+    // Añadir el contenedor al cuerpo del documento
+    document.body.appendChild(gameOverContainer);
+}
+
+  
+
   update() {
+    if (this.gameOver) {
+        return; // Salir de la función
+  }
 
     this.updateHUD();
 
@@ -384,6 +454,9 @@ class MyScene extends THREE.Scene {
     // 1000 / 144);
   }
 }
+// FIN de la clase MyScene
+
+// FUNCIONES AUXILIARES
 
 var musicEnabled = true;
 

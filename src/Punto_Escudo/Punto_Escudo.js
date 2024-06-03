@@ -81,7 +81,7 @@ class Punto_Escudo extends THREE.Object3D{
       var box = new THREE.Box3();
       box.setFromObject(this.escudo);
       var boxHelper = new THREE.Box3Helper( box, 0xffff00 );
-      boxHelper.visible = true;
+      boxHelper.visible = false;
       boxHelper.userData = this;
       this.escudo.add(boxHelper);
     }

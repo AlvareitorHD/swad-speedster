@@ -1,7 +1,7 @@
 import * as THREE from '../libs/three.module.js'
 
 class Circuito extends THREE.Object3D {
-    constructor(gui, titleGui) {
+    constructor() {
         super();
         this.puedeSalir = false;
         

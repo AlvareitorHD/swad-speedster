@@ -124,7 +124,7 @@ class Punto_Energia extends THREE.Object3D {
     var box = new THREE.Box3();
     box.setFromObject(this.energia);
     var boxHelper = new THREE.Box3Helper(box, 0xffff00);
-    boxHelper.visible = true;
+    boxHelper.visible = false;
     boxHelper.userData = this;
     this.energia.add(boxHelper);
   }

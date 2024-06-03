@@ -81,7 +81,7 @@ class Moneda_Basica extends THREE.Object3D {
     }
 
     picked() {
-        console.log("Moneda recogida");
+        //console.log("Moneda recogida");
         const rot = this.movimientoLateral.rotation.z;
         const audio = new Audio('/sound/coin.flac');
         audio.volume = 0.5;
@@ -113,7 +113,7 @@ class Moneda_Basica extends THREE.Object3D {
         const box = new THREE.Box3();
         box.setFromObject(this.basica);
         const boxHelper = new THREE.Box3Helper(box, 0xffff00);
-        boxHelper.visible = true;
+        boxHelper.visible = false;
         boxHelper.userData = this;
         this.basica.add(boxHelper);
     }
