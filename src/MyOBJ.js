@@ -801,8 +801,6 @@ createHelmet() {
     this.personaje.add(this.speedParticles);
 }
 
-
-
 updateSpeedParticles() {
   if (this.speedParticles.visible) {
       this.speedParticles.children.forEach(particle => {
@@ -814,8 +812,7 @@ updateSpeedParticles() {
   }
 }
 
-
-  // Método para compronar si el personaje ha colisionado con un obstáculo y actuar en consecuencia
+  // Método para comprobar si el personaje ha colisionado con un obstáculo y actuar en consecuencia
   updateRayo(){
     // Actualiza la posición del rayo
     this.personaje.getWorldPosition(this.pos);
@@ -1024,7 +1021,6 @@ updateSpeedParticles() {
   }
   }
 }
-
 
   update() {
     if (this.circuito.puedeSalir) {

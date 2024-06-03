@@ -208,28 +208,17 @@ class MyScene extends THREE.Scene {
     // En este caso la intensidad de la luz y si se muestran o no los ejes
     this.guiControls = {
       // En el contexto de una función   this   alude a la función
-      lightPower: 500.0,  // La potencia de esta fuente de luz se mide en lúmenes
       ambientIntensity: 0.5,
-      axisOnOff: true,
     }
 
     // Se crea una sección para los controles de esta clase
-    var folder = gui.addFolder('Luz y Ejes');
-
-    // Se le añade un control para la potencia de la luz puntual
-    folder.add(this.guiControls, 'lightPower', 0, 1000, 20)
-      .name('Luz puntual : ')
-      .onChange((value) => this.setLightPower(value));
+    var folder = gui.addFolder('Luz ambiental');
 
     // Otro para la intensidad de la luz ambiental
     folder.add(this.guiControls, 'ambientIntensity', 0, 1, 0.05)
       .name('Luz ambiental: ')
       .onChange((value) => this.setAmbientIntensity(value));
 
-    // Y otro para mostrar u ocultar los ejes
-    folder.add(this.guiControls, 'axisOnOff')
-      .name('Mostrar ejes : ')
-      .onChange((value) => this.setAxisVisible(value));
     return gui;
   }
 
@@ -241,32 +230,14 @@ class MyScene extends THREE.Scene {
     this.ambientLight = new THREE.AmbientLight('white', this.guiControls.ambientIntensity);
     // La añadimos a la escena
     this.add(this.ambientLight);
-    /*
-    // Se crea una luz focal que va a ser la luz principal de la escena
-    // La luz focal, además tiene una posición, y un punto de mira
-    // Si no se le da punto de mira, apuntará al (0,0,0) en coordenadas del mundo
-    // En este caso se declara como   this.atributo   para que sea un atributo accesible desde otros métodos.
-    this.pointLight = new THREE.PointLight(0xffffff);
-    this.pointLight.power = this.guiControls.lightPower;
-    this.pointLight.position.set(2, 3, 1);
-    this.add(this.pointLight);*/
-
     // Luz direccional
     this.directionalLight = new THREE.DirectionalLight(0xfdf3c6, 1.5);
     this.directionalLight.position.set(1, 1, 1);
     this.add(this.directionalLight);
   }
 
-  setLightPower(valor) {
-    this.pointLight.power = valor;
-  }
-
   setAmbientIntensity(valor) {
     this.ambientLight.intensity = valor;
-  }
-
-  setAxisVisible(valor) {
-    this.axis.visible = valor;
   }
 
   createRenderer(myCanvas) {
@@ -286,6 +257,7 @@ class MyScene extends THREE.Scene {
 
     return renderer;
   }
+
   updateHUD() {
     const escudo = document.getElementById("escudo");
     if (this.personaje.tengoEscudo) {
@@ -326,6 +298,7 @@ class MyScene extends THREE.Scene {
     const score = document.getElementById("score");
     score.innerHTML = "Score: " + this.personaje.score + " pts";
   }
+
   getCamera() {
     // En principio se devuelve la única cámara que tenemos
     // Si hubiera varias cámaras, este método decidiría qué cámara devuelve cada vez que es consultado
@@ -418,8 +391,6 @@ class MyScene extends THREE.Scene {
     // Añadir el contenedor al cuerpo del documento
     document.body.appendChild(gameOverContainer);
 }
-
-  
 
   update() {
     if (this.gameOver) {
