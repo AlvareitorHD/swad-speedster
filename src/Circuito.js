@@ -164,9 +164,9 @@ class Circuito extends THREE.Object3D {
             this.lights.push(light);
         }
 
-        var audio = new Audio('/sound/rojo.mp3');
+        var audio = new Audio('../sound/rojo.mp3');
         audio.volume = 0.5;
-        var audio2 = new Audio('/sound/verde.mp3');
+        var audio2 = new Audio('../sound/verde.mp3');
         audio2.volume = 0.5;
 
         // Añadir animación para cambiar el color de las luces
