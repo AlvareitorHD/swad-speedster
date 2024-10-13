@@ -147,7 +147,7 @@ class MyScene extends THREE.Scene {
   }
 
   createSky() {
-    var path = "/imgs/cube/";
+    var path = "../imgs/cube/";
     var format = '.bmp';
     var urls = [
       path + 'px' + format, path + 'nx' + format,
@@ -434,7 +434,7 @@ var musicEnabled = true;
 function alternarMusica() {
   // Seleccionar el botón y el audio
   var toggleButton = document.getElementById('toggleMusic');
-  var audio = new Audio('/sound/main_theme.mp3');
+  var audio = new Audio('../sound/main_theme.mp3');
   audio.loop = true; // Repetir la música
   audio.volume = 0.2; // Volumen inicial del audio
 

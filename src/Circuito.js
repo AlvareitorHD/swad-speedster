@@ -113,8 +113,8 @@ class Circuito extends THREE.Object3D {
         this.tubeGeometry = new THREE.TubeGeometry(curve, segments, radius, 20, true);
 
         // Material para el tubo
-        var textura = new THREE.TextureLoader().load('/imgs/carretera1.jpg');
-        var normal = new THREE.TextureLoader().load('/imgs/normalcarretera.png');
+        var textura = new THREE.TextureLoader().load('../imgs/carretera1.jpg');
+        var normal = new THREE.TextureLoader().load('../imgs/normalcarretera.png');
         textura.wrapS = THREE.RepeatWrapping;
         textura.wrapT = THREE.RepeatWrapping;
         textura.repeat.set(10, 1); // Ajusta el factor de repetición según tus necesidades
@@ -127,7 +127,7 @@ class Circuito extends THREE.Object3D {
         // Crear el mesh del tubo y agregarlo al circuito
         this.tubeMesh = new THREE.Mesh(this.tubeGeometry, material);
         this.add(this.tubeMesh);
-        var mat = new THREE.TextureLoader().load('/imgs/textura-ajedrezada.jpg');
+        var mat = new THREE.TextureLoader().load('../imgs/textura-ajedrezada.jpg');
         mat.wrapS = THREE.RepeatWrapping;
         mat.wrapT = THREE.RepeatWrapping;
         mat.repeat.set(5, 1); // Ajusta el factor de repetición según tus necesidades
