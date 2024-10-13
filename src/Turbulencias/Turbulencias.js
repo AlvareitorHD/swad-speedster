@@ -9,7 +9,7 @@ class Turbulencias extends THREE.Object3D{
         var circuito = c.tubeGeometry;
 
         //Creamos los materiales
-        var texture = new THREE.TextureLoader().load('../../imgs/acero.jpeg');
+        var texture = new THREE.TextureLoader().load('../imgs/acero.jpeg');
         var Mat = new THREE.MeshStandardMaterial({
           color: 0xCCCCCC,
           roughness: 0.5,
@@ -51,7 +51,7 @@ class Turbulencias extends THREE.Object3D{
         // Y añadirlo como hijo del Object3D (el this)
         this.turbulencias.userData = this;
 
-        this.sonido = new Audio('/sound/pinchazo.mp3');
+        this.sonido = new Audio('../sound/pinchazo.mp3');
 
         this.posicionar(circuito, t, rot);
         this.createColision();

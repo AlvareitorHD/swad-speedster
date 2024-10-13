@@ -43,7 +43,7 @@ class Impulsor extends THREE.Object3D {
     this.video.play();
     this.posicionar(circuito, t, rot);
     this.createColision();
-    this.sonido = new Audio('/sound/impulsor.mp3');
+    this.sonido = new Audio('../sound/impulsor.mp3');
   }
 
   posicionar(circuito,ti,rot){

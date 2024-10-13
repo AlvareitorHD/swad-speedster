@@ -9,8 +9,8 @@ class Neumatico extends THREE.Object3D{
         //this.createGUI(gui,titleGui);
 
         // Creamos la textura del neumatico
-        var texture = new THREE.TextureLoader().load('../../imgs/neumatico.jpeg');
-        var normalMap = new THREE.TextureLoader().load('../../imgs/normal-neu.png');
+        var texture = new THREE.TextureLoader().load('../imgs/neumatico.jpeg');
+        var normalMap = new THREE.TextureLoader().load('../imgs/normal-neu.png');
         //Le aplicamos la textura
         var Mat = new THREE.MeshStandardMaterial({map: texture, side: THREE.DoubleSide, color: 0xaaaaaa,
           normalMap: normalMap, normalScale: new THREE.Vector2(1, 1)
@@ -78,7 +78,7 @@ class Neumatico extends THREE.Object3D{
     }
 
     colision(){
-      var sonido = new Audio('/sound/qubodup-crash.ogg');
+      var sonido = new Audio('../sound/qubodup-crash.ogg');
       sonido.play();
     }
 

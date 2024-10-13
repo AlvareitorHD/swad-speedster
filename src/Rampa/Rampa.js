@@ -7,7 +7,7 @@ class Rampa extends THREE.Object3D{
         super();
         var circuito = c.tubeGeometry;
         //Creamos los materiales
-        var texture = new THREE.TextureLoader().load('../../imgs/rampa.webp');
+        var texture = new THREE.TextureLoader().load('../imgs/rampa.webp');
         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
         texture.repeat.set(1,1);
         texture.rotation = -Math.PI/2;
@@ -40,7 +40,7 @@ class Rampa extends THREE.Object3D{
         this.add(this.rampa);
         this.posicionar(circuito,t,rot);
         this.createColision();
-        this.sonido = new Audio('/sound/rampa.mp3' );
+        this.sonido = new Audio('../sound/rampa.mp3' );
     }
 
     colision(){

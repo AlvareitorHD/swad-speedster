@@ -11,8 +11,8 @@ class Punto_Escudo extends THREE.Object3D{
         //this.createGUI(gui,titleGui);
 
         //Creamos los materiales
-        var texture = new THREE.TextureLoader().load('/imgs/wood.jpg');
-        var metal = new THREE.TextureLoader().load('/imgs/metalnormal2.jpg');
+        var texture = new THREE.TextureLoader().load('../imgs/wood.jpg');
+        var metal = new THREE.TextureLoader().load('../imgs/metalnormal2.jpg');
         metal.wrapS = THREE.RepeatWrapping;
         metal.wrapT = THREE.RepeatWrapping;
         var Mat = new THREE.MeshStandardMaterial({
@@ -60,7 +60,7 @@ class Punto_Escudo extends THREE.Object3D{
 
         this.posicionar(circuito, t, rot);
         this.createColision();
-        this.sonido = new Audio('/sound/escudo.mp3');
+        this.sonido = new Audio('../sound/escudo.mp3');
     }
 
     colision(){

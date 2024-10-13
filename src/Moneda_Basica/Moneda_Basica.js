@@ -83,7 +83,7 @@ class Moneda_Basica extends THREE.Object3D {
     picked() {
         //console.log("Moneda recogida");
         const rot = this.movimientoLateral.rotation.z;
-        const audio = new Audio('/sound/coin.flac');
+        const audio = new Audio('../sound/coin.flac');
         audio.volume = 0.5;
         audio.play();
 

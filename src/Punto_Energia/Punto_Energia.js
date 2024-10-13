@@ -59,7 +59,7 @@ class Punto_Energia extends THREE.Object3D {
 
     this.posicionar(circuito, t, rot);
     this.createColision();
-    this.sonido = new Audio('/sound/electric.mp3');
+    this.sonido = new Audio('../sound/electric.mp3');
 
     // Crear el sistema de partículas
     this.createParticles(extrudeGeom);

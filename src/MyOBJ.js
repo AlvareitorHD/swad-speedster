@@ -481,10 +481,10 @@ cilindro.translate(0, 0, 0.08); // Posicionar el cilindro
 
 // Cargar las texturas para el material de cuero
 var textureLoader = new THREE.TextureLoader();
-var leatherColor = textureLoader.load('/imgs/black-leather-bl/black-leather_albedo.png');
-var leatherNormal = textureLoader.load('/imgs/black-leather-bl/black-leather_normal-ogl.png');
-var leatherRoughness = textureLoader.load('/imgs/black-leather-bl/black-leather_roughness.png');
-var leatherMetalness = textureLoader.load('/imgs/black-leather-bl/black-leather_metallic.png');
+var leatherColor = textureLoader.load('../imgs/black-leather-bl/black-leather_albedo.png');
+var leatherNormal = textureLoader.load('../imgs/black-leather-bl/black-leather_normal-ogl.png');
+var leatherRoughness = textureLoader.load('../imgs/black-leather-bl/black-leather_roughness.png');
+var leatherMetalness = textureLoader.load('../imgs/black-leather-bl/black-leather_metallic.png');
 
 // Crear el material con las texturas cargadas
 var materialVolante = new THREE.MeshStandardMaterial({
@@ -661,10 +661,10 @@ createHelmet() {
 }
 
   createSonido(){
-    this.aceleracion = new Audio('/sound/car-acceleration-inside-car.mp3');
-    this.ralenti = new Audio('/sound/ralenti.mp3');
+    this.aceleracion = new Audio('../sound/car-acceleration-inside-car.mp3');
+    this.ralenti = new Audio('../sound/ralenti.mp3');
     this.ralenti.volume = 0.1;
-    this.noEscudo = new Audio('/sound/noEscudo.mp3');
+    this.noEscudo = new Audio('../sound/noEscudo.mp3');
   }
 
   getCamara() {

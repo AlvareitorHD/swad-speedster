@@ -9,7 +9,7 @@ class Cono_Trafico extends THREE.Object3D{
         var circuito = c.tubeGeometry;
 
         //Creamos los materiales
-        var texture = new THREE.TextureLoader().load('../../imgs/cono_trafico.jpeg');
+        var texture = new THREE.TextureLoader().load('../imgs/cono_trafico.jpeg');
         var Mat = new THREE.MeshStandardMaterial({map: texture});
         
         //Creamos las geometrias
@@ -41,7 +41,7 @@ class Cono_Trafico extends THREE.Object3D{
         this.add(this.cono_trafico);
         this.posicionar(circuito,t,rot);
         this.createColision();
-        this.sonido = new Audio('/sound/cono.mp3');
+        this.sonido = new Audio('../sound/cono.mp3');
     }
 
     colision(){
