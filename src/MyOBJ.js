@@ -5,11 +5,11 @@ import * as KeyCode from '../libs/keycode.esm.js'
 import { Cono_Trafico } from './Cono_Trafico/Cono_Trafico.js';
 import { Neumatico } from './Neumatico/Neumatico.js';
 import { Rampa } from './Rampa/Rampa.js';
-import * as TWEEN from '../../libs/tween.esm.js'
+import * as TWEEN from '../libs/tween.esm.js'
 import { Moneda_Basica } from './Moneda_Basica/Moneda_Basica.js';
 import { Moneda_Premium } from './Moneda_Premium/Moneda_Premium.js';
 
-import { CSG } from '../../libs/CSG-v2.js';
+import { CSG } from '../libs/CSG-v2.js';
 import { Punto_Escudo } from './Punto_Escudo/Punto_Escudo.js';
 import { Impulsor } from './Impulsor/Impulsor.js';
 import { Punto_Energia } from './Punto_Energia/Punto_Energia.js';
