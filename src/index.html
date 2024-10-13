@@ -5,10 +5,10 @@
 <head>
     <title>SWAD Speedster</title>
     <meta charset="utf-8">
-    <script type="text/javascript" src="../../libs/jquery.js"></script>
+    <script type="text/javascript" src="../libs/jquery.js"></script>
 
     <script type="importmap">
-          { "imports": { "three": "../../libs/three.module.js" } }
+          { "imports": { "three": "../libs/three.module.js" } }
     </script>
 
     <script type="module" src="./main.js"></script>
@@ -21,7 +21,7 @@
 
         @font-face {
             font-family: 'titulo';
-            src: url('/imgs/SpeedRacing-NegativeItalic.ttf') format('truetype');
+            src: url('../imgs/SpeedRacing-NegativeItalic.ttf') format('truetype');
         }
 
         /* Estilo base del botón */
@@ -349,7 +349,7 @@
     </div>
 <!-- Video de fondo -->
 <video id="video" autoplay muted loop>
-    <source src="/imgs/menu_inicio.mp4" type="video/mp4">
+    <source src="../imgs/menu_inicio.mp4" type="video/mp4">
     <!-- Fallback para navegadores que no soportan videos -->
     Your browser does not support the video tag.
 </video>
@@ -358,7 +358,7 @@
     <div id="WebGL-output">
         <div id="hud">
             <div id="title"> ( SWAD Speedster ) </div>
-            <img src="/favicon.ico" alt="SWAD Logo" width="100">
+            <img src="../favicon.ico" alt="SWAD Logo" width="100">
 
             <div id="vueltas">Vueltas: </div>
             <div id="score">Score: </div>
